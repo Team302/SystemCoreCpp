@@ -22,7 +22,7 @@
 #include "units/velocity.h"
 #include "units/angle.h"
 #include "frc/Timer.h"
-//#include <choreo/Choreo.h>
+#include "choreo/choreo.h"
 
 // 302 includes
 #include "chassis/commands/TrajectoryDrive.h"
@@ -47,7 +47,6 @@ TrajectoryDrive::TrajectoryDrive(
 
 void TrajectoryDrive::Initialize()
 {
-    /**
     m_trajectory = AutonUtils::GetTrajectoryFromPathFile(m_pathName);
     m_trajectoryStates = m_trajectory.value().samples;
 
@@ -62,7 +61,6 @@ void TrajectoryDrive::Initialize()
     m_chassisSpeeds.vx = 0_mps;
     m_chassisSpeeds.vy = 0_mps;
     m_chassisSpeeds.omega = units::angular_velocity::radians_per_second_t(0);
-    **/
 }
 
 void TrajectoryDrive::SetPath(const std::string &pathName)
@@ -72,7 +70,6 @@ void TrajectoryDrive::SetPath(const std::string &pathName)
 
 void TrajectoryDrive::Execute()
 {
-    /**
     if (!m_trajectoryStates.empty()) // If we have a path parsed / have states to run
     {
         auto desiredState = m_trajectory.value().SampleAt(m_timer.get()->Get()).value();
@@ -96,7 +93,6 @@ void TrajectoryDrive::Execute()
             .WithVelocityY(m_chassisSpeeds.vy)
             .WithRotationalRate(m_chassisSpeeds.omega)
             .WithForwardPerspective(ctre::phoenix6::swerve::requests::ForwardPerspectiveValue::BlueAlliance));
-            **/
 }
 
 bool TrajectoryDrive::IsFinished()
@@ -104,7 +100,6 @@ bool TrajectoryDrive::IsFinished()
     bool isDone = false;
 
     auto currentPose = m_chassis != nullptr ? m_chassis->GetPose() : frc::Pose2d();
-    /**
     if (!m_trajectoryStates.empty())
     {
         auto currentTime = m_timer.get()->Get();
@@ -136,7 +131,6 @@ bool TrajectoryDrive::IsFinished()
         isDone = true;
         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "", "why done", m_whyDone);
     }
-    **/
 
     return isDone;
 }

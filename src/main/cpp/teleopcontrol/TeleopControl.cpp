@@ -450,10 +450,8 @@ frc2::Trigger TeleopControl::GetCommandTrigger(TeleopControlFunctions::FUNCTION 
 	return frc2::Trigger([]()
 						 { return false; }); // Return a trigger that is always inactive if the controller is null or the function is not mapped
 }
-/**
 frc2::Trigger TeleopControl::GetAxisAsTrigger(TeleopControlFunctions::FUNCTION function, double threshold)
 {
 	return frc2::Trigger([this, function, threshold]
 						 { return this->GetAxisValue(function) > threshold; });
 }
-**/

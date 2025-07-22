@@ -97,7 +97,7 @@ public:
      * @param threshold The value the axis must pass to activate the trigger (0.0 to 1.0).
      * @return An frc2::Trigger that can be used for command binding.
      */
-    //frc2::Trigger GetAxisAsTrigger(TeleopControlFunctions::FUNCTION function, double threshold);
+    frc2::Trigger GetAxisAsTrigger(TeleopControlFunctions::FUNCTION function, double threshold);
 
     void LogInformation();
     DragonHybridController *GetHybridController();

@@ -46,9 +46,7 @@ void ResetPositionTrajectory::Init(PrimitiveParams *param)
     if (chassis != nullptr)
     {
 
-/**
         auto path = AutonUtils::GetTrajectoryFromPathFile(param->GetTrajectoryName());
-
         if (path.has_value())
         {
             auto initialPose = path.value().GetInitialPose();
@@ -65,7 +63,6 @@ void ResetPositionTrajectory::Init(PrimitiveParams *param)
                 }
             }
         }
-        **/
     }
 }
 

@@ -394,7 +394,7 @@ void DragonTale::CreateCOMP_BOT302()
 	m_BranchCANRange = new ctre::phoenix6::hardware::CANrange(32, "canivore");
 
 	ctre::phoenix6::configs::CANcoderConfiguration ArmAngleSensorConfigs{};
-	ArmAngleSensorConfigs.MagnetSensor.MagnetOffset = units::angle::turn_t(0.446289);
+	ArmAngleSensorConfigs.MagnetSensor.MagnetOffset = units::angle::turn_t(-0.200439);
 	ArmAngleSensorConfigs.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::CounterClockwise_Positive;
 	m_ArmAngleSensor = new ctre::phoenix6::hardware::CANcoder(17, "canivore");
 	m_ArmAngleSensor->GetConfigurator().Apply(ArmAngleSensorConfigs);

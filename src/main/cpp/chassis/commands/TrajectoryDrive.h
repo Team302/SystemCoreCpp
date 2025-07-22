@@ -22,7 +22,7 @@
 // FRC Includes
 #include "frc/Timer.h"
 #include "frc/controller/PIDController.h"
-//#include <choreo/trajectory/Trajectory.h>
+#include "choreo/trajectory/Trajectory.h"
 
 class TrajectoryDrive : public frc2::CommandHelper<frc2::Command, TrajectoryDrive>
 {
@@ -53,9 +53,9 @@ private:
 
     bool IsSamePose(frc::Pose2d currentPose, frc::Pose2d previousPose, frc::ChassisSpeeds velocity, double xyTolerance, double rotTolerance, double speedTolerance);
 
-    //std::optional<choreo::Trajectory<choreo::SwerveSample>> m_trajectory;
-    //choreo::SwerveSample m_finalState;
-    //std::vector<choreo::SwerveSample> m_trajectoryStates;
+    std::optional<choreo::Trajectory<choreo::SwerveSample>> m_trajectory;
+    choreo::SwerveSample m_finalState;
+    std::vector<choreo::SwerveSample> m_trajectoryStates;
 
     frc::Pose2d m_prevPose;
     bool m_wasMoving;

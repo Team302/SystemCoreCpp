@@ -1,0 +1,111 @@
+{
+  "version": 1.0,
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 2.9,
+        "y": 6.99
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.904665834134367,
+        "y": 6.990466534628812
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.529920788800206,
+        "y": 7.530067898937509
+      },
+      "prevControl": {
+        "x": 3.9958012013028283,
+        "y": 7.483224552754384
+      },
+      "nextControl": {
+        "x": 6.923303707587491,
+        "y": 7.572613942259257
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 8.258545703967298,
+        "y": 7.8696821587651735
+      },
+      "prevControl": {
+        "x": 8.285578089687,
+        "y": 7.86866973427794
+      },
+      "nextControl": {
+        "x": 8.231513318247597,
+        "y": 7.870694583252407
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.529920788800206,
+        "y": 7.530067898937509
+      },
+      "prevControl": {
+        "x": 6.935221174293987,
+        "y": 7.576911245120637
+      },
+      "nextControl": {
+        "x": 4.009789318948176,
+        "y": 7.4793968499424395
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 2.9,
+        "y": 6.99
+      },
+      "prevControl": {
+        "x": 2.7636036663855332,
+        "y": 6.996177154979928
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.0,
+      "rotationDegrees": 180.0,
+      "rotateFast": false
+    },
+    {
+      "waypointRelativePos": 2,
+      "rotationDegrees": 180.0,
+      "rotateFast": false
+    }
+  ],
+  "constraintZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.65,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 540.0,
+    "maxAngularAcceleration": 720.0
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -160.0,
+    "rotateFast": true
+  },
+  "reversed": false,
+  "folder": "RedAmpWing1Center2",
+  "previewStartingState": {
+    "rotation": -146.58,
+    "velocity": 0
+  },
+  "useDefaultConstraints": false
+}

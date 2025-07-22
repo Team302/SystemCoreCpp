@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "auton.dtd">
+<auton>
+
+<!-- <primitive id= "RESET_POSITION"
+choreoname = "BlueRightInsideF"/> -->
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueRightInsideF"
+time = "2.5">
+<zone filename="BlueReefDriveToLeft.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+taleOption = "STATE_SCORE_CORAL"
+time = "2.5"/>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueRightCSA_F2"
+taleOption = "STATE_HUMAN_PLAYER_LOAD"
+time = "3.0">
+<zone filename="BlueRightHumanPlayerStation.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+time = "5.0"/>
+
+<primitive id= "TRAJECTORY_DRIVE"
+choreoname = "BlueRightCSA_D1"
+time = "2.5">
+<zone filename="BlueReefDriveToRight.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+taleOption = "STATE_SCORE_CORAL"
+time = "2.5"/>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueRightCSA_D2"
+taleOption = "STATE_HUMAN_PLAYER_LOAD"
+time = "3.0">
+<zone filename="BlueRightHumanPlayerStation.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+time = "5.0"/>
+
+<primitive id= "TRAJECTORY_DRIVE"
+choreoname = "BlueRightCSA_C1"
+time = "3.0">
+<zone filename="BlueReefDriveToLeft.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+taleOption = "STATE_SCORE_CORAL"
+time = "5.0"/>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueRightCSA_C2"
+taleOption = "STATE_HUMAN_PLAYER_LOAD"
+time = "2.5">
+<zone filename="BlueRightHumanPlayerStation.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+time = "5.0"/>
+
+<primitive id= "TRAJECTORY_DRIVE"
+choreoname = "BlueRightCSA_B1"
+time = "3.0">
+<zone filename = "BlueReefDriveToRight.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+taleOption = "STATE_SCORE_CORAL"
+time = "5.0"/>
+</auton>

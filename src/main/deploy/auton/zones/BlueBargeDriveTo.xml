@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "zone.dtd">
+
+<auton>
+    <zone 
+        x1_rect = "6.5"
+        y1_rect = "3.9"
+        x2_rect = "11.0"
+        y2_rect = "7.5"
+        taleOption="STATE_NET"
+        pathUpdateOption = "BARGE" />
+</auton>

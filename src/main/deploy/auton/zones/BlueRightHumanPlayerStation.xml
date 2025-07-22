@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "zone.dtd">
+
+<auton>
+    <zone 
+        circlex="0.836"
+        circley="0.737"
+        radius="90.0"
+        pathUpdateOption = "CORAL_STATION" />
+</auton>

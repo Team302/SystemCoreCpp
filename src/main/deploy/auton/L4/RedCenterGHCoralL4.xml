@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "auton.dtd">
+<auton>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname= "BlueCenter_H"
+time = "3.0">
+<zone filename = "RedReefDriveToLeft.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+taleOption = "STATE_SCORE_CORAL"
+time = "1.5"/>
+
+<primitive id = "DRIVE_STOP_MECH"
+taleOption = "STATE_GRAB_ALGAE_REEF"
+time= "1.5"/>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueCenterH_Barge"
+time = "1.75">
+<zone filename = "RedBargeDriveTo.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+taleOption = "STATE_SCORE_ALGAE"
+time = "1.5"/>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname= "BlueCenterBarge_F"
+time = "5.0">
+<zone filename = "RedReefDriveToLeftAlgae.xml"/>
+</primitive>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname= "BlueCenterF_Barge"
+time = "3.25">
+<zone filename = "RedBargeDriveTo.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+taleOption = "STATE_SCORE_ALGAE"
+time = "1.5"/>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname= "BlueCenterBarge_J"
+time = "4.0"
+taleOption="STATE_GRAB_ALGAE_REEF">
+<zone filename = "RedReefDriveToLeftAlgae.xml"/>
+</primitive>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueCenterJ_Barge"
+time = "3.0">
+<zone filename = "RedBargeAuto.xml"/>
+</primitive>
+
+</auton>

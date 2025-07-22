@@ -1,0 +1,61 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topLevelAppDataElement xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <robotFiles>
+    <string>PRACTICE_BOT9999.xml</string>
+    <string>COMP_BOT302.xml</string>
+  </robotFiles>
+  <Robots />
+  <Mechanisms>
+    <mechanism>
+      <GUID>2df76c4c-8319-48eb-ad35-a9d4cfb31dfe</GUID>
+      <name>Climber</name>
+      <MotorControllers />
+      <closedLoopControlParameters />
+      <solenoid />
+      <servo />
+      <analogInput />
+      <digitalInput />
+      <cancoder />
+      <stateMotorControlData />
+      <states />
+      <doubleParameters />
+      <boolParameters />
+      <constDoubleParameters />
+      <constBoolParameters />
+    </mechanism>
+    <mechanism>
+      <GUID>291938a9-4ec6-41fa-861a-32866baf4f67</GUID>
+      <name>DragonTail</name>
+      <MotorControllers />
+      <closedLoopControlParameters />
+      <solenoid />
+      <servo />
+      <analogInput />
+      <digitalInput />
+      <cancoder />
+      <stateMotorControlData />
+      <states />
+      <doubleParameters />
+      <boolParameters />
+      <constDoubleParameters />
+      <constBoolParameters />
+    </mechanism>
+    <mechanism>
+      <GUID>178a8a32-a228-43f0-81f4-be4dc9132beb</GUID>
+      <name>Intake</name>
+      <MotorControllers />
+      <closedLoopControlParameters />
+      <solenoid />
+      <servo />
+      <analogInput />
+      <digitalInput />
+      <cancoder />
+      <stateMotorControlData />
+      <states />
+      <doubleParameters />
+      <boolParameters />
+      <constDoubleParameters />
+      <constBoolParameters />
+    </mechanism>
+  </Mechanisms>
+</topLevelAppDataElement>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "auton.dtd">
+<auton>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname= "BlueCenter_H"
+time = "3.0">
+<zone filename = "BlueReefDriveToLeftNoMech.xml"/>
+</primitive>
+
+<primitive id = "DO_NOTHING"
+taleOption = "STATE_L4SCORING_POSITION"
+time= "1.0"/>
+
+<primitive id = "DRIVE_STOP_MECH"
+taleOption = "STATE_SCORE_CORAL"
+time= "3.0"/>
+
+<primitive id = "TRAJECTORY_DRIVE"
+choreoname = "BlueCenterBarge_H"
+time = "3.0"/>
+
+<primitive id = "DO_NOTHING"
+taleOption="STATE_NET"
+time = "1.0"/> 
+
+<!-- add more logic to handle state -->
+<primitive id = "DRIVE_STOP_MECH"
+taleOption="STATE_SCORE_ALGAE"
+time = "2.0"/> 
+
+</auton>

@@ -1,0 +1,52 @@
+<!ELEMENT auton (zone) >
+
+<!ELEMENT zone EMPTY >
+<!ATTLIST zone
+    ygrid1             		(  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 
+							  10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 
+                              20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 
+                              30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 
+                              40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 
+                              50 | 51 | 52 | 53 | 54 ) "1"
+    xgrid1             		(  1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 
+                               10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 
+                               19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27) "1"
+    ygrid2             		(  1 |  2 |  3 |  4 |  5 |  6 |  7 |  8 |  9 | 
+							  10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 19 | 
+                              20 | 21 | 22 | 23 | 24 | 25 | 26 | 27 | 28 | 29 | 
+                              30 | 31 | 32 | 33 | 34 | 35 | 36 | 37 | 38 | 39 | 
+                              40 | 41 | 42 | 43 | 44 | 45 | 46 | 47 | 48 | 49 | 
+                              50 | 51 | 52 | 53 | 54 ) "1"
+    xgrid2             		(  1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 
+                               10 | 11 | 12 | 13 | 14 | 15 | 16 | 17 | 18 | 
+                               19 | 20 | 21 | 22 | 23 | 24 | 25 | 26 | 27) "1"
+
+    x1_rect CDATA #IMPLIED
+    y1_rect CDATA #IMPLIED
+    x2_rect CDATA #IMPLIED
+    y2_rect CDATA #IMPLIED
+
+
+    circlex                 CDATA #IMPLIED
+    circley                 CDATA #IMPLIED
+    radius                  CDATA #IMPLIED                
+
+    pathUpdateOption 	(RIGHT_REEF_BRANCH | LEFT_REEF_BRANCH | REEF_ALGAE | FLOOR_ALGAE | CORAL_STATION | PROCESSOR | BARGE | NOTHING) "NOTHING"         
+    
+    taleOption		( STATE_READY | STATE_INITIALIZE | 
+		  					STATE_HUMAN_PLAYER_LOAD | STATE_GRAB_ALGAE_REEF | STATE_HOLD |
+							STATE_GRAB_ALGAE_FLOOR | STATE_PROCESS | STATE_NET | STATE_SCORE_ALGAE |
+							STATE_L1SCORING_POSITION | STATE_L2SCORING_POSITION |
+							STATE_L3SCORING_POSITION | STATE_L4SCORING_POSITION |
+							STATE_SCORE_CORAL | STATE_MANUAL_CORAL_LOAD |
+							STATE_MANUAL_GRAB_ALGAE_REEF | STATE_MANUAL_GRAB_ALGAE_FLOOR) "STATE_READY"
+
+    chassisOption           ( NO_VISION ) "NO_VISION"
+    avoidOption             ( PODIUM | ROBOT_COLLISION | NO_AVOID_OPTION ) "NO_AVOID_OPTION"
+    headingOption     ( MAINTAIN | SPECIFIED_ANGLE | FACE_GAME_PIECE | FACE_REEF_CENTER | FACE_REEF_FACE | FACE_CORAL_STATION | IGNORE) "IGNORE"
+    pathUpdateOption      ( RIGHT_REEF_BRANCH | LEFT_REEF_BRANCH | REEF_ALGAE | FLOOR_ALGAE | CORAL_STATION | PROCESSOR | NOTHING ) "NOTHING"
+
+    
+>
+
+

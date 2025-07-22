@@ -1,0 +1,248 @@
+<?xml version="1.0"?>
+<toolConfiguration xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <sourceCodeRelativePath>main\cpp</sourceCodeRelativePath>
+  <deployRelativePath>main\deploy</deployRelativePath>
+  <robotConfiguration>..\Robots\2025Reefscape.xml</robotConfiguration>
+  <appDataConfigurations>
+    <string>../Minimal/minimalRobot.xml</string>
+    <string>../RobotConfig/2024Crescendo.xml</string>
+    <string>../Robots/2025Reefscape.xml</string>
+  </appDataConfigurations>
+  <collectionBaseTypes>
+    <string>ApplicationData.MotorController</string>
+    <string>ApplicationData.SparkController</string>
+    <string>ApplicationData.Camera</string>
+    <string>ApplicationData.parameter</string>
+  </collectionBaseTypes>
+  <physicalUnits>
+    <physicalUnit>
+      <shortName>%</shortName>
+      <longName>Percent</longName>
+      <family>percent</family>
+      <wpiClassName>Unit.percent</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>s</shortName>
+      <longName>Second</longName>
+      <family>time</family>
+      <wpiClassName>units::time::second_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>ms</shortName>
+      <longName>millisecond</longName>
+      <family>time</family>
+      <wpiClassName>units::time::millisecond_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>W</shortName>
+      <longName>Watts</longName>
+      <family>power</family>
+      <wpiClassName>Units.watts</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>V</shortName>
+      <longName>Volts</longName>
+      <family>voltage</family>
+      <wpiClassName>units::voltage::volt_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>A</shortName>
+      <longName>Amperes</longName>
+      <family>current</family>
+      <wpiClassName>units::current::ampere_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>g</shortName>
+      <longName>Grams</longName>
+      <family>mass</family>
+      <wpiClassName>Units.grams</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>m</shortName>
+      <longName>meters</longName>
+      <family>length</family>
+      <wpiClassName>units::length::meter_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>in</shortName>
+      <longName>inches</longName>
+      <family>length</family>
+      <wpiClassName>units::length::inch_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>m/s</shortName>
+      <longName>metersPerSecond</longName>
+      <family>velocity</family>
+      <wpiClassName>Units.metersPerSecond</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>in/s</shortName>
+      <longName>inchesPerSecond</longName>
+      <family>velocity</family>
+      <wpiClassName>Units.inchesPerSecond</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>deg</shortName>
+      <longName>degree</longName>
+      <family>angle</family>
+      <wpiClassName>units::angle::degree_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>rad</shortName>
+      <longName>radians</longName>
+      <family>angle</family>
+      <wpiClassName>units::angle::radian_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>rad/s^2</shortName>
+      <longName>radiansPerSecSquared</longName>
+      <family>angularAcceleration</family>
+      <wpiClassName>units::angular_acceleration::radians_per_second_squared_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>deg/s^2</shortName>
+      <longName>degreePerSecSquared</longName>
+      <family>angularAcceleration</family>
+      <wpiClassName>units::angular_acceleration::degrees_per_second_squared_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>turns/s^2</shortName>
+      <longName>turnsPerSecSquared</longName>
+      <family>angularAcceleration</family>
+      <wpiClassName>units::angular_acceleration::turns_per_second_squared_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>m/s^2</shortName>
+      <longName>meters per second squared</longName>
+      <family>acceleration</family>
+      <wpiClassName>Units.meters_per_second_squared</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>ft/s^2</shortName>
+      <longName>feet per second squared</longName>
+      <family>acceleration</family>
+      <wpiClassName>Units.feet_per_second_squared</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>rad/s</shortName>
+      <longName>radians per second</longName>
+      <family>angularVelocity</family>
+      <wpiClassName>units::angular_velocity::radians_per_second_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>deg/s</shortName>
+      <longName>degrees per second</longName>
+      <family>angularVelocity</family>
+      <wpiClassName>units::angular_velocity::degrees_per_second_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>turns/s</shortName>
+      <longName>turns per second</longName>
+      <family>angularVelocity</family>
+      <wpiClassName>units::angular_velocity::turns_per_second_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>rad/s^3</shortName>
+      <longName>radians per second cubed</longName>
+      <family>angularJerk</family>
+      <wpiClassName>units::angular_jerk::radians_per_second_cubed_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>deg/s^3</shortName>
+      <longName>degrees per second cubed</longName>
+      <family>angularJerk</family>
+      <wpiClassName>units::angular_jerk::degrees_per_second_cubed_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>turn/s^3</shortName>
+      <longName>turns per second cubed</longName>
+      <family>angularJerk</family>
+      <wpiClassName>units::angular_jerk::turns_per_second_cubed_t</wpiClassName>
+    </physicalUnit>
+    <physicalUnit>
+      <shortName>PSI</shortName>
+      <longName>pounds per square inch</longName>
+      <family>pressure</family>
+      <wpiClassName>Units.pounds_per_square_inch</wpiClassName>
+    </physicalUnit>
+  </physicalUnits>
+  <codeTemplateFiles>
+    <codeTemplateFile>
+      <name>RobotIdentifier_h</name>
+      <templateFilePathName>..\..\templates\RobotIdentifier.h</templateFilePathName>
+      <outputFilePathName>RobotIdentifier.h</outputFilePathName>
+    </codeTemplateFile>
+    <codeTemplateFile>
+      <name>MechanismInstance_h</name>
+      <templateFilePathName>..\..\templates\MechanismInstance.h</templateFilePathName>
+      <outputFilePathName>mechanisms\MECHANISM_INSTANCE_NAME.h</outputFilePathName>
+    </codeTemplateFile>
+    <codeTemplateFile>
+      <name>MechanismInstance_cpp</name>
+      <templateFilePathName>..\..\templates\MechanismInstance.cpp</templateFilePathName>
+      <outputFilePathName>mechanisms\MECHANISM_INSTANCE_NAME.cpp</outputFilePathName>
+    </codeTemplateFile>
+    <codeTemplateFile>
+      <name>RobotElementNames</name>
+      <templateFilePathName>..\..\templates\RobotElementNames.h</templateFilePathName>
+      <outputFilePathName>configs\RobotElementNames.h</outputFilePathName>
+    </codeTemplateFile>
+    <codeTemplateFile>
+      <name>MechanismTypes</name>
+      <templateFilePathName>..\..\templates\MechanismTypes.h</templateFilePathName>
+      <outputFilePathName>mechanisms\MechanismTypes.h</outputFilePathName>
+    </codeTemplateFile>
+    <codeTemplateFile>
+      <name>state_h</name>
+      <templateFilePathName>..\..\templates\state.h</templateFilePathName>
+      <outputFilePathName>mechanisms\STATE_NAMEState.h</outputFilePathName>
+    </codeTemplateFile>
+    <codeTemplateFile>
+      <name>state_cpp</name>
+      <templateFilePathName>..\..\templates\state.cpp</templateFilePathName>
+      <outputFilePathName>mechanisms\STATE_NAMEState.cpp</outputFilePathName>
+    </codeTemplateFile>
+    <codeTemplateFile>
+      <name>RobotConfigMgr_cpp</name>
+      <templateFilePathName>..\..\templates\MechanismConfigMgr.cpp</templateFilePathName>
+      <outputFilePathName>configs\MechanismConfigMgr.cpp</outputFilePathName>
+    </codeTemplateFile>
+    <codeTemplateFile>
+      <name>RobotConfigMgr_h</name>
+      <templateFilePathName>..\..\templates\MechanismConfigMgr.h</templateFilePathName>
+      <outputFilePathName>configs\MechanismConfigMgr.h</outputFilePathName>
+    </codeTemplateFile>
+    <codeTemplateFile>
+      <name>RobotConfigRobotSpecific_h</name>
+      <templateFilePathName>..\..\templates\MechanismConfigRobotSpecific.h</templateFilePathName>
+      <outputFilePathName>configs\MechanismConfig$$_ROBOT_NAME_$$.h</outputFilePathName>
+    </codeTemplateFile>
+    <codeTemplateFile>
+      <name>RobotConfigRobotSpecific_cpp</name>
+      <templateFilePathName>..\..\templates\MechanismConfigRobotSpecific.cpp</templateFilePathName>
+      <outputFilePathName>configs\MechanismConfig$$_ROBOT_NAME_$$.cpp</outputFilePathName>
+    </codeTemplateFile>
+  </codeTemplateFiles>
+  <CopyrightNotice>
+//====================================================================================================================================================
+// Copyright 2025 Lake Orion Robotics FIRST Team 302
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+// OR OTHER DEALINGS IN THE SOFTWARE.
+//====================================================================================================================================================
+
+</CopyrightNotice>
+  <GenerationNotice>
+// This file was automatically generated by the Team 302 code generator version $CODE_GENERATOR_VERSION$
+// Generated on $GENERATION_DATE$ $GENERATION_TIME$
+</GenerationNotice>
+  <EditorFormattingDisable />
+</toolConfiguration>

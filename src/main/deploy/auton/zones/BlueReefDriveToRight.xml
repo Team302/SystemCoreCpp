@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "zone.dtd">
+
+<auton>
+    <zone 
+        circlex="4.467"
+        circley="4.038"
+        radius="100.0" 
+        taleOption="STATE_L4SCORING_POSITION"
+        pathUpdateOption="RIGHT_REEF_BRANCH"/>
+    </auton>

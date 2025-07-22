@@ -1,0 +1,28 @@
+<!ELEMENT MechanismParameters (MotorControlData)>
+<!ATTLIST MechanismParameters
+  xmlns:xsd CDATA #IMPLIED
+  xmlns:xsi CDATA #IMPLIED
+>
+
+<!ELEMENT MotorControlData (MinimalMotorControlData*)>
+
+<!ELEMENT MinimalMotorControlData EMPTY>
+<!ATTLIST MinimalMotorControlData
+  name CDATA #REQUIRED
+  pGain CDATA #REQUIRED
+  iGain CDATA #REQUIRED
+  dGain CDATA #REQUIRED
+  fGain CDATA #REQUIRED
+  aGain CDATA #REQUIRED
+  sGain CDATA #REQUIRED
+  vGain CDATA #REQUIRED
+  iZone CDATA #REQUIRED
+  peakValue CDATA #REQUIRED
+  nominalValue CDATA #REQUIRED
+  maxAcceleration CDATA #REQUIRED
+  cruiseVelocity CDATA #REQUIRED
+  enableFOC CDATA #REQUIRED
+  feedForwardType CDATA #REQUIRED
+  controlType CDATA #REQUIRED
+  controlLoopLocation CDATA #REQUIRED
+>

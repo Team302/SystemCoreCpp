@@ -65,7 +65,7 @@ private:
     std::string m_whyDone;
     units::time::second_t m_totalTrajectoryTime;
 
-    static constexpr double kPDrive{0.35};
+    static constexpr double kPDrive{0.65};
     static constexpr double kIDrive{0.0};
     static constexpr double kDDrive{0.0};
 

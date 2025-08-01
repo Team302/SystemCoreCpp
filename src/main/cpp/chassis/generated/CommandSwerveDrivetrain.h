@@ -100,7 +100,7 @@ namespace subsystems
                 this}};
 
         /* The SysId routine to test */
-        frc2::sysid::SysIdRoutine *m_sysIdRoutineToApply = &m_sysIdRoutineTranslation;
+        frc2::sysid::SysIdRoutine *m_sysIdRoutineToApply = &m_sysIdRoutineSteer;
 
     public:
         /**
@@ -270,6 +270,7 @@ namespace subsystems
             TunerSwerveDrivetrain::AddVisionMeasurement(std::move(visionRobotPose), utils::FPGAToCurrentTime(timestamp), visionMeasurementStdDevs);
         }
 
+        // Hand Coded
         frc::Pose2d GetPose() { return this->GetState().Pose; };
 
         bool IsSamePose();
@@ -279,7 +280,7 @@ namespace subsystems
             m_debounceTimer.Reset();
             m_prevPose = GetPose();
         }
-
+        // Hand Coded
     private:
         void StartSimThread();
         frc::Timer m_debounceTimer;

@@ -55,14 +55,11 @@
 #include "fielddata/DragonTargetFinder.h"
 #include "utils/logging/debug/Logger.h"
 #include "utils/DragonPower.h"
-
 #include "teleopcontrol/TeleopControl.h"
 #include "teleopcontrol/TeleopControlFunctions.h"
-
 #include "utils/AngleUtils.h"
 #include "utils/FMSData.h"
 #include "tuple"
-
 #include "frc/DataLogManager.h"
 
 using ctre::phoenix6::configs::Slot0Configs;
@@ -1235,10 +1232,7 @@ void DragonTale::UpdateTarget()
 
 	if (elevatorError > m_elevatorErrorThreshold)
 	{
-		if ((GetCurrentState() == STATE_L4SCORING_POSITION) && !GetAlgaeSensorState())
-			actualTargetAngle = m_armGrabAlgeAngle;
-		else
-			actualTargetAngle = m_armHoldAngle;
+		actualTargetAngle = m_armHoldAngle;
 	}
 	else if (GetElevatorHeight() < m_elevatorProtectionHeight && m_armTarget < m_armProtectionAngle)
 	{
@@ -1309,60 +1303,16 @@ void DragonTale::SetAlgaeMotor()
 
 void DragonTale::DataLog(uint64_t timestamp)
 {
-	// auto currTime = m_powerTimer.Get();
-
 	LogArm("/DragonTale/Arm/Angle", timestamp, "Degrees", GetArmAngle().value());
-	// auto ArmPower = DragonPower::CalcPowerEnergy(currTime, m_Arm->GetSupplyVoltage().GetValueAsDouble(), m_Arm->GetSupplyCurrent().GetValueAsDouble());
-	// m_power = get<0>(ArmPower);
-	// m_energy = get<1>(ArmPower);
-	// m_totalEnergy += m_energy;
-	// LogArmPower("/DragonTale/Arm/Power", timestamp, "double", m_power);
-	// LogArmEnergy("/DragonTale/Arm/Energy", timestamp, "double", m_energy);
 	LogArmTarget("/DragonTale/Arm/Target", timestamp, "double", m_armLoggingTarget);
-
 	LogElevatorLeader("/DragonTale/Elevator/ElevatorLeaderHeight", timestamp, "inches", GetElevatorHeight().value());
-	// auto ElevatorLeaderPower = DragonPower::CalcPowerEnergy(currTime, m_ElevatorLeader->GetSupplyVoltage().GetValueAsDouble(), m_ElevatorLeader->GetSupplyCurrent().GetValueAsDouble());
-	// m_power = get<0>(ElevatorLeaderPower);
-	// m_energy = get<1>(ElevatorLeaderPower);
-	// m_totalEnergy += m_energy;
-	// LogElevatorLeaderPower("/DragonTale/Elevator/ElevatorLeaderPower", timestamp, "double", m_power);
-	// LogElevatorLeaderEnergy("/DragonTale/Elevator/ElevatorLeaderEnergy", timestamp, "double", m_energy);
 	LogElevatorLeaderTarget("/DragonTale/Elevator/ElevatorLeaderTarget", timestamp, "double", m_elevatorTarget.value());
-
-	// auto AlgaePower = DragonPower::CalcPowerEnergy(currTime, m_activeRobotId == RobotIdentifier::PRACTICE_BOT_9999 ? m_AlgaeTalonFX->GetSupplyVoltage().GetValueAsDouble() : m_AlgaeTalonFXS->GetSupplyVoltage().GetValueAsDouble(), m_activeRobotId == RobotIdentifier::PRACTICE_BOT_9999 ? m_AlgaeTalonFX->GetSupplyCurrent().GetValueAsDouble() : m_AlgaeTalonFXS->GetSupplyCurrent().GetValueAsDouble());
-	// m_power = get<0>(AlgaePower);
-	// m_energy = get<1>(AlgaePower);
-	// m_totalEnergy += m_energy;
-	// LogAlgaePower("/DragonTale/Algae/AlgaePower", timestamp, "double", m_power);
-	// LogAlgaeEnergy("/DragonTale/Algae/AlgaeEnergy", timestamp, "double", m_energy);
-
 	LogElevatorFollower("/DragonTale/Elevator/ElevatorFollower", timestamp, "inches", units::length::inch_t(m_ElevatorFollower->GetPosition().GetValueAsDouble()).value());
-	// auto ElevatorFollowerPower = DragonPower::CalcPowerEnergy(currTime, m_ElevatorFollower->GetSupplyVoltage().GetValueAsDouble(), m_ElevatorFollower->GetSupplyCurrent().GetValueAsDouble());
-	// m_power = get<0>(ElevatorFollowerPower);
-	// m_energy = get<1>(ElevatorFollowerPower);
-	// m_totalEnergy += m_energy;
-	// LogElevatorFollowerPower("/DragonTale/Elevator/ElevatorFollowerPower", timestamp, "double", m_power);
-	// LogElevatorFollowerEnergy("/DragonTale/Elevator/ElevatorFollowerEnergy", timestamp, "double", m_energy);
 	LogElevatorFollowerTarget("/DragonTale/Elevator/ElevatorFollowerTarget", timestamp, "double", m_ElevatorLeader->GetRotorPosition().GetValueAsDouble());
-
-	// auto CoralPower = DragonPower::CalcPowerEnergy(currTime, m_Coral->GetSupplyVoltage().GetValueAsDouble(), m_Coral->GetSupplyCurrent().GetValueAsDouble());
-	// m_power = get<0>(CoralPower);
-	// m_energy = get<1>(CoralPower);
-	// m_totalEnergy += m_energy;
-	// LogCoralPower("/DragonTale/Coral/CoralPower", timestamp, "double", m_power);
-	// LogCoralEnergy("/DragonTale/Coral/CoralEergy", timestamp, "double", m_energy);
-
 	LogCoralInSensor("/DragonTale/Coral/CoralInSensor", timestamp, GetCoralInSensorState());
 	LogCoralOutSensor("/DragonTale/Coral/CoralOutSensor", timestamp, GetCoralOutSensorState());
 	LogAlgaeSensor("/DragonTale/Algae/ALgaeSensor", timestamp, GetAlgaeSensorState());
-
 	LogDragonTaleState("/DragonTale/DragonTaleState", timestamp, GetCurrentState());
-
-	// m_totalWattHours += DragonPower::ConvertEnergyToWattHours(m_totalEnergy);
-	// LogDragonTaleTotalEnergy("/DragonTale/DragonTaleTotalEnergy", timestamp, "int", m_totalEnergy);
-	// LogDragonTaleTotalWattHours("/DragonTale/DragonTaleTotalWattHours", timestamp, "int", m_totalWattHours);
-	// m_powerTimer.Reset();
-	// m_powerTimer.Start();
 }
 
 void DragonTale::LogInformation()
@@ -1373,14 +1323,9 @@ void DragonTale::LogInformation()
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "Algae Sensor", GetAlgaeSensorState());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "Arm Angle Method (Abs)", GetArmAngle().value());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "Elevator Height Method", GetElevatorHeight().value());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "Dragon Tale Scoring Mode", m_scoringMode);
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "State", GetCurrentState());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "Remedial Action", m_elevatorRemedialAction);
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "Branch CANRange", GetBranchCANRangeState());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "DriveToIsDone", m_isDriveToIsDone);
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "At Target", AtTarget());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "IsInBargeZone", m_isInBargeZone);
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "IsInReefZone", m_isInReefZone);
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "Elevator Velocity", m_ElevatorLeader->GetVelocity().GetValueAsDouble());
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "Elevator Acceleration", m_ElevatorLeader->GetAcceleration().GetValueAsDouble());
 }

@@ -71,7 +71,7 @@ optional<tuple<DragonTargetFinderData, Pose2d>> DragonTargetFinder::GetPose(Drag
         if (taginfo.has_value())
         {
             auto tag = taginfo.value();
-                                                                                                                                                                                                                                                                                                          auto tagpose{fieldconst->GetAprilTagPose2d(tag)};
+            auto tagpose{fieldconst->GetAprilTagPose2d(tag)};
             m_switchToVision = false;
 
             if (item == DragonTargetFinderTarget::CLOSEST_REEF_ALGAE)

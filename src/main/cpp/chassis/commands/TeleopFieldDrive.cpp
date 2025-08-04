@@ -71,8 +71,7 @@ bool TeleopFieldDrive::IsFinished()
 
 void TeleopFieldDrive::End(bool interrupted)
 {
-    m_chassis->ApplyRequest([]() -> auto
-                            { return swerve::requests::SwerveDriveBrake{}; });
+    m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
 }
 
 void TeleopFieldDrive::FaceReef()

@@ -58,8 +58,10 @@ void DriveToTarget::Initialize()
                 m_translationPIDX.SetGoal(m_endPose.X());
                 m_translationPIDY.SetGoal(m_endPose.Y());
 
-                m_translationPIDX.Reset(m_currentPose.X());
-                m_translationPIDY.Reset(m_currentPose.Y());
+                auto speeds = m_chassis->GetState().Speeds;
+
+                m_translationPIDX.Reset(m_currentPose.X(), speeds.vx);
+                m_translationPIDY.Reset(m_currentPose.Y(), speeds.vy);
             }
         }
     }
@@ -151,7 +153,6 @@ void DriveToTarget::CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds)
     {
         m_distanceError = m_currentPose.Translation().Distance(m_endPose.Translation());
 
-        // Calculate feedforward speed based on distance
         units::velocity::meters_per_second_t feedforwardSpeed = 0.0_mps;
         if (m_distanceError > m_ffMinRadius)
         {
@@ -159,7 +160,6 @@ void DriveToTarget::CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds)
             feedforwardSpeed = kMaxVelocity * feedForwardScale;
         }
 
-        // Apply feedforward to the desired velocity
         frc::Translation2d translationError = m_endPose.Translation() - m_currentPose.Translation();
         frc::Rotation2d angleToTarget = translationError.Angle();
 

@@ -86,7 +86,7 @@ void AutonDrivePrimitive::Init(PrimitiveParams *params)
 
     if (m_managedCommand)
     {
-        m_managedCommand.Schedule();
+        frc2::CommandScheduler::GetInstance().Schedule(m_managedCommand);
     }
 }
 
@@ -99,7 +99,7 @@ void AutonDrivePrimitive::Run()
         m_managedCommand = CreateDriveToTargetCommand(driveToType);
         if (m_managedCommand.get() != nullptr)
         {
-            m_managedCommand.Schedule();
+            frc2::CommandScheduler::GetInstance().Schedule(m_managedCommand);
             m_visionTransition = true;
         }
     }

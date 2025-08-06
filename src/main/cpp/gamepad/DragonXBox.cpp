@@ -74,13 +74,13 @@ DragonXBox::DragonXBox(
     // Create POVButton Objects for the POV
 
     m_button[TeleopControlMappingEnums::POV_0] = new POVButton(m_xbox, 0);
-    m_button[TeleopControlMappingEnums::POV_45] = new POVButton(m_xbox, 45);
-    m_button[TeleopControlMappingEnums::POV_90] = new POVButton(m_xbox, 90);
-    m_button[TeleopControlMappingEnums::POV_135] = new POVButton(m_xbox, 135);
-    m_button[TeleopControlMappingEnums::POV_180] = new POVButton(m_xbox, 180);
-    m_button[TeleopControlMappingEnums::POV_225] = new POVButton(m_xbox, 225);
-    m_button[TeleopControlMappingEnums::POV_270] = new POVButton(m_xbox, 270);
-    m_button[TeleopControlMappingEnums::POV_315] = new POVButton(m_xbox, 315);
+    m_button[TeleopControlMappingEnums::POV_45] = new POVButton(m_xbox, 1);
+    m_button[TeleopControlMappingEnums::POV_90] = new POVButton(m_xbox, 2);
+    m_button[TeleopControlMappingEnums::POV_135] = new POVButton(m_xbox, 3);
+    m_button[TeleopControlMappingEnums::POV_180] = new POVButton(m_xbox, 4);
+    m_button[TeleopControlMappingEnums::POV_225] = new POVButton(m_xbox, 5);
+    m_button[TeleopControlMappingEnums::POV_270] = new POVButton(m_xbox, 6);
+    m_button[TeleopControlMappingEnums::POV_315] = new POVButton(m_xbox, 7);
 }
 
 DragonXBox::~DragonXBox()

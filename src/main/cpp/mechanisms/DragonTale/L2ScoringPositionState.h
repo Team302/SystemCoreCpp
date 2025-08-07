@@ -46,7 +46,7 @@ namespace DragonTaleStates
 		void InitCOMP_BOT302();
 		RobotIdentifier m_RobotId;
 		const units::angle::degree_t m_ArmTarget = units::angle::degree_t(64);
-		const units::length::inch_t m_ElevatorLeaderTarget = units::length::inch_t(9.5);
+		const units::length::inch_t m_ElevatorLeaderTarget = units::length::inch_t(9.0);
 		const double m_CoralTarget = double(0);
 		const double m_AlgaeTarget = double(0);
 	};

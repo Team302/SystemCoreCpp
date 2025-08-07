@@ -68,6 +68,7 @@ DragonQuest::DragonQuest(
     frc::SmartDashboard::PutData("Quest Endgame ONLY", &m_questEndgameEnabledChooser);
     RobotState *RobotStates = RobotState::GetInstance();
     RobotStates->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Int);
+    RobotStates->RegisterForStateChanges(this, RobotStateChanges::IsDriveToBarge_Bool);
 }
 
 frc::Pose2d DragonQuest::GetEstimatedPose()
@@ -167,7 +168,7 @@ void DragonQuest::HandleDashboard()
     if (m_questEnabledChooser.GetSelected() == true)
     {
         m_isQuestEnabled = true;
-        if (m_questEndgameEnabledChooser.GetSelected() == true && m_climbMode != RobotStateChanges::ClimbMode::ClimbModeOn)
+        if (m_questEndgameEnabledChooser.GetSelected() == true && (m_climbMode != RobotStateChanges::ClimbMode::ClimbModeOn && !m_isDriveToBarge))
         {
             m_isQuestEnabled = false;
         }
@@ -182,6 +183,12 @@ void DragonQuest::NotifyStateUpdate(RobotStateChanges::StateChange change, int v
 {
     if (RobotStateChanges::StateChange::ClimbModeStatus_Int == change)
         m_climbMode = static_cast<RobotStateChanges::ClimbMode>(value);
+}
+
+void DragonQuest::NotifyStateUpdate(RobotStateChanges::StateChange change, bool value)
+{
+    if (RobotStateChanges::StateChange::IsDriveToBarge_Bool == change)
+        m_isDriveToBarge = value;
 }
 DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
 {

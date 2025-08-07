@@ -43,7 +43,7 @@ DragonXBox::DragonXBox(
 {
     // Create Axis Objects
     m_axis[TeleopControlMappingEnums::LEFT_JOYSTICK_X] = new AnalogAxis(m_xbox, XboxController::Axis::kLeftX, false);
-    m_axis[TeleopControlMappingEnums::LEFT_JOYSTICK_Y] = new AnalogAxis(m_xbox, XboxController::Axis::kLeftY, false);
+    m_axis[TeleopControlMappingEnums::LEFT_JOYSTICK_Y] = new AnalogAxis(m_xbox, XboxController::Axis::kLeftY, true);
     // m_axis[TeleopControlMappingEnums::LEFT_JOYSTICK_X]->DefinePerpendicularAxis(m_axis[TeleopControlMappingEnums::LEFT_JOYSTICK_Y]);
     // m_axis[TeleopControlMappingEnums::LEFT_JOYSTICK_Y]->DefinePerpendicularAxis(m_axis[TeleopControlMappingEnums::LEFT_JOYSTICK_X]);
 
@@ -51,7 +51,7 @@ DragonXBox::DragonXBox(
     m_axis[TeleopControlMappingEnums::RIGHT_TRIGGER] = new AnalogAxis(m_xbox, XboxController::Axis::kRightTrigger, false);
 
     m_axis[TeleopControlMappingEnums::RIGHT_JOYSTICK_X] = new AnalogAxis(m_xbox, XboxController::Axis::kRightX, false);
-    m_axis[TeleopControlMappingEnums::RIGHT_JOYSTICK_Y] = new AnalogAxis(m_xbox, XboxController::Axis::kRightY, false);
+    m_axis[TeleopControlMappingEnums::RIGHT_JOYSTICK_Y] = new AnalogAxis(m_xbox, XboxController::Axis::kRightY, true);
     m_axis[TeleopControlMappingEnums::RIGHT_JOYSTICK_X]->DefinePerpendicularAxis(m_axis[TeleopControlMappingEnums::RIGHT_JOYSTICK_Y]);
     m_axis[TeleopControlMappingEnums::RIGHT_JOYSTICK_Y]->DefinePerpendicularAxis(m_axis[TeleopControlMappingEnums::RIGHT_JOYSTICK_X]);
 
@@ -74,13 +74,13 @@ DragonXBox::DragonXBox(
     // Create POVButton Objects for the POV
 
     m_button[TeleopControlMappingEnums::POV_0] = new POVButton(m_xbox, 0);
-    m_button[TeleopControlMappingEnums::POV_45] = new POVButton(m_xbox, 1);
-    m_button[TeleopControlMappingEnums::POV_90] = new POVButton(m_xbox, 2);
-    m_button[TeleopControlMappingEnums::POV_135] = new POVButton(m_xbox, 3);
-    m_button[TeleopControlMappingEnums::POV_180] = new POVButton(m_xbox, 4);
-    m_button[TeleopControlMappingEnums::POV_225] = new POVButton(m_xbox, 5);
-    m_button[TeleopControlMappingEnums::POV_270] = new POVButton(m_xbox, 6);
-    m_button[TeleopControlMappingEnums::POV_315] = new POVButton(m_xbox, 7);
+    m_button[TeleopControlMappingEnums::POV_45] = new POVButton(m_xbox, 45);
+    m_button[TeleopControlMappingEnums::POV_90] = new POVButton(m_xbox, 90);
+    m_button[TeleopControlMappingEnums::POV_135] = new POVButton(m_xbox, 135);
+    m_button[TeleopControlMappingEnums::POV_180] = new POVButton(m_xbox, 180);
+    m_button[TeleopControlMappingEnums::POV_225] = new POVButton(m_xbox, 225);
+    m_button[TeleopControlMappingEnums::POV_270] = new POVButton(m_xbox, 270);
+    m_button[TeleopControlMappingEnums::POV_315] = new POVButton(m_xbox, 315);
 }
 
 DragonXBox::~DragonXBox()

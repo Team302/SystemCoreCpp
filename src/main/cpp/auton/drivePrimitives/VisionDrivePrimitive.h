@@ -20,7 +20,7 @@
 // Team302 Includes
 #include "auton/PrimitiveParams.h"
 #include "auton/drivePrimitives/IPrimitive.h"
-#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "chassis/SwerveChassis.h"
 #include "chassis/ChassisOptionEnums.h"
 #include "vision/DragonVision.h"
 
@@ -40,7 +40,7 @@ public:
     bool IsDone() override;
 
 private:
-    subsystems::CommandSwerveDrivetrain *m_chassis;
+    SwerveChassis *m_chassis;
     ChassisOptionEnums::HeadingOption m_headingOption;
     std::string m_ntName;
 

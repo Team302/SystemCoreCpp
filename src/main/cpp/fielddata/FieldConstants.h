@@ -26,7 +26,7 @@
 #include "units/angle.h"
 #include "units/base.h"
 
-#define WELDED_FIELD // comment this guy out when not welded field :)
+// #define WELDED_FIELD //comment this guy out when not welded field :)
 
 class FieldConstants
 {

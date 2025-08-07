@@ -14,20 +14,16 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 #pragma once
 
-#include <optional>
-
 #include <frc/TimedRobot.h>
-#include <frc2/command/CommandPtr.h>
+
+#include "frc/geometry/Pose2d.h"
 
 class CyclePrimitives;
+class HolonomicDrive;
+class SwerveChassis;
 class TeleopControl;
-class SwerveContainer;
 class FMSData;
 class DragonField;
 class AutonPreviewer;
@@ -40,14 +36,21 @@ class DragonQuest;
 class Robot : public frc::TimedRobot
 {
 public:
-    Robot();
+    Robot() = default;
+    ~Robot() = default;
+
+    void RobotInit() override;
     void RobotPeriodic() override;
-    void DisabledPeriodic() override;
     void AutonomousInit() override;
     void AutonomousPeriodic() override;
     void TeleopInit() override;
     void TeleopPeriodic() override;
+    void DisabledInit() override;
+    void DisabledPeriodic() override;
     void TestInit() override;
+    void TestPeriodic() override;
+    void SimulationInit() override;
+    void SimulationPeriodic() override;
 
 private:
     void InitializeRobot();
@@ -55,12 +58,16 @@ private:
     void InitializeDriveteamFeedback();
     void UpdateDriveTeamFeedback();
 
-    SwerveContainer *m_container;
+    TeleopControl *m_controller;
+    SwerveChassis *m_chassis;
     CyclePrimitives *m_cyclePrims;
+    HolonomicDrive *m_holonomic;
 
+    FMSData *m_fmsData;
     DragonField *m_field;
     AutonPreviewer *m_previewer;
     RobotState *m_robotState;
+    SomeMech *m_someMech;
     DragonDataLoggerMgr *m_datalogger;
     bool isFMSAttached = false;
     DragonSwervePoseEstimator *m_dragonswerveposeestimator;

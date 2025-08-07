@@ -28,7 +28,7 @@
 #include "chassis/ChassisOptionEnums.h"
 #include "vision/DragonVision.h"
 #include "auton/ZoneParams.h"
-
+#include "auton/drivePrimitives/DriveStopDelay.h"
 #include "mechanisms/DragonTale/DragonTale.h"
 
 // Third Party Includes
@@ -49,12 +49,15 @@ public:
                     units::time::second_t time,
                     ChassisOptionEnums::HeadingOption headingOption,
                     float heading,
+                    std::string pathName,
                     std::string choreoTrajectoryName,
+                    ChassisOptionEnums::PathGainsType pahtgainsType,
                     ZoneParamsVector zones, // create zones parameter of type
                     VISION_ALIGNMENT visionAlignment,
                     bool changeTaleState,
                     DragonTale::STATE_NAMES taleState,
-                    ChassisOptionEnums::DriveStateType pathUpdateOption); // create zones parameter of type ZonesParamsVector
+                    ChassisOptionEnums::DriveStateType pathUpdateOption,
+                    DriveStopDelay::DelayOption delayOption); // create zones parameter of type ZonesParamsVector
 
     PrimitiveParams() = delete;
     virtual ~PrimitiveParams() = default; // Destructor
@@ -66,13 +69,28 @@ public:
     units::time::second_t GetTime() const { return m_time; };
     ChassisOptionEnums::HeadingOption GetHeadingOption() const { return m_headingOption; };
     float GetHeading() const { return m_heading; };
+    std::string GetPathName() const { return m_pathName; };
     std::string GetTrajectoryName() const { return m_choreoTrajectoryName; };
+    ChassisOptionEnums::PathGainsType GetPathGainsType() const { return m_pathGainsType; }
     ZoneParamsVector GetZones() const { return m_zones; }; // create a GetZones() method to return the instance of zones m_zones
     VISION_ALIGNMENT GetVisionAlignment() const { return m_visionAlignment; }
 
+    DriveStopDelay::DelayOption GetDelayOption() const { return m_delayOption; }
+
+    void SetStartDelay(units::time::second_t startDelay) { m_startDelay = startDelay; }
+    void SetReefDelay(units::time::second_t reefDelay) { m_reefDelay = reefDelay; }
+    void SetCoralStationDelay(units::time::second_t coralStationDelay) { m_coralStationDelay = coralStationDelay; }
+    units::time::second_t GetStartDelay() const { return m_startDelay; }
+    units::time::second_t GetReefDelay() const { return m_reefDelay; }
+    units::time::second_t GetCoralStationDelay() const { return m_coralStationDelay; }
+
     bool IsTaleStateChanging() const { return m_changeTaleState; }
     DragonTale::STATE_NAMES GetTaleState() const { return m_taleState; }
-
+    // Setters
+    void SetPathName(std::string path)
+    {
+        m_pathName = path;
+    }
     void SetVisionAlignment(VISION_ALIGNMENT visionAlignment) { m_visionAlignment = visionAlignment; }
 
 private:
@@ -82,7 +100,15 @@ private:
     ChassisOptionEnums::HeadingOption m_headingOption = ChassisOptionEnums::HeadingOption::IGNORE;
     float m_heading;
 
+    DriveStopDelay::DelayOption m_delayOption;
+
+    units::time::second_t m_startDelay;
+    units::time::second_t m_reefDelay;
+    units::time::second_t m_coralStationDelay;
+
+    std::string m_pathName;
     std::string m_choreoTrajectoryName;
+    ChassisOptionEnums::PathGainsType m_pathGainsType;
     VISION_ALIGNMENT m_visionAlignment;
 
     bool m_changeTaleState;

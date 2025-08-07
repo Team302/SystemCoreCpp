@@ -19,7 +19,7 @@
 // C++ includes
 #include <optional>
 // 302 includes
-
+#include "chassis/SwerveChassis.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/geometry/Pose2d.h"
 
@@ -35,6 +35,6 @@ private:
     ~ProcessorHelper() = default;
     static ProcessorHelper *m_instance;
 
-    subsystems::CommandSwerveDrivetrain *m_chassis;
+    SwerveChassis *m_chassis;
     FieldConstants *m_fieldConstants;
 };

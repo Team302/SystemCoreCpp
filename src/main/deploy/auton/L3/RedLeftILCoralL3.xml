@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE auton SYSTEM "auton.dtd">
+<auton>
+
+<primitive id= "RESET_POSITION_PATH_PLANNER"
+choreoname = "BlueLeftOutside_J"/>
+
+<primitive id = "DRIVE_PATH_PLANNER"
+choreoname = "BlueLeftOutside_J"
+time="2.0">
+<zone filename="RedReefPlacerZones.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+taleOption="STATE_SCORE_CORAL"
+time="5.0"/>
+
+<primitive id = "DRIVE_PATH_PLANNER"
+choreoname = "BlueLeftCSA_J2"
+taleOption="STATE_HUMAN_PLAYER_LOAD"
+time = "1.5"/>
+
+<primitive id = "DRIVE_STOP_MECH"
+time="10.0"/>
+
+
+<primitive id = "DRIVE_PATH_PLANNER"
+choreoname = "BlueLeftCSA_K1"
+time = "2.0">
+<zone filename="RedReefPlacerZones.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+taleOption="STATE_SCORE_CORAL"
+time="5.0"/>
+
+<primitive id = "DRIVE_PATH_PLANNER"
+choreoname = "BlueLeftCSA_K2"
+taleOption="STATE_HUMAN_PLAYER_LOAD"
+time = "1.4"/>
+
+<primitive id = "DRIVE_STOP_MECH"
+time="5.0"/>
+
+<primitive id = "DRIVE_PATH_PLANNER"
+choreoname = "BlueLeftCSA_L1"
+filename="RedReefPlacerZones.xml"
+time = "1.3">
+<zone filename="RedReefPlacerZones.xml"/>
+</primitive>
+
+<primitive id = "DRIVE_STOP_MECH"
+taleOption="STATE_SCORE_CORAL"
+time="5.0"/>
+
+<primitive id ="DO_NOTHING"
+time="1.0"/> 
+
+</auton>

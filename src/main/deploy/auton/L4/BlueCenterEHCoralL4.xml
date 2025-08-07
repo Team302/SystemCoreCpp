@@ -2,7 +2,7 @@
 <!DOCTYPE auton SYSTEM "auton.dtd">
 <auton>
 
-<primitive id = "TRAJECTORY_DRIVE"
+<primitive id = "DRIVE_PATH_PLANNER"
 choreoname= "BlueCenter_H"
 time = "3.0">
 <zone filename = "BlueReefDriveToLeftNoMech.xml"/>
@@ -16,7 +16,7 @@ time= "1.0"/>
 taleOption = "STATE_SCORE_CORAL"
 time= "3.0"/>
 
-<primitive id = "TRAJECTORY_DRIVE"
+<primitive id = "DRIVE_PATH_PLANNER"
 choreoname = "BlueCenterBarge_H"
 time = "3.0"/>
 

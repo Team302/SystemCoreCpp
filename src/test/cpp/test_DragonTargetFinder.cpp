@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
 #include <frc/RobotController.h>
 #include "fielddata/DragonTargetFinder.h"
-#include "chassis/ChassisConfigMgr.h"
+#include "chassis/definitions/ChassisConfigMgr.h"
+#include "chassis/SwerveChassis.h"
 #include "vision/DragonVision.h"
 #include "units/angle.h"
 #include "utils/FMSData.h"
@@ -13,8 +14,12 @@ protected:
     void SetUp() override
     {
         // Initialize necessary components
-        auto chassisConfig = ChassisConfigMgr::GetInstance();
+        int32_t teamNumber = frc::RobotController::GetTeamNumber();
+        ChassisConfigMgr::GetInstance()->InitChassis(static_cast<RobotIdentifier>(teamNumber));
+        auto chassisConfig = ChassisConfigMgr::GetInstance()->GetCurrentConfig();
         auto chassis = chassisConfig->GetSwerveChassis();
+
+
     }
 
     void TearDown() override

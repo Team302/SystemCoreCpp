@@ -49,6 +49,10 @@ public:
 	std::string GetDesiredScoringLevel();
 	std::string GetTargetFace();
 
+	units::time::second_t GetStartDelay();
+	units::time::second_t GetReefDelay();
+	units::time::second_t GetCoralStationDelay();
+
 	//---------------------------------------------------------------------
 	// Method: 		GetSelectedAutoFile
 	// Description: This returns the selected auton file to run.  If it
@@ -74,4 +78,8 @@ private:
 	frc::SendableChooser<std::string> m_targetFace;
 	frc::SendableChooser<std::string> m_targetGamePiece;
 	frc::SendableChooser<std::string> m_desiredScoringLevel;
+
+	const std::string m_startDelay = "StartDelay";
+	const std::string m_reefDelay = "Reef Delay";
+	const std::string m_coralStationDelay = "Coral Station Delay";
 };

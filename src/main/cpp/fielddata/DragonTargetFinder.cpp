@@ -17,7 +17,9 @@
 #include <optional>
 #include <string>
 
-#include "chassis/ChassisConfigMgr.h"
+#include "chassis/definitions/ChassisConfig.h"
+#include "chassis/definitions/ChassisConfigMgr.h"
+#include "chassis/states/ISwerveDriveOrientation.h"
 #include "fielddata/BargeHelper.h"
 #include "fielddata/CoralStationHelper.h"
 #include "fielddata/DragonTargetFinder.h"
@@ -28,9 +30,9 @@
 #include "frc/geometry/Pose3d.h"
 #include "frc/geometry/Rotation3d.h"
 #include "units/angle.h"
-#include "utils/DragonField.h"
 #include "utils/FMSData.h"
 #include "vision/DragonVisionStructLogger.h"
+#include "utils/DragonField.h"
 
 // Debugging
 #include "utils/logging/debug/Logger.h"
@@ -52,7 +54,7 @@ DragonTargetFinder *DragonTargetFinder::GetInstance()
     return DragonTargetFinder::m_instance;
 }
 
-DragonTargetFinder::DragonTargetFinder() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()), m_vision(DragonVision::GetDragonVision())
+DragonTargetFinder::DragonTargetFinder() : m_chassis(ChassisConfigMgr::GetInstance()->GetCurrentChassis()), m_vision(DragonVision::GetDragonVision())
 {
 }
 
@@ -67,6 +69,8 @@ optional<tuple<DragonTargetFinderData, Pose2d>> DragonTargetFinder::GetPose(Drag
         item == DragonTargetFinderTarget::CLOSEST_RIGHT_REEF_BRANCH ||
         item == DragonTargetFinderTarget::CLOSEST_REEF_ALGAE)
     {
+        // call reef helper to find the appropriate closest side of the reef,
+        // its corresponding APRILTAG ID and the field constant identifier
         auto taginfo = ReefHelper::GetInstance()->GetNearestReefTag();
         if (taginfo.has_value())
         {
@@ -74,30 +78,67 @@ optional<tuple<DragonTargetFinderData, Pose2d>> DragonTargetFinder::GetPose(Drag
             auto tagpose{fieldconst->GetAprilTagPose2d(tag)};
             m_switchToVision = false;
 
+            // auto visTagPose{m_vision->GetAprilTagPose(tag)};
+            // m_switchToVision = SwitchToVision(visTagPose);
+            // Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTargetFinder", "SwitchToVision", m_switchToVision ? "true" : "false");
+
             if (item == DragonTargetFinderTarget::CLOSEST_REEF_ALGAE)
             {
-                m_goalPose = tagpose;
-                return make_tuple(DragonTargetFinderData::ODOMETRY_BASED, m_goalPose.value());
+                // if (m_switchToVision)
+                //{
+                //     units::angle::degree_t fieldRelativeAngle = m_chassis->GetYaw() - visTagPose.value().ToPose2d().Rotation().Degrees(); // Need to verify if it works for Red and Blue and all the way around the reef
+                //     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTargetFinder", "Field Realitve Angle", fieldRelativeAngle.value());
+                //  return make_tuple(DragonTargetFinderData::VISION_BASED, visTagPose.value().ToPose2d());
+                //}
+                return make_tuple(DragonTargetFinderData::ODOMETRY_BASED, tagpose);
             }
             else if (item == DragonTargetFinderTarget::CLOSEST_LEFT_REEF_BRANCH)
             {
+                // TODO:  Update when we have reef machine learning Add another DragonTargetFinderData Enum
+                // Have a vision pose of the tag, calculate the offset to the reef branch
+                // if (m_switchToVision)
+                //{
+                //    FieldElementCalculator fc;
+                //    auto pose3 = fc.CalcOffsetPositionForElement(visTagPose.value(), FieldConstants::FIELD_ELEMENT_OFFSETS::LEFT_STICK);
+                //    units::angle::degree_t fieldRelativeAngle = m_chassis->GetYaw() - pose3.ToPose2d().Rotation().Degrees();
+                //    DragonVisionStructLogger::logPose3d("Left Branch Vision", pose3);
+                //    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTargetFinder", "Field Realitve Angle-Left", fieldRelativeAngle.to<double>());
+                //    m_goalPose = pose3.ToPose2d();
+
+                // return make_tuple(DragonTargetFinderData::VISION_BASED, pose3.ToPose2d());
+                //}
+
                 // If no vision, then just use odometry based pose
                 auto leftbranch = ReefHelper::GetInstance()->GetNearestLeftReefBranch(tag);
                 if (leftbranch.has_value())
                 {
                     auto leftbranchpose = fieldconst->GetFieldElementPose2d(leftbranch.value());
-                    m_goalPose = frc::Pose2d(leftbranchpose.X(), leftbranchpose.Y(), frc::Rotation2d(leftbranchpose.Rotation().Degrees() + 180_deg)); // Have to add 180 degrees since the tag is facing the opposite direction of the robot
-                    return make_tuple(DragonTargetFinderData::ODOMETRY_BASED, m_goalPose.value());
+                    m_goalPose = leftbranchpose;
+                    return make_tuple(DragonTargetFinderData::ODOMETRY_BASED, leftbranchpose);
                 }
             }
             else // right branch
             {
+                // TODO:  Update when we have reef machine learning
+                //  Have a vision pose of the tag, calculate the offset to the reef branch
+                // if (m_switchToVision)
+                //{
+                //    FieldElementCalculator fc;
+                //    auto pose3 = fc.CalcOffsetPositionForElement(visTagPose.value(), FieldConstants::FIELD_ELEMENT_OFFSETS::RIGHT_STICK);
+                //    units::angle::degree_t fieldRelativeAngle = m_chassis->GetYaw() - pose3.ToPose2d().Rotation().Degrees();
+                //    DragonVisionStructLogger::logPose3d("Right Branch Vision", pose3);
+                //    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTargetFinder", "Field Realitve Angle-Right", fieldRelativeAngle.to<double>());
+                //    m_goalPose = pose3.ToPose2d();
+                // return make_tuple(DragonTargetFinderData::VISION_BASED, pose3.ToPose2d());
+                //}
+
+                // If no vision, then just use odometry based pose
                 auto rightbranch = ReefHelper::GetInstance()->GetNearestRightReefBranch(tag);
                 if (rightbranch.has_value())
                 {
                     auto rightbranchpose = fieldconst->GetFieldElementPose2d(rightbranch.value());
-                    m_goalPose = frc::Pose2d(rightbranchpose.X(), rightbranchpose.Y(), frc::Rotation2d(rightbranchpose.Rotation().Degrees() + 180_deg)); // Have to add 180 degrees since the tag is facing the opposite direction of the robot
-                    return make_tuple(DragonTargetFinderData::ODOMETRY_BASED, m_goalPose.value());
+                    m_goalPose = rightbranchpose;
+                    return make_tuple(DragonTargetFinderData::ODOMETRY_BASED, rightbranchpose);
                 }
             }
         }
@@ -105,7 +146,7 @@ optional<tuple<DragonTargetFinderData, Pose2d>> DragonTargetFinder::GetPose(Drag
 
     else if (item == DragonTargetFinderTarget::REEF_CENTER)
     {
-        auto allianceColor = FMSData::GetAllianceColor();
+        auto allianceColor = FMSData::GetInstance()->GetAllianceColor();
         if (allianceColor == frc::DriverStation::Alliance::kRed)
         {
             return make_tuple(DragonTargetFinderData::ODOMETRY_BASED, fieldconst->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_REEF_CENTER));
@@ -140,6 +181,20 @@ optional<tuple<DragonTargetFinderData, Pose2d>> DragonTargetFinder::GetPose(Drag
             auto tagpose{fieldconst->GetAprilTagPose2d(tag)};
             if (item == DragonTargetFinderTarget::CLOSEST_CORAL_STATION_MIDDLE)
             {
+                // auto visiondata = m_vision->GetVisionData(DragonVision::VISION_ELEMENT::CORAL_STATION);
+                // if (visiondata.has_value())
+                //{
+                // auto visiontagpose = GetVisonPose(visiondata.value());
+                // if (visiontagpose)
+                //{
+                //     if (visiontagpose.value().Translation().Distance(tagpose.Translation()) < 1_m)
+                //     {
+                //         m_goalPose = visiontagpose.value();
+                //         return make_tuple(DragonTargetFinderData::VISION_BASED, visiontagpose.value());
+                //     }
+                //  }
+                //}
+
                 return make_tuple(DragonTargetFinderData::ODOMETRY_BASED, tagpose);
             }
             else if (item == DragonTargetFinderTarget::CLOSEST_CORAL_STATION_SIDWALL_SIDE)
@@ -172,7 +227,6 @@ optional<tuple<DragonTargetFinderData, Pose2d>> DragonTargetFinder::GetPose(Drag
         if (bargeHelper != nullptr)
         {
             auto cagepose = bargeHelper->GetCagePose(item);
-            cagepose = frc::Pose2d(cagepose.X(), cagepose.Y(), frc::Rotation2d(cagepose.Rotation().Degrees() + 90_deg)); // Adding 90 degrees to cage pose to align with the robot's climber direction
             m_goalPose = cagepose;
             return make_tuple(DragonTargetFinderData::ODOMETRY_BASED, cagepose);
         }
@@ -183,13 +237,25 @@ optional<tuple<DragonTargetFinderData, Pose2d>> DragonTargetFinder::GetPose(Drag
         auto visiondata = m_vision->GetVisionData(DragonVision::VISION_ELEMENT::ALGAE);
         if (visiondata.has_value())
         {
-            m_algaePose = GetFieldRelativePose(visiondata);
+
+            // visiondata.value().transformToTarget.X() - units::length::inch_t(16.0);
+            // visiondata.value().transformToTarget.Y() - units::length::inch_t(12.0);
+            m_algaePose = GetVisonPose(visiondata);
+
+            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("Algae"), std::string("finder rotation"), "reached");
             if (m_algaePose.has_value())
             {
-                m_goalPose = m_algaePose.value();
+                m_goalPose = frc::Pose2d(m_algaePose.value().X(), m_algaePose.value().Y(), m_algaePose.value().Rotation());
+                DragonVisionStructLogger::logPose2d("Algae", m_algaePose.value());
+                Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("Algae"), std::string("X"), m_goalPose.value().X().value());
+                Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, std::string("Algae"), std::string("Y"), m_goalPose.value().Y().value());
+                SignalLogger::WriteString(m_driveStatePath, "Algae", m_latency);
+                auto field = DragonField::GetInstance();
+                field->UpdateObject("algae", m_goalPose.value());
                 return make_tuple(DragonTargetFinderData::VISION_BASED, m_goalPose.value()); // TODO JW come back to this one when we have machine learning
             }
         }
+
         else
         {
             if (!m_goalPose.has_value())
@@ -275,24 +341,23 @@ void DragonTargetFinder::ResetGoalPose()
     m_goalPose = std::nullopt;
 }
 
-/**
- * @brief Calculates the field-relative pose as a target pose for the DriveToTarget command.
- *
- * @param data The vision data containing the transform from the robot to the target game piece.
- * @return std::optional<frc::Pose2d> The calculated goal pose for the robot's center, or std::nullopt if not possible.
- */
-std::optional<frc::Pose2d> DragonTargetFinder::GetFieldRelativePose(std::optional<VisionData> data)
+std::optional<frc::Pose2d> DragonTargetFinder::GetVisonPose(std::optional<VisionData> data)
 {
-    if (data.has_value() && m_chassis != nullptr)
+    SetChassis();
+    if (data.has_value())
     {
-        frc::Pose2d robotFieldPose = m_chassis->GetPose();
-        frc::Transform2d robotToGamePiece = frc::Transform2d(data.value().transformToTarget.Translation().ToTranslation2d(),
-                                                             data.value().transformToTarget.Rotation().ToRotation2d());
-        frc::Pose2d gamePieceFieldPose = robotFieldPose.TransformBy(robotToGamePiece);
+        if (m_chassis != nullptr)
+        {
+            auto currentPose{Pose3d(m_chassis->GetPose())};
 
-        frc::Pose2d goalRobotFieldPose = gamePieceFieldPose.TransformBy(m_intakeOffset.Inverse());
+            auto trans3d = data.value().transformToTarget;
+            auto targetPose = currentPose + trans3d + m_calcAlgaeOffset;
+            auto distanceY = targetPose.ToPose2d().Translation().Y() - currentPose.ToPose2d().Translation().Y(); // value is robot to target
+            auto distanceX = targetPose.ToPose2d().Translation().X() - currentPose.ToPose2d().Translation().X();
+            auto angle = atan2(distanceY.value(), distanceX.value());
 
-        return goalRobotFieldPose;
+            return frc::Pose2d(targetPose.X(), targetPose.Y(), (units::angle::radian_t(angle)));
+        }
     }
     return std::nullopt;
 }
@@ -318,7 +383,7 @@ void DragonTargetFinder::SetChassis()
 {
     if (m_chassis == nullptr)
     {
-        m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
+        m_chassis = ChassisConfigMgr::GetInstance()->GetCurrentChassis();
     }
 }
 

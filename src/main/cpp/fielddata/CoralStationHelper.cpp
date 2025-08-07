@@ -14,7 +14,8 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "chassis/ChassisConfigMgr.h"
+#include "chassis/definitions/ChassisConfig.h"
+#include "chassis/definitions/ChassisConfigMgr.h"
 #include "fielddata/CoralStationHelper.h"
 #include "frc/DriverStation.h"
 #include "utils/FMSData.h"
@@ -29,8 +30,8 @@ CoralStationHelper *CoralStationHelper::GetInstance()
     return CoralStationHelper::m_instance;
 }
 
-CoralStationHelper::CoralStationHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
-                                           m_allianceColor(FMSData::GetAllianceColor()),
+CoralStationHelper::CoralStationHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetCurrentChassis()),
+                                           m_allianceColor(FMSData::GetInstance()->GetAllianceColor()),
                                            m_fieldConstants(FieldConstants::GetInstance())
 {
 }
@@ -39,9 +40,7 @@ std::optional<FieldConstants::AprilTagIDs> CoralStationHelper::GetNearestCoralSt
 {
     if (m_chassis != nullptr)
     {
-
         auto pose = m_chassis->GetPose();
-        ;
         if (m_allianceColor == frc::DriverStation::Alliance::kRed)
         {
             if (CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::RED_CORAL_STATION_LEFT_TAG, pose) <

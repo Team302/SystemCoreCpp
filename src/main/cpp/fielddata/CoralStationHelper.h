@@ -18,6 +18,7 @@
 
 #include <optional>
 
+#include "chassis/SwerveChassis.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/DriverStation.h"
 #include "frc/geometry/Pose2d.h"
@@ -38,7 +39,7 @@ private:
 
     units::length::meter_t CalcDistanceToAprilTag(FieldConstants::AprilTagIDs tag, frc::Pose2d currentPose);
 
-    subsystems::CommandSwerveDrivetrain *m_chassis;
+    SwerveChassis *m_chassis;
     frc::DriverStation::Alliance m_allianceColor;
     FieldConstants *m_fieldConstants;
 };

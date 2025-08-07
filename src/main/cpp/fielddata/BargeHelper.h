@@ -20,7 +20,7 @@
 #include <optional>
 #include <vector>
 // 302 includes
-
+#include "chassis/SwerveChassis.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/DriverStation.h"
 #include "frc/geometry/Pose2d.h"
@@ -57,7 +57,7 @@ private:
     std::optional<BargeZones> GetClosestZone();
     void CalculateZones();
 
-    subsystems::CommandSwerveDrivetrain *m_chassis;
+    SwerveChassis *m_chassis;
     FieldConstants *m_fieldConstants;
 
     // blue

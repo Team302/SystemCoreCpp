@@ -42,13 +42,11 @@ namespace DragonTaleStates
 
 	private:
 		DragonTale *m_mechanism;
-		void InitPRACTICE_BOT9999();
-		void InitCOMP_BOT302();
 		RobotIdentifier m_RobotId;
 		const units::angle::degree_t m_ArmTarget = units::angle::degree_t(50);
 		const units::length::inch_t m_ElevatorLeaderTarget = units::length::inch_t(29.25);
 		const double m_CoralTarget = double(0);
-		const double m_AlgaeTarget = double(1);
+		const double m_AlgaeTarget = double(0);
 		units::angle::degree_t m_cappingAngleFactor = units::angle::degree_t(5);
 	};
 }

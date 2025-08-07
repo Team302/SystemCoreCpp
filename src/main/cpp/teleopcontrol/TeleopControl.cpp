@@ -1,3 +1,4 @@
+
 //====================================================================================================================================================
 // Copyright 2025 Lake Orion Robotics FIRST Team 302
 //
@@ -97,22 +98,20 @@ void TeleopControl::InitializeControllers()
 
 void TeleopControl::InitializeController(int port)
 {
+
 	if (m_controller[port] == nullptr)
 	{
-		if (port == 0) // Special handling for port 0
-		{
-			m_hybridController = new DragonHybridController(port);
-			m_controller[port] = m_hybridController->GetNonCommandController();
-		}
-		else if (DriverStation::GetJoystickIsGamepad(port))
+		if (DriverStation::GetJoystickIsGamepad(port))
 		{
 			auto xbox = new DragonXBox(port);
 			m_controller[port] = xbox;
+			m_numControllers++;
 		}
 		else if (DriverStation::GetJoystickType(port) == GenericHID::kHID1stPerson)
 		{
 			auto gamepad = new DragonGamepad(port);
 			m_controller[port] = gamepad;
+			m_numControllers++;
 		}
 
 		if (m_controller[port] != nullptr)
@@ -123,10 +122,6 @@ void TeleopControl::InitializeController(int port)
 	}
 }
 
-DragonHybridController *TeleopControl::GetHybridController()
-{
-	return m_hybridController;
-}
 void TeleopControl::InitializeAxes(int port)
 {
 	if (m_controller[port] != nullptr)
@@ -387,71 +382,4 @@ void TeleopControl::LogInformation()
 			}
 		}
 	}
-}
-
-frc2::Trigger TeleopControl::GetCommandTrigger(TeleopControlFunctions::FUNCTION function)
-{
-	// Find the button mapping for the given function
-	auto itr = teleopControlMapButtonMap.find(function);
-	auto buttonInfo = itr->second;
-
-	auto controller = m_hybridController->GetCommandController();
-	if (controller != nullptr)
-	{
-
-		// Map the button identifier to the corresponding CommandXboxController method
-		switch (buttonInfo.buttonId)
-		{
-		case TeleopControlMappingEnums::A_BUTTON:
-			return controller->A();
-		case TeleopControlMappingEnums::B_BUTTON:
-			return controller->B();
-		case TeleopControlMappingEnums::X_BUTTON:
-			return controller->X();
-		case TeleopControlMappingEnums::Y_BUTTON:
-			return controller->Y();
-		case TeleopControlMappingEnums::LEFT_BUMPER:
-			return controller->LeftBumper();
-		case TeleopControlMappingEnums::RIGHT_BUMPER:
-			return controller->RightBumper();
-		case TeleopControlMappingEnums::SELECT_BUTTON:
-			return controller->Back(); // 'Select' is usually 'Back' in FRC
-		case TeleopControlMappingEnums::START_BUTTON:
-			return controller->Start();
-		case TeleopControlMappingEnums::LEFT_STICK_PRESSED:
-			return controller->LeftStick();
-		case TeleopControlMappingEnums::RIGHT_STICK_PRESSED:
-			return controller->RightStick();
-		case TeleopControlMappingEnums::LEFT_TRIGGER_PRESSED:
-			return controller->LeftTrigger();
-		case TeleopControlMappingEnums::RIGHT_TRIGGER_PRESSED:
-			return controller->RightTrigger();
-		case TeleopControlMappingEnums::POV_0:
-			return controller->POVUp();
-		case TeleopControlMappingEnums::POV_90:
-			return controller->POVRight();
-		case TeleopControlMappingEnums::POV_180:
-			return controller->POVDown();
-		case TeleopControlMappingEnums::POV_270:
-			return controller->POVLeft();
-			// NOTE: CommandXboxController does not have direct support for diagonal POV directions.
-			// You would need to use `controller->GetPOV()` and a lambda for those, e.g.:
-			// return frc2::Trigger([controller] { return controller->GetPOV() == 45; });
-			// For simplicity, this implementation only includes cardinal directions. TODO: implement the comment above
-
-		default:
-			Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("TeleopControl-Command"), std::to_string(function), "Couldn't map the TeleopControlMapEnum");
-		}
-	}
-	else
-	{
-		Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("TeleopControl-Command"), std::to_string(function), "Controller is null.");
-	}
-	return frc2::Trigger([]()
-						 { return false; }); // Return a trigger that is always inactive if the controller is null or the function is not mapped
-}
-frc2::Trigger TeleopControl::GetAxisAsTrigger(TeleopControlFunctions::FUNCTION function, double threshold)
-{
-	return frc2::Trigger([this, function, threshold]
-						 { return this->GetAxisValue(function) > threshold; });
 }

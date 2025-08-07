@@ -32,17 +32,4 @@ public:
 private:
     std::vector<int> m_limelightIndexs;
     int m_questIndex = -1;
-
-    static constexpr units::length::meter_t m_ll1MountingXOffset{0.24765};  // 9.75 inches
-    static constexpr units::length::meter_t m_ll1MountingYOffset{-0.08255}; // -3.25 inches
-    static constexpr units::length::meter_t m_ll1MountingZOffset{0.8223};   // 32.4 inches
-    static constexpr units::angle::degree_t m_ll1Pitch{-32.0};              // -32 degrees
-    static constexpr units::angle::degree_t m_ll1Yaw{0};                    // 0 degrees
-    static constexpr units::angle::degree_t m_ll1Roll{0};                   // 0 degrees
-    static constexpr units::length::inch_t m_questMountingXOffset{-12.3};
-    static constexpr units::length::inch_t m_questMountingYOffset{-2.5};
-    static constexpr units::length::inch_t m_questMountingZOffset{12.574};
-    static constexpr units::angle::degree_t m_questPitch{0.0};
-    static constexpr units::angle::degree_t m_questYaw{180.0};
-    static constexpr units::angle::degree_t m_questRoll{0.0};
 };

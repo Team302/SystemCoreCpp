@@ -255,6 +255,69 @@ DragonTale::DragonTale(RobotIdentifier activeRobotId) : BaseMech(MechanismTypes:
 	m_robotState->RegisterForStateChanges(this, RobotStateChanges::StateChange::DriveToFieldElementIsDone_Bool);
 
 	PeriodicLooper::GetInstance()->RegisterAll(this);
+	InitializeLogging();
+}
+
+void DragonTale::InitializeLogging()
+{
+	// wpi::log::DataLog &log = frc::DataLogManager::GetLog();
+
+	// m_DragonTaleTotalEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/TotalEnergy");
+	// m_DragonTaleTotalEnergyLogEntry.Append(0.0);
+	// m_DragonTaleTotalWattHoursLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/TotalWattHours");
+	// m_DragonTaleTotalWattHoursLogEntry.Append(0.0);
+	// m_ArmLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/ArmPosition");
+	// m_ArmLogEntry.Append(0.0);
+	// m_ArmTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/ArmTarget");
+	// m_ArmTargetLogEntry.Append(0.0);
+	// m_ArmPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/ArmPower");
+	// m_ArmPowerLogEntry.Append(0.0);
+	// m_ArmEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/ArmEnergy");
+	// m_ArmEnergyLogEntry.Append(0.0);
+	// m_ElevatorLeaderLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/ElevatorLeaderPosition");
+	// m_ElevatorLeaderLogEntry.Append(0.0);
+	// m_ElevatorLeaderTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/ElevatorLeaderTarget");
+	// m_ElevatorLeaderTargetLogEntry.Append(0.0);
+	// m_ElevatorLeaderPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/ElevatorLeaderPower");
+	// m_ElevatorLeaderPowerLogEntry.Append(0.0);
+	// m_ElevatorLeaderEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/ElevatorLeaderEnergy");
+	// m_ElevatorLeaderEnergyLogEntry.Append(0.0);
+	// m_ElevatorFollowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/ElevatorFollowerPosition");
+	// m_ElevatorFollowerLogEntry.Append(0.0);
+	// m_ElevatorFollowerTargetLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/ElevatorFollowerTarget");
+	// m_ElevatorFollowerTargetLogEntry.Append(0.0);
+	// m_ElevatorFollowerPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/ElevatorFollowerPower");
+	// m_ElevatorFollowerPowerLogEntry.Append(0.0);
+	// m_ElevatorFollowerEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/ElevatorFollowerEnergy");
+	// m_ElevatorFollowerEnergyLogEntry.Append(0.0);
+	// m_CoralPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/CoralPower");
+	// m_CoralPowerLogEntry.Append(0.0);
+	// m_CoralEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/CoralEnergy");
+	// m_CoralEnergyLogEntry.Append(0.0);
+	// m_CoralInSensorLogEntry = wpi::log::BooleanLogEntry(log, "mechanisms/DragonTale/CoralInSensor");
+	// m_CoralInSensorLogEntry.Append(false);
+
+	// m_CoralOutSensorLogEntry = wpi::log::BooleanLogEntry(log, "mechanisms/DragonTale/CoralOutSensor");
+	// m_CoralOutSensorLogEntry.Append(false);
+	// m_AlgaeSensorLogEntry = wpi::log::BooleanLogEntry(log, "mechanisms/DragonTale/AlgaeSensor");
+	// m_AlgaeSensorLogEntry.Append(false);
+	// m_DragonTaleStateLogEntry = wpi::log::IntegerLogEntry(log, "mechanisms/DragonTale/State");
+	// m_DragonTaleStateLogEntry.Append(0);
+
+	// if (m_activeRobotId == RobotIdentifier::PRACTICE_BOT_9999)
+	// {
+	// 	m_AlgaeTalonFXPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/AlgaePower");
+	// 	m_AlgaeTalonFXPowerLogEntry.Append(0.0);
+	// 	m_AlgaeTalonFXEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/AlgaeEnergy");
+	// 	m_AlgaeTalonFXEnergyLogEntry.Append(0.0);
+	// }
+	// else if (m_activeRobotId == RobotIdentifier::COMP_BOT_302)
+	// {
+	// 	m_AlgaeTalonFXSPowerLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/AlgaePower");
+	// 	m_AlgaeTalonFXSPowerLogEntry.Append(0.0);
+	// 	m_AlgaeTalonFXSEnergyLogEntry = wpi::log::DoubleLogEntry(log, "mechanisms/DragonTale/AlgaeEnergy");
+	// 	m_AlgaeTalonFXSEnergyLogEntry.Append(0.0);
+	// }
 }
 
 std::map<std::string, DragonTale::STATE_NAMES> DragonTale::stringToSTATE_NAMESEnumMap{
@@ -1180,7 +1243,7 @@ void DragonTale::SetSensorFailSafe()
 
 void DragonTale::SetAlgaeReefPosition()
 {
-	bool isBlue = FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kBlue;
+	bool isBlue = FMSData::GetInstance()->GetAllianceColor() == frc::DriverStation::Alliance::kBlue;
 
 	units::length::inch_t algeHeight = isBlue ? m_grabAlgaeLow : m_grabAlgaeHigh;
 	units::angle::degree_t algeAngle = isBlue ? m_grabAlgaeLowAngle : m_grabAlgaeHighAngle;

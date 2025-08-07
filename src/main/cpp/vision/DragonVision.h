@@ -75,8 +75,6 @@ public:
     /// @return std::optional<frc::Pose2d>
     std::optional<frc::Pose2d> CalcVisionPose();
 
-    std::vector<DragonVisionPoseEstimator *> GetPoseEstimators() { return m_poseEstimators; };
-
     // raw data methods
 
     std::optional<units::angle::degree_t> GetTargetYaw(DRAGON_LIMELIGHT_CAMERA_USAGE position);
@@ -120,5 +118,4 @@ private:
 
     static DragonVision *m_dragonVision;
     std::multimap<DRAGON_LIMELIGHT_CAMERA_USAGE, DragonLimelight *> m_dragonLimelightMap;
-    std::vector<DragonVisionPoseEstimator *> m_poseEstimators;
 };

@@ -16,14 +16,17 @@
 
 #pragma once
 
-#include <optional>
+#include <memory>
 #include <string>
 
 // Third Party Includes
-#include <choreo/Choreo.h>
+#include "pathplanner/lib/path/PathPlannerPath.h"
 
 class AutonUtils
 {
 public:
-    static std::optional<choreo::Trajectory<choreo::SwerveSample>> GetTrajectoryFromPathFile(std::string pathName);
+    static std::shared_ptr<pathplanner::PathPlannerPath> GetPathFromPathFile(std::string pathName);
+    static std::shared_ptr<pathplanner::PathPlannerPath> GetPathFromTrajectory(std::string trajectoryName);
+
+    static bool IsValidPath(std::shared_ptr<pathplanner::PathPlannerPath> path);
 };

@@ -18,7 +18,9 @@
 #include <string>
 #include <vector>
 
-#include "chassis/ChassisConfigMgr.h"
+#include "chassis/definitions/ChassisConfig.h"
+#include "chassis/definitions/ChassisConfigMgr.h"
+#include "chassis/SwerveChassis.h"
 #include "state/RobotStateChangeBroker.h"
 #include "teleopcontrol/TeleopControl.h"
 #include "utils/DragonField.h"
@@ -38,7 +40,8 @@ RobotState *RobotState::GetInstance()
     return RobotState::m_instance;
 }
 
-RobotState::RobotState() : m_brokers(),
+RobotState::RobotState() : m_chassis(nullptr),
+                           m_brokers(),
                            m_scoringMode(RobotStateChanges::ScoringMode::Coral),
                            m_gamePhase(RobotStateChanges::Disabled),
                            m_climbMode(RobotStateChanges::ClimbModeOff),
@@ -64,6 +67,8 @@ RobotState::~RobotState()
 
 void RobotState::Init()
 {
+    auto chassisConfig = ChassisConfigMgr::GetInstance()->GetCurrentConfig();
+    m_chassis = chassisConfig != nullptr ? chassisConfig->GetSwerveChassis() : nullptr;
 }
 
 void RobotState::Run()
@@ -76,7 +81,6 @@ void RobotState::Run()
         {
             PublishScoringMode(controller);
             PublishClimbMode(controller);
-            PublishDesiredCoralSide(controller);
         }
     }
 }
@@ -218,18 +222,4 @@ void RobotState::PublishClimbMode(TeleopControl *controller)
     }
 
     m_climbModeButtonReleased = !controller->IsButtonPressed(TeleopControlFunctions::CLIMB_MODE);
-}
-
-void RobotState::PublishDesiredCoralSide(TeleopControl *controller)
-{
-    if (controller->IsButtonPressed(TeleopControlFunctions::SWITCH_DESIRED_CORAL_SIDE))
-    {
-        if (m_desiredCoralSideButtonReleased)
-        {
-            m_desiredCoralSide = (m_desiredCoralSide == RobotStateChanges::DesiredCoralSide::AllianceWall) ? RobotStateChanges::DesiredCoralSide::Sidewall : RobotStateChanges::DesiredCoralSide::AllianceWall;
-            PublishStateChange(RobotStateChanges::DesiredCoralSide_Int, m_desiredCoralSide);
-        }
-    }
-
-    m_desiredCoralSideButtonReleased = !controller->IsButtonPressed(TeleopControlFunctions::SWITCH_DESIRED_CORAL_SIDE);
 }

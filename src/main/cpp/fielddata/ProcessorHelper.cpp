@@ -14,7 +14,7 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "chassis/ChassisConfigMgr.h"
+#include "chassis/definitions/ChassisConfigMgr.h"
 #include "fielddata/ProcessorHelper.h"
 #include "utils/FMSData.h"
 
@@ -28,14 +28,14 @@ ProcessorHelper *ProcessorHelper::GetInstance()
     return ProcessorHelper::m_instance;
 }
 
-ProcessorHelper::ProcessorHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
+ProcessorHelper::ProcessorHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetCurrentChassis()),
                                      m_fieldConstants(FieldConstants::GetInstance())
 {
 }
 
 frc::Pose2d ProcessorHelper::CalcProcessorPose()
 {
-    auto allianceColor = FMSData::GetAllianceColor();
+    auto allianceColor = FMSData::GetInstance()->GetAllianceColor();
     frc::Pose2d pose2d{};
     if (allianceColor == frc::DriverStation::Alliance::kRed)
     {
@@ -49,5 +49,13 @@ frc::Pose2d ProcessorHelper::CalcProcessorPose()
 }
 std::optional<FieldConstants::AprilTagIDs> ProcessorHelper::GetAprilTag()
 {
-    return FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed ? FieldConstants::AprilTagIDs::RED_PROCESSOR_TAG : FieldConstants::AprilTagIDs::BLUE_PROCESSOR_TAG;
+    auto allianceColor = FMSData::GetInstance()->GetAllianceColor();
+    if (allianceColor == frc::DriverStation::Alliance::kRed)
+    {
+        return FieldConstants::AprilTagIDs::RED_PROCESSOR_TAG;
+    }
+    else
+    {
+        return FieldConstants::AprilTagIDs::BLUE_PROCESSOR_TAG;
+    }
 }

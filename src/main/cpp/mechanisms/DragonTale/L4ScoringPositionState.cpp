@@ -45,24 +45,9 @@ void L4ScoringPositionState::Init()
 {
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ArrivedAt"), string("L4ScoringPositionState"), string("Init"));
 
-	if (m_RobotId == RobotIdentifier::PRACTICE_BOT_9999)
-		InitPRACTICE_BOT9999();
-	else if (m_RobotId == RobotIdentifier::COMP_BOT_302)
-		InitCOMP_BOT302();
-
 	m_mechanism->UpdateTargetCoralPercentOutput(m_CoralTarget);
 	m_mechanism->SetArmTarget(m_ArmTarget);
 	m_mechanism->SetElevatorTarget(m_ElevatorLeaderTarget);
-}
-
-void L4ScoringPositionState::InitPRACTICE_BOT9999()
-{
-	m_mechanism->UpdateTargetAlgaeTalonFXPercentOutput(m_AlgaeTarget);
-}
-
-void L4ScoringPositionState::InitCOMP_BOT302()
-{
-	m_mechanism->UpdateTargetAlgaeTalonFXSPercentOutput(m_AlgaeTarget);
 }
 
 void L4ScoringPositionState::Run()

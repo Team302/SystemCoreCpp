@@ -19,6 +19,8 @@
 #include <map>
 #include <tuple>
 
+#include "chassis/ChassisMovement.h"
+#include "chassis/SwerveChassis.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/geometry/Pose2d.h"
 #include "units/angle.h"
@@ -65,14 +67,14 @@ private:
     ~DragonTargetFinder() = default;
     static DragonTargetFinder *m_instance;
 
-    subsystems::CommandSwerveDrivetrain *m_chassis;
+    SwerveChassis *m_chassis;
     DragonVision *m_vision;
     DragonTargetFinderTarget m_targetVisionTarget;
 
     std::optional<FieldConstants::AprilTagIDs> GetAprilTag(DragonVision::VISION_ELEMENT item);
     frc::Pose3d GetAprilTagPose(DragonVision::VISION_ELEMENT item);
     units::angle::degree_t AdjustRobotRelativeAngleForIntake(units::angle::degree_t angle);
-    std::optional<frc::Pose2d> GetFieldRelativePose(std::optional<VisionData> data);
+    std::optional<frc::Pose2d> GetVisonPose(std::optional<VisionData> data);
     bool SwitchToVision(std::optional<frc::Pose3d> visTagPose);
 
     void SetChassis();
@@ -81,9 +83,14 @@ private:
     std::optional<frc::Pose2d> m_algaePose;
 
     bool m_switchToVision = false;
-    static constexpr units::length::meter_t m_fuseTol{0.25};
-    static constexpr units::length::meter_t m_switchToVisionThreshold{1.0};
-    static constexpr frc::Transform2d m_intakeOffset = frc::Transform2d{
-        frc::Translation2d(12.0_in, 6.5_in),
-        frc::Rotation2d(0_deg)};
+    const units::length::meter_t m_fuseTol{0.25};
+    const units::length::meter_t m_switchToVisionThreshold{1.0};
+    const frc::Transform3d m_calcAlgaeOffset = frc::Transform3d(
+        frc::Translation3d(
+            units::length::inch_t(0.0),
+            units::length::inch_t(6.5),
+            units::length::inch_t(0.0)),
+        frc::Rotation3d());
+
+    const units::length::inch_t m_armoffset = units::length::inch_t(12);
 };

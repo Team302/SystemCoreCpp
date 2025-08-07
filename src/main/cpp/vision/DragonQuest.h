@@ -21,12 +21,16 @@
 #include <networktables/NetworkTable.h>
 #include <networktables/NetworkTableEntry.h>
 #include <networktables/NetworkTableInstance.h>
-#include <networktables/DoubleTopic.h>
 #include <state/IRobotStateChangeSubscriber.h>
+
 #include "chassis/pose/DragonVisionPoseEstimator.h"
+#include "chassis/SwerveChassis.h"
 #include "networktables/DoubleArrayTopic.h"
 #include "networktables/IntegerTopic.h"
+#include "utils/logging/debug/Logger.h"
+#include "utils/logging/debug/Logger.h"
 #include "utils/logging/signals/DragonDataLogger.h"
+#include "vision/DragonVision.h"
 #include "vision/DragonVisionStructs.h"
 
 using namespace std;
@@ -57,6 +61,8 @@ public:
     void HandleDashboard();
 
     void NotifyStateUpdate(RobotStateChanges::StateChange change, int value) override;
+
+    void NotifyStateUpdate(RobotStateChanges::StateChange change, bool value) override;
 
 private:
     DragonQuest() = delete;
@@ -89,8 +95,8 @@ private:
 
     frc::Transform2d m_questToRobotTransform; // <I> Transform from Quest to robot (used to calculate the robot pose from the quest pose)
 
-    static constexpr double m_stdxy{0.02};
-    static constexpr double m_stddeg{.035};
+    const double m_stdxy = 0.02;
+    const double m_stddeg = 0.035;
 
     double m_prevFrameCount = 0;
     int m_loopCounter = 0;
@@ -101,4 +107,5 @@ private:
 
     bool m_isQuestEnabled = false; // <I> Is the Quest enabled?
     RobotStateChanges::ClimbMode m_climbMode = RobotStateChanges::ClimbMode::ClimbModeOff;
+    bool m_isDriveToBarge = false;
 };

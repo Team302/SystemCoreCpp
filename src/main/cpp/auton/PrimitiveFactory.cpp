@@ -15,12 +15,16 @@
 //====================================================================================================================================================
 
 // Team 302 includes
+#include "auton/drivePrimitives/DriveHoldPosition.h"
+#include "auton/drivePrimitives/DrivePathPlanner.h"
+#include "auton/drivePrimitives/DriveStop.h"
+#include "auton/drivePrimitives/DriveStopDelay.h"
+#include "auton/drivePrimitives/DriveStopMech.h"
 #include "auton/drivePrimitives/IPrimitive.h"
-#include "auton/drivePrimitives/ResetPositionTrajectory.h"
+#include "auton/drivePrimitives/ResetPositionPathPlanner.h"
 #include "auton/drivePrimitives/VisionDrivePrimitive.h"
 #include "auton/PrimitiveEnums.h"
 #include "auton/PrimitiveFactory.h"
-#include "auton/drivePrimitives/AutonDrivePrimitive.h"
 
 PrimitiveFactory *PrimitiveFactory::m_instance = nullptr;
 
@@ -33,8 +37,12 @@ PrimitiveFactory *PrimitiveFactory::GetInstance()
     return PrimitiveFactory::m_instance; // Return said instance
 }
 
-PrimitiveFactory::PrimitiveFactory() : m_resetPositionTrajectory(nullptr),
-                                       m_autonDrivePrimitive(nullptr)
+PrimitiveFactory::PrimitiveFactory() : m_DriveStop(nullptr),
+                                       m_DriveStopDelay(nullptr),
+                                       m_driveStopMech(nullptr),
+                                       m_DriveHoldPosition(nullptr),
+                                       m_resetPositionPathPlanner(nullptr),
+                                       m_drivePathPlanner(nullptr)
 {
 }
 
@@ -49,28 +57,61 @@ IPrimitive *PrimitiveFactory::GetIPrimitive(PrimitiveParams *primitivePasser)
     switch (primitivePasser->GetID()) // Decides which primitive to get or make
     {
     case DO_NOTHING:
-    case DO_NOTHING_MECHANISMS:
-    case HOLD_POSITION:
-    case TRAJECTORY_DRIVE:
-    case VISION_ALIGN:
-        if (m_autonDrivePrimitive == nullptr)
+        if (m_DriveStop == nullptr)
         {
-            m_autonDrivePrimitive = new AutonDrivePrimitive();
+            m_DriveStop = new DriveStop();
         }
-        primitive = m_autonDrivePrimitive;
+        primitive = m_DriveStop;
+        break;
+    case DO_NOTHING_DELAY:
+        if (m_DriveStopDelay == nullptr)
+        {
+            m_DriveStopDelay = new DriveStopDelay();
+        }
+        primitive = m_DriveStopDelay;
+        break;
+    case DO_NOTHING_MECHANISMS:
+        if (m_driveStopMech == nullptr)
+        {
+            m_driveStopMech = new DriveStopMech();
+        }
+        primitive = m_driveStopMech;
         break;
 
-    case RESET_POSITION:
-        if (m_resetPositionTrajectory == nullptr)
+    case HOLD_POSITION:
+        if (m_DriveHoldPosition == nullptr)
         {
-            m_resetPositionTrajectory = new ResetPositionTrajectory();
+            m_DriveHoldPosition = new DriveHoldPosition();
         }
-        primitive = m_resetPositionTrajectory;
+        primitive = m_DriveHoldPosition;
+        break;
+
+    case RESET_POSITION_PATH_PLANNER:
+        if (m_resetPositionPathPlanner == nullptr)
+        {
+            m_resetPositionPathPlanner = new ResetPositionPathPlanner();
+        }
+        primitive = m_resetPositionPathPlanner;
+        break;
+
+    case DRIVE_PATH_PLANNER:
+        if (m_drivePathPlanner == nullptr)
+        {
+            m_drivePathPlanner = new DrivePathPlanner();
+        }
+        primitive = m_drivePathPlanner;
+        break;
+
+    case VISION_ALIGN:
+        if (m_visionAlign == nullptr)
+        {
+            m_visionAlign = new VisionDrivePrimitive();
+        }
+        primitive = m_visionAlign;
         break;
 
     default:
         break;
     }
-
     return primitive;
 }

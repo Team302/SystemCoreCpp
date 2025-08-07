@@ -4,13 +4,18 @@
 
 #include "Robot.h"
 
-#include <frc2/command/CommandScheduler.h>
+#include <string>
+
+#include <Robot.h>
 
 #include "auton/AutonPreviewer.h"
 #include "auton/CyclePrimitives.h"
 #include "auton/drivePrimitives/AutonUtils.h"
-#include "chassis/ChassisConfigMgr.h"
+#include "chassis/definitions/ChassisConfig.h"
+#include "chassis/definitions/ChassisConfigMgr.h"
+#include "chassis/HolonomicDrive.h"
 #include "chassis/pose/DragonSwervePoseEstimator.h"
+#include "chassis/SwerveChassis.h"
 #include "configs/MechanismConfig.h"
 #include "configs/MechanismConfigMgr.h"
 #include "ctre/phoenix6/SignalLogger.hpp"
@@ -35,11 +40,16 @@
 #include "vision/definitions/CameraConfigMgr.h"
 #include "vision/DragonVision.h"
 #include "vision/DragonQuest.h"
-#include "chassis/SwerveContainer.h"
 
-Robot::Robot()
+using std::string;
+
+void Robot::RobotInit()
 {
+    isFMSAttached = frc::DriverStation::IsFMSAttached();
+
     Logger::GetLogger()->PutLoggingSelectionsOnDashboard();
+
+    m_controller = nullptr;
 
     InitializeRobot();
     InitializeAutonOptions();
@@ -50,23 +60,41 @@ Robot::Robot()
 
     m_datalogger = DragonDataLoggerMgr::GetInstance();
 
-    auto path = AutonUtils::GetTrajectoryFromPathFile("BlueLeftInside_I"); // load choreo library so we don't get loop overruns during autonperiodic
+    auto path = AutonUtils::GetPathFromTrajectory("BlueLeftInside_I"); // load choreo library so we don't get loop overruns during autonperiodic
+
+    if (m_dragonswerveposeestimator != nullptr)
+    {
+        auto visionPoseEstitmators = m_dragonswerveposeestimator->GetVisionPoseEstimators();
+        if (!visionPoseEstitmators.empty())
+        {
+            if (CameraConfigMgr::GetInstance()->GetCurrentConfig()->GetQuestIndex() != -1)
+            {
+                m_quest = static_cast<DragonQuest *>(visionPoseEstitmators[CameraConfigMgr::GetInstance()->GetCurrentConfig()->GetQuestIndex()]);
+            }
+        }
+    }
 }
 
+/**
+ * This function is called every robot packet, no matter the mode. Use
+ * this for items like diagnostics that you want ran during disabled,
+ * autonomous, teleoperated and test.
+ *
+ * <p> This runs after the mode specific periodic functions, but before
+ * LiveWindow and SmartDashboard integrated updating.
+ */
 void Robot::RobotPeriodic()
 {
-    frc2::CommandScheduler::GetInstance().Run();
-
-    isFMSAttached = frc::DriverStation::IsFMSAttached();
+    isFMSAttached = isFMSAttached ? true : frc::DriverStation::IsFMSAttached();
     if (!isFMSAttached)
     {
         Logger::GetLogger()->PeriodicLog();
     }
 
-    // if (m_datalogger != nullptr && !frc::DriverStation::IsDisabled())
-    // {
-    //     m_datalogger->PeriodicDataLog();
-    // }
+    if (m_datalogger != nullptr && !frc::DriverStation::IsDisabled())
+    {
+        m_datalogger->PeriodicDataLog();
+    }
 
     if (m_robotState != nullptr)
     {
@@ -81,15 +109,17 @@ void Robot::RobotPeriodic()
 
     UpdateDriveTeamFeedback();
 }
-
-void Robot::DisabledPeriodic()
-{
-    if (m_dragonswerveposeestimator != nullptr)
-    {
-        m_dragonswerveposeestimator->CalculateInitialPose();
-    }
-}
-
+/**
+ * This autonomous (along with the chooser code above) shows how to select
+ * between different autonomous modes using the dashboard. The sendable chooser
+ * code works with the Java SmartDashboard. If you prefer the LabVIEW Dashboard,
+ * remove all of the chooser code and uncomment the GetString line to get the
+ * auto name from the text box below the Gyro.
+ *
+ * You can add additional auto modes by adding additional comparisons to the
+ * if-else structure below with additional strings. If using the SendableChooser
+ * make sure to add them to the chooser code above as well.
+ */
 void Robot::AutonomousInit()
 {
     frc::SetCurrentThreadPriority(true, 15);
@@ -99,6 +129,7 @@ void Robot::AutonomousInit()
         m_cyclePrims->Init();
     }
     PeriodicLooper::GetInstance()->AutonRunCurrentState();
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::GameState_Int, RobotStateChanges::GamePeriod::Auton);
 }
 
 void Robot::AutonomousPeriodic()
@@ -118,7 +149,18 @@ void Robot::AutonomousPeriodic()
 
 void Robot::TeleopInit()
 {
+    if (m_controller == nullptr)
+    {
+        m_controller = TeleopControl::GetInstance();
+    }
+
+    if (m_chassis != nullptr && m_controller != nullptr && m_holonomic != nullptr)
+    {
+        m_holonomic->Init();
+    }
+
     PeriodicLooper::GetInstance()->TeleopRunCurrentState();
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::GameState_Int, RobotStateChanges::GamePeriod::Teleop);
 }
 
 void Robot::TeleopPeriodic()
@@ -128,12 +170,43 @@ void Robot::TeleopPeriodic()
     {
         m_dragonswerveposeestimator->Update();
     }
+
+    if (m_chassis != nullptr && m_controller != nullptr && m_holonomic != nullptr)
+    {
+        m_holonomic->Run();
+    }
     PeriodicLooper::GetInstance()->TeleopRunCurrentState();
+}
+
+void Robot::DisabledInit()
+{
+    RobotState::GetInstance()->PublishStateChange(RobotStateChanges::GameState_Int, RobotStateChanges::GamePeriod::Disabled);
+}
+
+void Robot::DisabledPeriodic()
+{
+    if (m_dragonswerveposeestimator != nullptr)
+    {
+        m_dragonswerveposeestimator->CalculateInitialPose();
+    }
 }
 
 void Robot::TestInit()
 {
-    frc2::CommandScheduler::GetInstance().CancelAll();
+}
+
+void Robot::TestPeriodic()
+{
+}
+
+void Robot::SimulationInit()
+{
+    PeriodicLooper::GetInstance()->SimulationRunCurrentState();
+}
+
+void Robot::SimulationPeriodic()
+{
+    PeriodicLooper::GetInstance()->SimulationRunCurrentState();
 }
 
 void Robot::InitializeRobot()
@@ -141,32 +214,22 @@ void Robot::InitializeRobot()
     int32_t teamNumber = frc::RobotController::GetTeamNumber();
     FieldConstants::GetInstance();
     RoboRio::GetInstance();
-    auto chassisConfig = ChassisConfigMgr::GetInstance();
-    chassisConfig->CreateDrivetrain();
-    m_container = SwerveContainer::GetInstance();
 
+    ChassisConfigMgr::GetInstance()->InitChassis(static_cast<RobotIdentifier>(teamNumber));
+    auto chassisConfig = ChassisConfigMgr::GetInstance()->GetCurrentConfig();
+    m_chassis = chassisConfig != nullptr ? chassisConfig->GetSwerveChassis() : nullptr;
+    m_holonomic = nullptr;
+    m_dragonswerveposeestimator = nullptr;
+    if (m_chassis != nullptr)
+    {
+        m_holonomic = new HolonomicDrive();
+        m_dragonswerveposeestimator = m_chassis->GetSwervePoseEstimator();
+    }
     MechanismConfigMgr::GetInstance()->InitRobot((RobotIdentifier)teamNumber);
 
+    // initialize cameras
     CameraConfigMgr::GetInstance()->InitCameras(static_cast<RobotIdentifier>(teamNumber));
-
-    m_dragonswerveposeestimator = DragonSwervePoseEstimator::GetInstance();
-
-    auto dragonVision = DragonVision::GetDragonVision();
-    if (dragonVision != nullptr)
-    {
-        auto visionPoseEstimators = dragonVision->GetPoseEstimators();
-        for (auto &poseEstimator : visionPoseEstimators)
-        {
-            m_dragonswerveposeestimator->RegisterVisionPoseEstimator(poseEstimator);
-        }
-        if (!visionPoseEstimators.empty())
-        {
-            if (CameraConfigMgr::GetInstance()->GetCurrentConfig()->GetQuestIndex() != -1)
-            {
-                m_quest = static_cast<DragonQuest *>(visionPoseEstimators[CameraConfigMgr::GetInstance()->GetCurrentConfig()->GetQuestIndex()]);
-            }
-        }
-    }
+    // auto vision = DragonVision::GetDragonVision();
 
     m_robotState = RobotState::GetInstance();
     m_robotState->Init();
@@ -190,7 +253,7 @@ void Robot::UpdateDriveTeamFeedback()
     }
     if (m_field != nullptr && m_dragonswerveposeestimator != nullptr)
     {
-        m_field->UpdateRobotPosition(m_dragonswerveposeestimator->GetPose());
+        m_field->UpdateRobotPosition(m_dragonswerveposeestimator->GetPose()); // ToDo:: Move to DriveTeamFeedback (also don't assume m_field isn't a nullptr)
     }
     auto feedback = DriverFeedback::GetInstance();
     if (feedback != nullptr)

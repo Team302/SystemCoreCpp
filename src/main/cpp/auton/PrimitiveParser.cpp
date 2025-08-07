@@ -40,9 +40,10 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
     map<string, PRIMITIVE_IDENTIFIER> primStringToEnumMap;
     primStringToEnumMap["DO_NOTHING"] = DO_NOTHING;
     primStringToEnumMap["HOLD_POSITION"] = HOLD_POSITION;
-    primStringToEnumMap["TRAJECTORY_DRIVE"] = TRAJECTORY_DRIVE;
-    primStringToEnumMap["RESET_POSITION"] = RESET_POSITION;
+    primStringToEnumMap["DRIVE_PATH_PLANNER"] = DRIVE_PATH_PLANNER;
+    primStringToEnumMap["RESET_POSITION_PATH_PLANNER"] = RESET_POSITION_PATH_PLANNER;
     primStringToEnumMap["VISION_ALIGN"] = VISION_ALIGN;
+    primStringToEnumMap["DO_NOTHING_DELAY"] = DO_NOTHING_DELAY;
     primStringToEnumMap["DRIVE_STOP_MECH"] = DO_NOTHING_MECHANISMS;
 
     map<string, ChassisOptionEnums::HeadingOption>
@@ -53,6 +54,10 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
     headingOptionMap["FACE_GAME_PIECE"] = ChassisOptionEnums::HeadingOption::FACE_GAME_PIECE;
     headingOptionMap["FACE_CORAL_STATION"] = ChassisOptionEnums::HeadingOption::FACE_CORAL_STATION;
 
+    map<string, ChassisOptionEnums::PathGainsType> pathGainsMap;
+    pathGainsMap["LongPath"] = ChassisOptionEnums::PathGainsType::LONG;
+    pathGainsMap["ShortPath"] = ChassisOptionEnums::PathGainsType::SHORT;
+
     map<string, PrimitiveParams::VISION_ALIGNMENT>
         xmlStringToVisionAlignmentEnumMap{
             {"UNKNOWN", PrimitiveParams::VISION_ALIGNMENT::UNKNOWN},
@@ -62,9 +67,18 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
 
     map<string, ChassisOptionEnums::DriveStateType> updateOptionMap{{"RIGHT_REEF_BRANCH", ChassisOptionEnums::DriveStateType::DRIVE_TO_RIGHT_REEF_BRANCH},
                                                                     {"LEFT_REEF_BRANCH", ChassisOptionEnums::DriveStateType::DRIVE_TO_LEFT_REEF_BRANCH},
+                                                                    // {"REEF_ALGAE", PATH_UPDATE_OPTION::REEF_ALGAE}, // need to update when drive option is implemented
+                                                                    // {"FLOOR_ALGAE", PATH_UPDATE_OPTION::FLOOR_ALGAE},
                                                                     {"CORAL_STATION", ChassisOptionEnums::DriveStateType::DRIVE_TO_CORAL_STATION},
+                                                                    // {"PROCESSOR", PATH_UPDATE_OPTION::PROCESSOR},
                                                                     {"BARGE", ChassisOptionEnums::DRIVE_TO_BARGE},
                                                                     {"NOTHING", ChassisOptionEnums::DriveStateType::STOP_DRIVE}};
+
+    map<string, DriveStopDelay::DelayOption> pathDelayOptionsMap{
+        {"START", DriveStopDelay::DelayOption::START},
+        {"REEF", DriveStopDelay::DelayOption::REEF},
+        {"CORAL_STATION", DriveStopDelay::DelayOption::CORAL_STATION},
+    };
 
     xml_document doc;
     xml_parse_result result = doc.load_file(fulldirfile.c_str());
@@ -133,7 +147,9 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
 
                     std::string pathName;
                     std::string choreoTrajectoryName;
+                    ChassisOptionEnums::PathGainsType pathGainsType = ChassisOptionEnums::PathGainsType::LONG;
                     ZoneParamsVector zones;
+                    DriveStopDelay::DelayOption pathDelayOption = DriveStopDelay::DelayOption::START;
 
                     ChassisOptionEnums::DriveStateType pathUpdateOption = ChassisOptionEnums::DriveStateType::STOP_DRIVE;
 
@@ -175,6 +191,19 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
                                 hasError = true;
                             }
                         }
+                        else if (strcmp(attr.name(), "delayOption") == 0)
+                        {
+                            auto delayOptionItr = pathDelayOptionsMap.find(attr.value());
+                            if (delayOptionItr != pathDelayOptionsMap.end())
+                            {
+                                pathDelayOption = delayOptionItr->second;
+                            }
+                            else
+                            {
+                                Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("PrimitiveParser"), string("ParseXML invalid delay option"), attr.value());
+                                hasError = true;
+                            }
+                        }
                         else if (strcmp(attr.name(), "pathUpdateOption") == 0)
                         {
                             auto updateOptionItr = updateOptionMap.find(attr.value());
@@ -192,10 +221,28 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
                         {
                             heading = attr.as_float();
                         }
+                        else if (strcmp(attr.name(), "pathname") == 0)
+                        {
+                            pathName = attr.value();
+                        }
                         else if (strcmp(attr.name(), "choreoname") == 0)
                         {
                             choreoTrajectoryName = attr.value();
                         }
+                        else if (strcmp(attr.name(), "pathgains") == 0)
+                        {
+                            auto pathitr = pathGainsMap.find(attr.value());
+                            if (pathitr != pathGainsMap.end())
+                            {
+                                pathGainsType = pathitr->second;
+                            }
+                            else
+                            {
+                                Logger::GetLogger()->LogData(LOGGER_LEVEL::ERROR, string("PrimitiveParser"), string("ParseXML invalid path gains option"), attr.value());
+                                hasError = true;
+                            }
+                        }
+
                         else if (strcmp(attr.name(), "taleOption") == 0)
                         {
                             if (config != nullptr && config->GetMechanism(MechanismTypes::DRAGON_TALE) != nullptr)
@@ -252,13 +299,16 @@ PrimitiveParamsVector PrimitiveParser::ParseXML(string fulldirfile)
                                                                      time,
                                                                      headingOption,
                                                                      heading,
+                                                                     pathName,
                                                                      choreoTrajectoryName,
+                                                                     pathGainsType,
                                                                      zones, // vector of all zones included as part of the path
                                                                             // can have multiple zones as part of a complex path
                                                                      visionAlignment,
                                                                      changeTaleState,
                                                                      taleState,
-                                                                     pathUpdateOption));
+                                                                     pathUpdateOption,
+                                                                     pathDelayOption));
                     }
                     else
                     {
@@ -289,9 +339,12 @@ void PrimitiveParser::Print(PrimitiveParamsVector paramVector)
         logger->LogData(LOGGER_LEVEL::PRINT, ntName, string("Time"), param->GetTime().to<double>());
         logger->LogData(LOGGER_LEVEL::PRINT, ntName, string("Heading Option"), to_string(param->GetHeadingOption()));
         logger->LogData(LOGGER_LEVEL::PRINT, ntName, string("Heading"), param->GetHeading());
+        logger->LogData(LOGGER_LEVEL::PRINT, ntName, string("Path Name"), param->GetPathName());
         logger->LogData(LOGGER_LEVEL::PRINT, ntName, string("Choreo Trajectory Name"), param->GetTrajectoryName());
         logger->LogData(LOGGER_LEVEL::PRINT, ntName, string("vision alignment"), param->GetVisionAlignment());
         logger->LogData(LOGGER_LEVEL::PRINT, ntName, string("Dragon Tale State"), param->GetTaleState());
+        // logger->LogData(LOGGER_LEVEL::PRINT, ntName, string("climber change"), param->IsClimberStateChanging() ? string("true") : string("false"));
+        // logger->LogData(LOGGER_LEVEL::PRINT, ntName, string("climber state"), param->GetClimberState());
         logger->LogData(LOGGER_LEVEL::PRINT, ntName, string("num zones"), (double)param->GetZones().size());
 
         slot++;

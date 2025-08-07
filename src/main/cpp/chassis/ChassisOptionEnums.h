@@ -34,7 +34,7 @@ public:
     {
         ROBOT_DRIVE,
         FIELD_DRIVE,
-        TRAJECTORY_DRIVE,
+        TRAJECTORY_DRIVE_PLANNER,
         HOLD_DRIVE,
         POLAR_DRIVE,
         DRIVE_TO_CORAL_STATION,
@@ -71,6 +71,12 @@ public:
         PODIUM,
         ROBOT_COLLISION,
         NO_AVOID_OPTION
+    };
+
+    enum PathGainsType
+    {
+        SHORT,
+        LONG
     };
 
     enum PathUpdateOption

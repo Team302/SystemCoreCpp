@@ -14,21 +14,39 @@
 //====================================================================================================================================================
 #pragma once
 
-#include <optional>
-
 // FRC Includes
+#include <frc/smartdashboard/SendableChooser.h>
 #include <frc/DriverStation.h>
 
 class FMSData
 {
 public:
-    FMSData() = default;
+    enum ALLIANCE_COLOR
+    {
+        BLUE,
+        RED,
+        INVALID
+    };
+
+    FMSData();
     ~FMSData() = default;
 
     /// @brief Get the alliance color from dashboard or FMS when available
     /// @return the current alliance
-    static frc::DriverStation::Alliance GetAllianceColor()
-    {
-        return (frc::DriverStation::GetAlliance().has_value()) ? frc::DriverStation::GetAlliance().value() : frc::DriverStation::Alliance::kRed;
-    }
+    frc::DriverStation::Alliance GetAllianceColor();
+
+    /// @brief Check if we are connected to FMS
+    void CheckForFMS();
+
+    /// @brief get the singeleton of FMSData
+    static FMSData *GetInstance();
+
+private:
+    static FMSData *m_instance;
+
+    frc::SendableChooser<std::string> m_allianceColorChooser;
+    std::unordered_map<frc::DriverStation::Alliance, ALLIANCE_COLOR> m_colorMap;
+    bool m_hasFMS;
+    frc::DriverStation::Alliance m_color;
+    bool m_polledFMS;
 };

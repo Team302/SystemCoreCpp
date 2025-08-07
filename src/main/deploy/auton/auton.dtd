@@ -6,13 +6,15 @@
 <!ELEMENT primitive (zone* ) >
 <!ATTLIST primitive 
           id                ( DO_NOTHING | HOLD_POSITION | 
-                              TRAJECTORY_DRIVE | RESET_POSITION | RESET_POSITION_NO_VISION | DRIVE_STOP_MECH) "DO_NOTHING"
+                              DRIVE_PATH_PLANNER | RESET_POSITION_PATH_PLANNER | RESET_POSITION_PATH_PLANNER_NO_VISION | DO_NOTHING_DELAY | DRIVE_STOP_MECH) "DO_NOTHING"
 		  pathUpdateOption 	(RIGHT_REEF_BRANCH | LEFT_REEF_BRANCH | REEF_ALGAE | FLOOR_ALGAE | CORAL_STATION | PROCESSOR | BARGE | NOTHING) "NOTHING"
 		  time				CDATA #IMPLIED
 		  delayOption		(START | PLACED_CORAL | REEF) "START"
           headingOption     CDATA "IGNORE"
           heading           CDATA "0.0"
+          pathname          CDATA #IMPLIED
 		  choreoname		CDATA #IMPLIED
+		  pathgains			(LongPath | ShortPath) "LongPath"
 		  taleOption		( STATE_READY | STATE_INITIALIZE | 
 		  					STATE_HUMAN_PLAYER_LOAD | STATE_GRAB_ALGAE_REEF | STATE_HOLD |
 							STATE_GRAB_ALGAE_FLOOR | STATE_PROCESS | STATE_NET | STATE_SCORE_ALGAE |

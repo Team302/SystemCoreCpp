@@ -32,10 +32,10 @@
 #include "auton/PrimitiveParser.h"
 #include "auton/drivePrimitives/IPrimitive.h"
 #include "utils/logging/debug/Logger.h"
-
-#include "chassis/ChassisConfigMgr.h"
+#include "chassis/definitions/ChassisConfig.h"
+#include "chassis/definitions/ChassisConfigMgr.h"
 #include "chassis/ChassisOptionEnums.h"
-
+#include "chassis/SwerveModule.h"
 #include "mechanisms/DragonTale/DragonTale.h"
 // #include "mechanisms/MechanismTypes.h"
 
@@ -64,7 +64,7 @@ CyclePrimitives::CyclePrimitives() : State(string("CyclePrimitives"), 0),
 									 m_chassis(),
 									 m_updatedHeadingOption()
 {
-	auto chassisConfig = ChassisConfigMgr::GetInstance();
+	auto chassisConfig = ChassisConfigMgr::GetInstance()->GetCurrentConfig();
 	m_chassis = chassisConfig != nullptr ? chassisConfig->GetSwerveChassis() : nullptr;
 }
 
@@ -82,6 +82,7 @@ void CyclePrimitives::Init()
 	m_primParams = PrimitiveParser::ParseXML(m_autonSelector->GetSelectedAutoFile());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("CyclePrim"), string("nPrims"), double(m_primParams.size()));
 
+	InitDriveStopDelayTimes();
 	if (!m_primParams.empty())
 	{
 		GetNextPrim();
@@ -193,12 +194,15 @@ void CyclePrimitives::RunDriveStop()
 										  time,		  // time
 										  ChassisOptionEnums::HeadingOption::MAINTAIN,
 										  0.0,		// heading
+										  string(), // pathname
 										  string(), // ChoreoTrajectoryName
+										  ChassisOptionEnums::PathGainsType::LONG,
 										  ZoneParamsVector(),
 										  PrimitiveParams::VISION_ALIGNMENT::UNKNOWN,
 										  false,
 										  DragonTale::STATE_NAMES::STATE_READY,
-										  ChassisOptionEnums::DriveStateType::STOP_DRIVE);
+										  ChassisOptionEnums::DriveStateType::STOP_DRIVE,
+										  DriveStopDelay::DelayOption::START);
 		m_driveStop = m_primFactory->GetIPrimitive(params);
 		m_driveStop->Init(params);
 	}
@@ -231,6 +235,26 @@ void CyclePrimitives::SetMechanismStatesFromZone(ZoneParams *params)
 		if (taleMgr != nullptr && params->IsTaleStateChanging())
 		{
 			taleMgr->SetCurrentState(params->GetTaleOption(), true);
+		}
+	}
+}
+void CyclePrimitives::InitDriveStopDelayTimes()
+{
+	if (!m_primParams.empty())
+	{
+		auto startDelay = m_autonSelector->GetStartDelay();
+		auto reefDelay = m_autonSelector->GetReefDelay();
+		auto coralStationDelay = m_autonSelector->GetCoralStationDelay();
+
+		for (PrimitiveParams *param : m_primParams)
+		{
+
+			if (param->GetID() == PRIMITIVE_IDENTIFIER::DO_NOTHING_DELAY)
+			{
+				param->SetStartDelay(startDelay);
+				param->SetReefDelay(reefDelay);
+				param->SetCoralStationDelay(coralStationDelay);
+			}
 		}
 	}
 }

@@ -312,7 +312,7 @@ private:
 	bool m_manualMode = false;
 
 	units::length::inch_t m_elevatorAtTargetThreshold{1.0};
-	units::angle::degree_t m_ArmAtTargetThreshold{2.0}; // 1.0
+	units::angle::degree_t m_ArmAtTargetThreshold{0.5}; // 1.0
 
 	frc::Pose2d m_robotPose;
 
@@ -328,6 +328,8 @@ private:
 	units::length::inch_t m_motorCountInches;
 	double m_elevatorGearRatio;
 	double m_elevatorDiameterInch;
+
+	void InitializeLogging();
 
 	frc::Timer m_powerTimer;
 	double m_power = 0.0;

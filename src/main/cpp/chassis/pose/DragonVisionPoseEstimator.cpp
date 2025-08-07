@@ -13,10 +13,20 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "chassis/pose/DragonVisionPoseEstimator.h"
+#include "chassis/definitions/ChassisConfig.h"
+#include "chassis/definitions/ChassisConfigMgr.h"
 #include "chassis/pose/DragonSwervePoseEstimator.h"
+#include "chassis/pose/DragonVisionPoseEstimator.h"
 
 DragonVisionPoseEstimator::DragonVisionPoseEstimator()
 {
-    DragonSwervePoseEstimator::GetInstance()->RegisterVisionPoseEstimator(this);
+    auto chassis = ChassisConfigMgr::GetInstance()->GetCurrentChassis();
+    if (chassis != nullptr)
+    {
+        auto poseEst = chassis->GetSwervePoseEstimator();
+        if (poseEst != nullptr)
+        {
+            poseEst->RegisterVisionPoseEstimator(this);
+        }
+    }
 }

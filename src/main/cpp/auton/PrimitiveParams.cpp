@@ -23,21 +23,27 @@ PrimitiveParams::PrimitiveParams(PRIMITIVE_IDENTIFIER id,
 								 units::time::second_t time,
 								 ChassisOptionEnums::HeadingOption headingOpt,
 								 float heading,
+								 std::string pathName,
 								 std::string choreoTrajectoryName,
+								 ChassisOptionEnums::PathGainsType pathgainstype,
 								 ZoneParamsVector zones,
 								 VISION_ALIGNMENT visionAlignment,
 								 bool taleStateChanged,
 								 DragonTale::STATE_NAMES taleState,
-								 ChassisOptionEnums::DriveStateType pathUpdateOption) : m_id(id), // Primitive ID
-																						m_time(time),
-																						m_headingOption(headingOpt),
-																						m_heading(heading),
-																						m_choreoTrajectoryName(choreoTrajectoryName),
-																						m_visionAlignment(visionAlignment),
-																						m_changeTaleState(taleStateChanged),
-																						m_taleState(taleState),
-																						m_zones(zones),
-																						m_pathUpdateOption(pathUpdateOption)
+								 ChassisOptionEnums::DriveStateType pathUpdateOption,
+								 DriveStopDelay::DelayOption delayOption) : m_id(id), // Primitive ID
+																			m_time(time),
+																			m_headingOption(headingOpt),
+																			m_heading(heading),
+																			m_delayOption(delayOption),
+																			m_pathName(pathName),
+																			m_choreoTrajectoryName(choreoTrajectoryName),
+																			m_pathGainsType(pathgainstype),
+																			m_visionAlignment(visionAlignment),
+																			m_changeTaleState(taleStateChanged),
+																			m_taleState(taleState),
+																			m_zones(zones),
+																			m_pathUpdateOption(pathUpdateOption)
 
 // @ADDMECH initilize state mgr attribute
 {

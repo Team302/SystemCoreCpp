@@ -31,8 +31,6 @@
 #include <teleopcontrol/TeleopControlButton.h>
 #include <teleopcontrol/TeleopControlFunctions.h>
 #include <teleopcontrol/TeleopControlMappingEnums.h>
-#include <gamepad/DragonHybridController.h>
-#include <frc2/command/button/Trigger.h>
 
 // third part
 #include <RobinHood/robin_hood.h>
@@ -80,27 +78,7 @@ public:
         bool rightRumble // <I> - rumble right
     );
 
-    /**
-     * @brief Gets a command framework Trigger for a given function.
-     * This allows you to bind commands to buttons defined in TeleopControlMap.
-     * @param function The function to get the trigger for.
-     * @return An frc2::Trigger that can be used for command binding.
-     * @note This will throw an exception if the function is not mapped to a button
-     * on the primary command controller (port 0).
-     */
-    frc2::Trigger GetCommandTrigger(TeleopControlFunctions::FUNCTION function);
-
-    /**
-     * @brief Gets a command framework Trigger from an axis.
-     * The trigger becomes active when the axis value exceeds the specified threshold.
-     * @param function The axis function to get the trigger for.
-     * @param threshold The value the axis must pass to activate the trigger (0.0 to 1.0).
-     * @return An frc2::Trigger that can be used for command binding.
-     */
-    frc2::Trigger GetAxisAsTrigger(TeleopControlFunctions::FUNCTION function, double threshold);
-
     void LogInformation();
-    DragonHybridController *GetHybridController();
 
 private:
     //----------------------------------------------------------------------------------
@@ -169,8 +147,6 @@ private:
     static TeleopControl *m_instance; // Singleton instance of this class
 
     std::array<IDragonGamepad *, frc::DriverStation::kJoystickPorts> m_controller;
-
-    DragonHybridController *m_hybridController = nullptr;
 
     int m_numControllers;
 };

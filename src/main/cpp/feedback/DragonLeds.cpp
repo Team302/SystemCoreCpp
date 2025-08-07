@@ -40,11 +40,11 @@ void DragonLeds::Initialize(int PWMport, int numLeds)
     {
         m_addressibleLeds = new frc::AddressableLED(PWMport);
         m_addressibleLeds->SetLength(numLeds);
+        m_addressibleLeds->SetStart(0);
 
         m_ledBuffer.resize(numLeds);
 
         SetSolidColor(frc::Color::kDarkGreen);
-        commitLedData();
         setOn();
     }
     else
@@ -62,7 +62,7 @@ void DragonLeds::setOn()
 {
     if (IsInitialized())
     {
-        m_addressibleLeds->Start();
+        commitLedData();
     }
 }
 
@@ -70,7 +70,8 @@ void DragonLeds::setOff()
 {
     if (IsInitialized())
     {
-        m_addressibleLeds->Stop();
+        m_ledBuffer = std::vector<frc::AddressableLED::LEDData>();
+        m_addressibleLeds->SetData(m_ledBuffer);
     }
 }
 void DragonLeds::ResetVariables()

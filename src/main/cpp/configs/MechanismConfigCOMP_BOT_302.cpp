@@ -54,5 +54,5 @@ StateMgr *MechanismConfigCOMP_BOT_302::GetMechanism(MechanismTypes::MECHANISM_TY
 
 void MechanismConfigCOMP_BOT_302::DefineLEDs()
 {
-	DragonLeds::GetInstance()->Initialize(9, 45);
+	DragonLeds::GetInstance()->Initialize(5, 45);
 }

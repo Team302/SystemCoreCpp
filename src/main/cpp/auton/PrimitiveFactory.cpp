@@ -16,12 +16,10 @@
 
 // Team 302 includes
 #include "auton/drivePrimitives/DriveHoldPosition.h"
-#include "auton/drivePrimitives/DrivePathPlanner.h"
 #include "auton/drivePrimitives/DriveStop.h"
 #include "auton/drivePrimitives/DriveStopDelay.h"
 #include "auton/drivePrimitives/DriveStopMech.h"
 #include "auton/drivePrimitives/IPrimitive.h"
-#include "auton/drivePrimitives/ResetPositionPathPlanner.h"
 #include "auton/drivePrimitives/VisionDrivePrimitive.h"
 #include "auton/PrimitiveEnums.h"
 #include "auton/PrimitiveFactory.h"
@@ -87,19 +85,9 @@ IPrimitive *PrimitiveFactory::GetIPrimitive(PrimitiveParams *primitivePasser)
         break;
 
     case RESET_POSITION_PATH_PLANNER:
-        if (m_resetPositionPathPlanner == nullptr)
-        {
-            m_resetPositionPathPlanner = new ResetPositionPathPlanner();
-        }
-        primitive = m_resetPositionPathPlanner;
         break;
 
     case DRIVE_PATH_PLANNER:
-        if (m_drivePathPlanner == nullptr)
-        {
-            m_drivePathPlanner = new DrivePathPlanner();
-        }
-        primitive = m_drivePathPlanner;
         break;
 
     case VISION_ALIGN:

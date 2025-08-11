@@ -139,7 +139,6 @@ public:
     frc::Translation2d GetBackLeftOffset() const { return m_backLeftLocation; }
     frc::Translation2d GetBackRightOffset() const { return m_backRightLocation; }
 
-    pathplanner::RobotConfig GetRobotConfig() { return m_robotConfig; }
     DragonSwervePoseEstimator *GetSwervePoseEstimator() { return m_swervePoseEstimator; }
 
 private:
@@ -193,7 +192,6 @@ private:
     std::array<frc::SwerveModuleState, 4U> m_targetStates;
     units::mass::kilogram_t m_mass = units::mass::kilogram_t(52.0);                                                                // TODO put a real value in
     units::moment_of_inertia::kilogram_square_meter_t m_momentOfInertia = units::moment_of_inertia::kilogram_square_meter_t(26.0); // TODO put a real value in
-    pathplanner::RobotConfig m_robotConfig;
     frc::Timer m_velocityTimer;
 
     const units::angle::degree_t m_specifiedHeadingTolerance{0.5};

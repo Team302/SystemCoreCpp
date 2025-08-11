@@ -289,7 +289,7 @@ void Logger::PeriodicLog()
 
             default:
                 optionAsString.assign("Out of range !");
-                m_option = EAT_IT;
+                m_option = DASHBOARD;
                 break;
             }
             LogData(LOGGER_LEVEL::PRINT, string("Logger"), string("Selected Option"), optionAsString);

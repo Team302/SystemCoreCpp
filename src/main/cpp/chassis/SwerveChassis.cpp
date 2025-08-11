@@ -33,7 +33,7 @@
 #include "chassis/states/RobotDrive.h"
 #include "chassis/states/PolarDrive.h"
 #include "chassis/states/StopDrive.h"
-#include "chassis/states/TrajectoryDrivePathPlanner.h"
+//#include "chassis/states/TrajectoryDrivePathPlanner.h"
 #include "chassis/states/IgnoreHeading.h"
 #include "chassis/states/ISwerveDriveOrientation.h"
 #include "chassis/states/MaintainHeading.h"
@@ -127,20 +127,13 @@ SwerveChassis::SwerveChassis(SwerveModule *frontLeft,
                                                            SwerveModulePosition()},
                                                           Pose2d());
 
-    m_robotConfig = pathplanner::RobotConfig(GetMass(), GetMomenOfInertia(),
-                                             frontLeft->GetModuleConfig(), GetTrack());
 
     std::vector<frc::Translation2d> moduleLocs;
     moduleLocs.emplace_back(GetFrontLeftOffset());
     moduleLocs.emplace_back(GetFrontRightOffset());
     moduleLocs.emplace_back(GetBackLeftOffset());
     moduleLocs.emplace_back(GetBackRightOffset());
-    m_robotConfig.numModules = moduleLocs.size();
-    m_robotConfig.moduleLocations = moduleLocs;
-    m_robotConfig.isHolonomic = true;
-    // TO DO Understand if we need these
-    // m_robotConfig.maxTorqueFriction = 50_Nm;
-    // m_robotConfig.wheelFrictionForce = 20_N;
+
 }
 
 //==================================================================================
@@ -153,7 +146,6 @@ void SwerveChassis::InitStates()
     m_driveStateMap[ChassisOptionEnums::DriveStateType::HOLD_DRIVE] = new HoldDrive();
     m_driveStateMap[ChassisOptionEnums::DriveStateType::ROBOT_DRIVE] = m_robotDrive;
     m_driveStateMap[ChassisOptionEnums::DriveStateType::STOP_DRIVE] = new StopDrive(m_robotDrive);
-    m_driveStateMap[ChassisOptionEnums::DriveStateType::TRAJECTORY_DRIVE_PLANNER] = new TrajectoryDrivePathPlanner(m_robotDrive);
     m_driveStateMap[ChassisOptionEnums::DriveStateType::DRIVE_TO_CORAL_STATION] = new DriveToCoralStation(m_robotDrive);
     m_driveStateMap[ChassisOptionEnums::DriveStateType::DRIVE_TO_LEFT_REEF_BRANCH] = new DriveToLeftReefBranch(m_robotDrive);
     m_driveStateMap[ChassisOptionEnums::DriveStateType::DRIVE_TO_RIGHT_REEF_BRANCH] = new DriveToRightReefBranch(m_robotDrive);

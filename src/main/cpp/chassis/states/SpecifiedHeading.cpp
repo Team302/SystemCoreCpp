@@ -43,10 +43,6 @@ void SpecifiedHeading::UpdateChassisSpeeds(ChassisMovement &chassisMovement)
 
     auto config = ChassisConfigMgr::GetInstance()->GetCurrentConfig();
     auto chassis = config != nullptr ? config->GetSwerveChassis() : nullptr;
-    if (chassisMovement.previousDriveOption == ChassisOptionEnums::DriveStateType::TRAJECTORY_DRIVE_PLANNER)
-    {
-        m_pid->Reset();
-    }
     if (chassis != nullptr)
     {
         auto correction = CalcHeadingCorrection(m_targetAngle, kPSpecifiedHeading);

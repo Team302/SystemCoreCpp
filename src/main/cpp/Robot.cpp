@@ -10,7 +10,6 @@
 
 #include "auton/AutonPreviewer.h"
 #include "auton/CyclePrimitives.h"
-#include "auton/drivePrimitives/AutonUtils.h"
 #include "chassis/definitions/ChassisConfig.h"
 #include "chassis/definitions/ChassisConfigMgr.h"
 #include "chassis/HolonomicDrive.h"
@@ -59,8 +58,6 @@ void Robot::RobotInit()
     ReefHelper::GetInstance();
 
     m_datalogger = DragonDataLoggerMgr::GetInstance();
-
-    auto path = AutonUtils::GetPathFromTrajectory("BlueLeftInside_I"); // load choreo library so we don't get loop overruns during autonperiodic
 
     if (m_dragonswerveposeestimator != nullptr)
     {

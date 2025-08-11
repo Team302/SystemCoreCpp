@@ -28,8 +28,6 @@ void LogChassisMovement::Print(ChassisMovement &moveinfo)
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ChassisMovement"), string("vx"), moveinfo.chassisSpeeds.vx.to<double>());
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ChassisMovement"), string("vy"), moveinfo.chassisSpeeds.vy.to<double>());
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ChassisMovement"), string("omega"), moveinfo.chassisSpeeds.omega.to<double>());
-    auto ppstates = moveinfo.pathplannerTrajectory.getStates();
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ChassisMovement"), string("trajectory"), ppstates.empty() ? string("false") : string("true"));
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ChassisMovement"), string("centerOfRotationOffset X"), moveinfo.centerOfRotationOffset.X().to<double>());
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ChassisMovement"), string("centerOfRotationOffset Y"), moveinfo.centerOfRotationOffset.Y().to<double>());
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("ChassisMovement"), string("headingOption"), moveinfo.headingOption);

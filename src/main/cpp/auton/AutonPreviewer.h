@@ -34,8 +34,6 @@ public:
 
     void PopulateField();
 
-    std::vector<frc::Trajectory> GetTrajectories();
-
 private:
     AutonSelector *m_selector;
     std::string m_prevChoice;

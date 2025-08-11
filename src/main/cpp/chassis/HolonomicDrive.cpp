@@ -222,10 +222,7 @@ void HolonomicDrive::Run()
             }
             else
             {
-                if ((m_moveInfo.driveOption != ChassisOptionEnums::DriveStateType::TRAJECTORY_DRIVE_PLANNER))
-                {
-                    m_moveInfo.driveOption = ChassisOptionEnums::DriveStateType::FIELD_DRIVE;
-                }
+                m_moveInfo.driveOption = ChassisOptionEnums::DriveStateType::FIELD_DRIVE;
             }
             m_resetPathplannerTrajectory = true;
             if (m_previousDriveState == ChassisOptionEnums::DriveStateType::DRIVE_TO_BARGE || m_previousDriveState == ChassisOptionEnums::DriveStateType::DRIVE_TO_CORAL_STATION || m_previousDriveState == ChassisOptionEnums::DriveStateType::DRIVE_TO_LEFT_REEF_BRANCH || m_previousDriveState == ChassisOptionEnums::DriveStateType::DRIVE_TO_RIGHT_REEF_BRANCH)
@@ -271,7 +268,6 @@ void HolonomicDrive::InitChassisMovement()
     m_moveInfo.driveOption = ChassisOptionEnums::DriveStateType::FIELD_DRIVE;
     m_moveInfo.controllerType = ChassisOptionEnums::AutonControllerType::HOLONOMIC;
     m_moveInfo.headingOption = ChassisOptionEnums::HeadingOption::MAINTAIN;
-    m_moveInfo.pathplannerTrajectory = pathplanner::PathPlannerTrajectory();
     m_moveInfo.centerOfRotationOffset = frc::Translation2d();
     m_moveInfo.noMovementOption = ChassisOptionEnums::NoMovementOption::STOP;
     m_moveInfo.yawAngle = m_swerve->GetYaw();
@@ -323,7 +319,6 @@ void HolonomicDrive::InitSpeeds(double forwardScale,
 
     if (m_resetPathplannerTrajectory)
     {
-        m_moveInfo.pathplannerTrajectory = pathplanner::PathPlannerTrajectory();
     }
 
     m_moveInfo.IsClimbMode = m_climbMode;

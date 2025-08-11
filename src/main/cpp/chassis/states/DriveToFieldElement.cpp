@@ -184,7 +184,6 @@ void DriveToFieldElement::InitChassisMovement(ChassisMovement &chassisMovement)
     chassisMovement.driveOption = GetDriveStateType();
     chassisMovement.controllerType = ChassisOptionEnums::AutonControllerType::HOLONOMIC;
     chassisMovement.headingOption = GetHeadingOption();
-    chassisMovement.pathplannerTrajectory = pathplanner::PathPlannerTrajectory();
     chassisMovement.centerOfRotationOffset = frc::Translation2d();
     chassisMovement.noMovementOption = ChassisOptionEnums::NoMovementOption::STOP;
     chassisMovement.pathnamegains = ChassisOptionEnums::PathGainsType::LONG;

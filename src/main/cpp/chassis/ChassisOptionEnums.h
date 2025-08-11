@@ -34,7 +34,6 @@ public:
     {
         ROBOT_DRIVE,
         FIELD_DRIVE,
-        TRAJECTORY_DRIVE_PLANNER,
         HOLD_DRIVE,
         POLAR_DRIVE,
         DRIVE_TO_CORAL_STATION,

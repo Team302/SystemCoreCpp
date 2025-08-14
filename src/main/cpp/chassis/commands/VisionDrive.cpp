@@ -78,6 +78,5 @@ bool VisionDrive::IsFinished()
 
 void VisionDrive::End(bool interrupted)
 {
-    m_chassis->ApplyRequest([]() -> auto
-                            { return swerve::requests::SwerveDriveBrake{}; });
+    m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
 }

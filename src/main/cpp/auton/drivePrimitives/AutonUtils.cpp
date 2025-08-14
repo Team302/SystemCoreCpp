@@ -15,7 +15,7 @@
 //====================================================================================================================================================
 
 #include "auton/drivePrimitives/AutonUtils.h"
-#include "choreo/Choreo.h" 
+#include "choreo/Choreo.h"
 #include "utils/FMSData.h"
 
 using frc::DriverStation;
@@ -30,4 +30,3 @@ std::optional<choreo::Trajectory<choreo::SwerveSample>> AutonUtils::GetTrajector
     }
     return trajectory;
 }
-

@@ -73,9 +73,9 @@ frc::Pose2d DragonSwervePoseEstimator::GetPose() const
 {
     return (m_chassis != nullptr) ? m_chassis->GetPose() : frc::Pose2d{};
 }
-                                                    
+
 void DragonSwervePoseEstimator::ResetPosition(const frc::Pose2d &pose)
-{       
+{
     if (m_chassis != nullptr)
     {
         m_chassis->ResetPose(pose);

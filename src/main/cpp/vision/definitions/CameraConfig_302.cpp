@@ -38,7 +38,7 @@ void CameraConfig_302::BuildCameraConfig()
                                                  DRAGON_LIMELIGHT_CAM_MODE::CAM_VISION         // CAM_MODE camMode,
 
     ); // additional parameter
-    DragonVision::GetDragonVision()->AddLimelight(front, DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
+    DragonVision::GetDragonVision()->AddLimelight(front, DRAGON_LIMELIGHT_CAMERA_USAGE::BOTH);
     m_limelightIndexs.push_back(0);
 
     // DragonLimelight *back = new DragonLimelight(std::string("limelight-back"), // networkTableName

@@ -177,27 +177,6 @@ optional<tuple<DragonTargetFinderData, Pose2d>> DragonTargetFinder::GetPose(Drag
             return make_tuple(DragonTargetFinderData::ODOMETRY_BASED, cagepose);
         }
     }
-    else if (item == DragonTargetFinderTarget::ALGAE)
-    {
-
-        auto visiondata = m_vision->GetVisionData(DragonVision::VISION_ELEMENT::ALGAE);
-        if (visiondata.has_value())
-        {
-            m_algaePose = GetFieldRelativePose(visiondata);
-            if (m_algaePose.has_value())
-            {
-                m_goalPose = m_algaePose.value();
-                return make_tuple(DragonTargetFinderData::VISION_BASED, m_goalPose.value()); // TODO JW come back to this one when we have machine learning
-            }
-        }
-        else
-        {
-            if (!m_goalPose.has_value())
-                return make_tuple(DragonTargetFinderData::NOT_FOUND, frc::Pose2d()); // TODO JW come back to this one when we have machine learning
-            else
-                return make_tuple(DragonTargetFinderData::VISION_BASED, m_goalPose.value()); // TODO JW come back to this one when we have machine learning
-        }
-    }
     else if (item == DragonTargetFinderTarget::PROCESSOR)
     {
         frc::Pose2d processorPose = ProcessorHelper::GetInstance()->CalcProcessorPose();

@@ -35,6 +35,12 @@ void TeleopFieldDrive::Initialize()
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElementIsDone_Bool, false);
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::IsInBargeZone_Bool, false);
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::IsInReefZone_Bool, false);
+
+    auto vision = DragonVision::GetDragonVision();
+    if (vision != nullptr)
+    {
+        vision->SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE::BOTH, DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG);
+    }
 }
 
 void TeleopFieldDrive::Execute()

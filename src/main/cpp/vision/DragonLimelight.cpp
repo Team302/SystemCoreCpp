@@ -31,6 +31,7 @@
 #include "frc/Timer.h"
 #include "units/length.h"
 #include "units/time.h"
+#include "frc/RobotBase.h"
 
 // Team 302 includes
 #include "chassis/ChassisConfigMgr.h"
@@ -99,6 +100,11 @@ void DragonLimelight::PeriodicCacheData()
 
 bool DragonLimelight::HealthCheck()
 {
+    if (frc::RobotBase::IsSimulation())
+    {
+        return true; // In simulation, we don't have a limelight, so just return true
+    }
+
     auto nt = m_networktable.get();
     if (nt != nullptr)
     {
@@ -218,6 +224,10 @@ std::optional<units::angle::degree_t> DragonLimelight::GetTargetSkew()
  */
 std::optional<VisionPose> DragonLimelight::EstimatePoseOdometryLimelight(bool megatag2)
 {
+    if (frc::RobotBase::IsSimulation())
+    {
+        return std::nullopt;
+    }
     // use megatag1
     // megatag2 = false;  TODO: Try Again without this
     auto mode = static_cast<int>(LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_ONLY); // Chief Delphi answer says perfect portrait pose doesn't work with internal IMU

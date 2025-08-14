@@ -22,7 +22,7 @@
 // FRC Includes
 #include "frc/Timer.h"
 #include "frc/controller/PIDController.h"
-#include "choreo/trajectory/Trajectory.h"
+#include <choreo/trajectory/Trajectory.h>
 
 class TrajectoryDrive : public frc2::CommandHelper<frc2::Command, TrajectoryDrive>
 {

@@ -43,6 +43,7 @@ private:
 
     swerve::requests::RobotCentric m_RobotDriveRequest = swerve::requests::RobotCentric{}
                                                              .WithDeadband(m_maxSpeed * 0.1)
-                                                             .WithRotationalDeadband(m_maxAngularRate * 0.1)                   // Add a 10% deadband
-                                                             .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage); // Use open-loop control for drive motors
+                                                             .WithRotationalDeadband(m_maxAngularRate * 0.1) // Add a 10% deadband
+                                                             .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage)
+                                                             .WithDesaturateWheelSpeeds(true);
 };

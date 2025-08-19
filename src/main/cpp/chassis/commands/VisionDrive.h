@@ -50,12 +50,12 @@ private:
     double m_forwardkP = 0.12;
     double m_forwadkI = 0.1;
     double m_forwardkD = 0.0;
-    double m_rotationkP = 0.15;
-    double m_rotationkI = 0.1;
+    double m_rotationkP = 5.0;
+    double m_rotationkI = 1.5;
     double m_rotationkD = 0.0;
 
     frc::PIDController m_drivePID{m_forwardkP, m_forwadkI, m_forwardkD};
-    frc::PIDController m_rotatePID{m_forwardkP, m_forwadkI, m_forwardkD};
+    frc::PIDController m_rotatePID{m_rotationkP, m_rotationkI, m_rotationkD};
 
     swerve::requests::RobotCentric m_RobotDriveRequest = swerve::requests::RobotCentric{}
                                                              .WithDeadband(m_maxSpeed * 0.1)

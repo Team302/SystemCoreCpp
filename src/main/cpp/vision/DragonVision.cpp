@@ -273,8 +273,12 @@ std::optional<VisionData> DragonVision::GetVisionDataToNearestTag()
 
 std::optional<VisionData> DragonVision::GetVisionDataFromAlgae(VISION_ELEMENT element)
 {
-	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::BOTH);
+	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS);
+	return GetRawVisionDataFromObject(cameras, DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL);
+}
 
+std::optional<VisionData> DragonVision::GetRawVisionDataFromObject(std::vector<DragonLimelight *> cameras, DRAGON_LIMELIGHT_PIPELINE pipeline)
+{
 	for (auto cam : cameras)
 	{
 		if (cam->GetPipeline() == DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL)
@@ -282,23 +286,22 @@ std::optional<VisionData> DragonVision::GetVisionDataFromAlgae(VISION_ELEMENT el
 			if (cam->HasTarget())
 			{
 				// create translation using 3 estimated distances
-
 				if (cam->EstimateTargetXDistance_RelToRobotCoords().has_value() ||
 					cam->EstimateTargetZDistance_RelToRobotCoords().has_value() ||
 					cam->EstimateTargetYDistance_RelToRobotCoords().has_value())
 				{
-					frc::Translation3d translationToAlgae = frc::Translation3d(cam->EstimateTargetXDistance_RelToRobotCoords().value(),
-																			   cam->EstimateTargetYDistance_RelToRobotCoords().value(),
-																			   cam->EstimateTargetZDistance_RelToRobotCoords().value());
-					frc::Rotation3d rotationToAlgae = frc::Rotation3d();
+					frc::Translation3d translationToTarget = frc::Translation3d(cam->EstimateTargetXDistance_RelToRobotCoords().value(),
+																				cam->EstimateTargetYDistance_RelToRobotCoords().value(),
+																				cam->EstimateTargetZDistance_RelToRobotCoords().value());
+					frc::Rotation3d rotationToTarget = frc::Rotation3d();
 
 					// create rotation3d with pitch and yaw (don't have access to roll)
-					rotationToAlgae = frc::Rotation3d(units::angle::degree_t(0.0),
-													  cam->GetTargetPitchRobotFrame().value(),
-													  cam->GetTargetYawRobotFrame().value());
+					rotationToTarget = frc::Rotation3d(units::angle::degree_t(0.0),
+													   cam->GetTargetPitchRobotFrame().value(),
+													   cam->GetTargetYawRobotFrame().value());
 
 					// return VisionData with new translation and rotation
-					return VisionData{frc::Transform3d(translationToAlgae, rotationToAlgae), translationToAlgae, rotationToAlgae, -1};
+					return VisionData{frc::Transform3d(translationToTarget, rotationToTarget), translationToTarget, rotationToTarget, -1};
 				}
 			}
 		}
@@ -453,23 +456,32 @@ std::optional<double> DragonVision::GetTargetArea(DRAGON_LIMELIGHT_CAMERA_USAGE 
 units::angle::degree_t DragonVision::GetTy(DRAGON_LIMELIGHT_CAMERA_USAGE usage)
 {
 	auto cameras = GetCameras(usage);
+	units::angle::degree_t minTy = units::angle::degree_t(720); // arbitrary large value
 	for (auto cam : cameras)
 	{
-		return cam->GetTy();
+		auto thisTy = cam->GetTy();
+		if (thisTy < minTy)
+		{
+			minTy = thisTy;
+		}
 	}
-	return 0_deg;
+	return minTy;
 }
 
 units::angle::degree_t DragonVision::GetTx(DRAGON_LIMELIGHT_CAMERA_USAGE usage)
 {
 	auto cameras = GetCameras(usage);
+	units::angle::degree_t minTx = units::angle::degree_t(720); // arbitrary large value
 	for (auto cam : cameras)
 	{
-		return cam->GetTx();
+		auto thisTx = cam->GetTx();
+		if (thisTx < minTx)
+		{
+			minTx = thisTx;
+		}
 	}
-	return 0_deg;
+	return minTx;
 }
-
 std::optional<units::angle::degree_t> DragonVision::GetTargetYaw(DRAGON_LIMELIGHT_CAMERA_USAGE usage)
 {
 	auto cameras = GetCameras(usage);
@@ -566,7 +578,7 @@ std::vector<DragonLimelight *> DragonVision::GetCameras(DRAGON_LIMELIGHT_CAMERA_
 	{
 		bool addCam = false;
 		auto cam = (*it).second;
-		if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::BOTH)
+		if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS)
 		{
 			if (cam->HealthCheck())
 			{
@@ -579,14 +591,14 @@ std::vector<DragonLimelight *> DragonVision::GetCameras(DRAGON_LIMELIGHT_CAMERA_
 			addCam = (*it).first == usage;
 			if (!addCam)
 			{
-				if ((*it).first == DRAGON_LIMELIGHT_CAMERA_USAGE::BOTH)
+				if ((*it).first == DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS)
 				{
 					auto pipe = cam->GetPipeline();
 					if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS)
 					{
 						addCam = pipe == DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG;
 					}
-					else if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION)
+					else if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE)
 					{
 						addCam = pipe == DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL || pipe == DRAGON_LIMELIGHT_PIPELINE::COLOR_THRESHOLD;
 					}
@@ -607,7 +619,7 @@ std::vector<DragonLimelight *> DragonVision::GetCameras(DRAGON_LIMELIGHT_CAMERA_
 
 DragonLimelight *DragonVision::GetCameras(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier) const
 {
-	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::BOTH);
+	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS);
 	for (auto cam : cameras)
 	{
 		if (cam->GetCameraIdentifier() == identifier)
@@ -647,7 +659,7 @@ std::optional<frc::Pose3d> DragonVision::GetAprilTagPose(FieldConstants::AprilTa
 	return std::nullopt;
 }
 
-void DragonVision::SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE position, DRAGON_LIMELIGHT_PIPELINE pipeline) // TODO: When we rework vision, we should make this funciton a result of Camera names not usage, this way we can specify the camera we want. Not all cameras of a certian change to the same pipeline
+void DragonVision::SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE position, DRAGON_LIMELIGHT_PIPELINE pipeline)
 {
 	auto cameras = GetCameras(position);
 	for (auto cam : cameras)

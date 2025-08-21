@@ -39,7 +39,7 @@ void TeleopFieldDrive::Initialize()
     auto vision = DragonVision::GetDragonVision();
     if (vision != nullptr)
     {
-        vision->SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE::BOTH, DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG);
+        vision->SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS, DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG);
     }
 }
 

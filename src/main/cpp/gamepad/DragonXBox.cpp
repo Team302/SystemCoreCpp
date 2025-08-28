@@ -73,14 +73,14 @@ DragonXBox::DragonXBox(
 
     // Create POVButton Objects for the POV
 
-    m_button[TeleopControlMappingEnums::POV_0] = new POVButton(m_xbox, 0);
-    m_button[TeleopControlMappingEnums::POV_45] = new POVButton(m_xbox, 1);
-    m_button[TeleopControlMappingEnums::POV_90] = new POVButton(m_xbox, 2);
-    m_button[TeleopControlMappingEnums::POV_135] = new POVButton(m_xbox, 3);
-    m_button[TeleopControlMappingEnums::POV_180] = new POVButton(m_xbox, 4);
-    m_button[TeleopControlMappingEnums::POV_225] = new POVButton(m_xbox, 5);
-    m_button[TeleopControlMappingEnums::POV_270] = new POVButton(m_xbox, 6);
-    m_button[TeleopControlMappingEnums::POV_315] = new POVButton(m_xbox, 7);
+    m_button[TeleopControlMappingEnums::POV_0] = new POVButton(m_xbox, frc::DriverStation::POVDirection::kUp);
+    m_button[TeleopControlMappingEnums::POV_45] = new POVButton(m_xbox, frc::DriverStation::POVDirection::kUpRight);
+    m_button[TeleopControlMappingEnums::POV_90] = new POVButton(m_xbox, frc::DriverStation::POVDirection::kRight);
+    m_button[TeleopControlMappingEnums::POV_135] = new POVButton(m_xbox, frc::DriverStation::POVDirection::kDownRight);
+    m_button[TeleopControlMappingEnums::POV_180] = new POVButton(m_xbox, frc::DriverStation::POVDirection::kDown);
+    m_button[TeleopControlMappingEnums::POV_225] = new POVButton(m_xbox, frc::DriverStation::POVDirection::kDownLeft);
+    m_button[TeleopControlMappingEnums::POV_270] = new POVButton(m_xbox, frc::DriverStation::POVDirection::kLeft);
+    m_button[TeleopControlMappingEnums::POV_315] = new POVButton(m_xbox, frc::DriverStation::POVDirection::kUpLeft);
 }
 
 DragonXBox::~DragonXBox()

@@ -22,7 +22,7 @@
 #include "units/velocity.h"
 #include "units/angle.h"
 #include "frc/Timer.h"
-#include "choreo/choreo.h"
+#include <choreo/Choreo.h>
 
 // 302 includes
 #include "chassis/commands/TrajectoryDrive.h"

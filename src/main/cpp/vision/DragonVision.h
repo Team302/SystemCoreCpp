@@ -115,8 +115,8 @@ private:
     std::vector<int> GetBargeTags(frc::DriverStation::Alliance allianceColor) const;
 
     std::optional<VisionData> GetVisionDataToNearestFieldElementAprilTag(VISION_ELEMENT element);
-
     std::optional<VisionData> SingleTagToElement(frc::Pose3d elementPose, int idToSearch);
+    std::optional<VisionData> GetRawVisionDataFromObject(std::vector<DragonLimelight *> cameras, DRAGON_LIMELIGHT_PIPELINE pipeline);
 
     static DragonVision *m_dragonVision;
     std::multimap<DRAGON_LIMELIGHT_CAMERA_USAGE, DragonLimelight *> m_dragonLimelightMap;

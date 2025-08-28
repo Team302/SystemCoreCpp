@@ -99,21 +99,21 @@ void TeleopControl::InitializeController(int port)
 {
 	if (m_controller[port] == nullptr)
 	{
-		if (port == 0) // Special handling for port 0
+		if (port == 0) // Special handling for port r
 		{
 			m_hybridController = new DragonHybridController(port);
 			m_controller[port] = m_hybridController->GetNonCommandController();
 		}
-		else if (DriverStation::GetJoystickIsGamepad(port))
+		else // if (DriverStation::GetJoystickIsGamepad(port)) TODO: re-enable when GetJoystickIsGampad is supported
 		{
 			auto xbox = new DragonXBox(port);
 			m_controller[port] = xbox;
 		}
-		else if (DriverStation::GetJoystickType(port) == GenericHID::kHID1stPerson)
-		{
-			auto gamepad = new DragonGamepad(port);
-			m_controller[port] = gamepad;
-		}
+		// else if (DriverStation::GetJoystickType(port) == GenericHID::kHID1stPerson) TODO: re-enable when GetJoystickIsGampad is supported
+		// {
+		// 	auto gamepad = new DragonGamepad(port);
+		// 	m_controller[port] = gamepad;
+		// }
 
 		if (m_controller[port] != nullptr)
 		{
@@ -450,6 +450,7 @@ frc2::Trigger TeleopControl::GetCommandTrigger(TeleopControlFunctions::FUNCTION 
 	return frc2::Trigger([]()
 						 { return false; }); // Return a trigger that is always inactive if the controller is null or the function is not mapped
 }
+
 frc2::Trigger TeleopControl::GetAxisAsTrigger(TeleopControlFunctions::FUNCTION function, double threshold)
 {
 	return frc2::Trigger([this, function, threshold]

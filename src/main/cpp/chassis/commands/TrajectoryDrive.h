@@ -15,14 +15,14 @@
 
 #pragma once
 
-#include <frc2/command/CommandHelper.h>
-#include <frc2/command/Command.h>
+#include "frc2/command/CommandHelper.h"
+#include "frc2/command/Command.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 
 // FRC Includes
 #include "frc/Timer.h"
 #include "frc/controller/PIDController.h"
-#include "choreo/trajectory/Trajectory.h"
+#include <choreo/trajectory/Trajectory.h>
 
 class TrajectoryDrive : public frc2::CommandHelper<frc2::Command, TrajectoryDrive>
 {

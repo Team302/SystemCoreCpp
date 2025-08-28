@@ -47,6 +47,7 @@ void ResetPositionTrajectory::Init(PrimitiveParams *param)
     {
 
         auto path = AutonUtils::GetTrajectoryFromPathFile(param->GetTrajectoryName());
+
         if (path.has_value())
         {
             auto initialPose = path.value().GetInitialPose();

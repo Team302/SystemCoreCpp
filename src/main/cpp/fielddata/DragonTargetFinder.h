@@ -78,7 +78,6 @@ private:
     void SetChassis();
 
     std::optional<frc::Pose2d> m_goalPose;
-    std::optional<frc::Pose2d> m_algaePose;
 
     bool m_switchToVision = false;
     static constexpr units::length::meter_t m_fuseTol{0.25};

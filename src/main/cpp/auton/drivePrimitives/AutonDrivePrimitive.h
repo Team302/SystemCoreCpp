@@ -16,7 +16,7 @@
 
 #include "auton/drivePrimitives/IPrimitive.h"
 #include "frc/Timer.h"
-#include <frc2/command/Command.h>
+#include "frc2/command/Command.h"
 #include <frc2/command/CommandScheduler.h>
 #include "auton/ZoneParams.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"

@@ -288,9 +288,6 @@ void DragonTale::CreatePRACTICE_BOT9999()
 	m_ElevatorFollower = new ctre::phoenix6::hardware::TalonFX(16, "canivore");
 	m_Coral = new ctre::phoenix6::hardware::TalonFXS(18, "rio");
 
-	m_CoralInSensor = new frc::DigitalInput(1);	 // yellow wire reverse
-	m_CoralOutSensor = new frc::DigitalInput(0); // black
-	m_AlgaeSensor = new frc::DigitalInput(2);	 // red reverse this one
 	m_BranchCANRange = nullptr;
 	m_ElevatorCANRange = nullptr;
 
@@ -384,9 +381,7 @@ void DragonTale::CreateCOMP_BOT302()
 	m_Coral = new ctre::phoenix6::hardware::TalonFXS(18, "canivore");
 	m_AlgaeTalonFXS = new ctre::phoenix6::hardware::TalonFXS(19, "canivore");
 
-	m_CoralInSensor = new frc::DigitalInput(0);
-	m_CoralOutSensor = new frc::DigitalInput(1);
-	m_AlgaeSensor = new frc::DigitalInput(2);
+	m_ArmSensors = new ctre::phoenix6::hardware::CANdi(2, "canivore");
 	m_ElevatorCANRange = new ctre::phoenix6::hardware::CANrange(31, "canivore");
 	m_BranchCANRange = new ctre::phoenix6::hardware::CANrange(32, "canivore");
 
@@ -413,6 +408,12 @@ void DragonTale::CreateCOMP_BOT302()
 	ElevatorCANRangeConfigs.FovParams.FOVRangeX = 3.75_deg;
 	ElevatorCANRangeConfigs.FovParams.FOVRangeY = 3.75_deg;
 	m_ElevatorCANRange->GetConfigurator().Apply(ElevatorCANRangeConfigs);
+
+	ctre::phoenix6::configs::CANdiConfiguration ArmSensorsConfigs{};
+	ArmSensorsConfigs.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenHigh;
+	ArmSensorsConfigs.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenHigh;
+
+	m_ArmSensors->GetConfigurator().Apply(ArmSensorsConfigs);
 
 	m_PositionInch = new ControlData(
 		ControlModes::CONTROL_TYPE::POSITION_INCH,		  // ControlModes::CONTROL_TYPE mode
@@ -790,18 +791,14 @@ void DragonTale::InitializeTalonFXArmCOMP_BOT302()
 	configs.Voltage.PeakReverseVoltage = units::voltage::volt_t(-11.0);
 	configs.ClosedLoopRamps.TorqueClosedLoopRampPeriod = units::time::second_t(0.25);
 
-	configs.HardwareLimitSwitch.ForwardLimitEnable = true;
-	configs.HardwareLimitSwitch.ForwardLimitRemoteSensorID = 2;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = m_maxAngle;
-	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::RemoteCANdiS2; // Verify S1/S2
+	configs.HardwareLimitSwitch.ForwardLimitEnable = false;
+	configs.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
+	configs.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue::Disabled; // Verify S1/S2
 	configs.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue::NormallyOpen;
 
-	configs.HardwareLimitSwitch.ReverseLimitEnable = true;
-	configs.HardwareLimitSwitch.ReverseLimitRemoteSensorID = 2;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = m_minAngle;
-	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::RemoteCANdiS1; // Verify S1/S2
+	configs.HardwareLimitSwitch.ReverseLimitEnable = false;
+	configs.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = false;
+	configs.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue::Disabled; // Verify S1/S2
 	configs.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue::NormallyOpen;
 
 	configs.MotorOutput.Inverted = InvertedValue::Clockwise_Positive;
@@ -1309,7 +1306,6 @@ void DragonTale::DataLog(uint64_t timestamp)
 	LogElevatorLeaderTarget("/DragonTale/Elevator/ElevatorLeaderTarget", timestamp, "double", m_elevatorTarget.value());
 	LogElevatorFollower("/DragonTale/Elevator/ElevatorFollower", timestamp, "inches", units::length::inch_t(m_ElevatorFollower->GetPosition().GetValueAsDouble()).value());
 	LogElevatorFollowerTarget("/DragonTale/Elevator/ElevatorFollowerTarget", timestamp, "double", m_ElevatorLeader->GetRotorPosition().GetValueAsDouble());
-	LogCoralInSensor("/DragonTale/Coral/CoralInSensor", timestamp, GetCoralInSensorState());
 	LogCoralOutSensor("/DragonTale/Coral/CoralOutSensor", timestamp, GetCoralOutSensorState());
 	LogAlgaeSensor("/DragonTale/Algae/ALgaeSensor", timestamp, GetAlgaeSensorState());
 	LogDragonTaleState("/DragonTale/DragonTaleState", timestamp, GetCurrentState());
@@ -1318,7 +1314,6 @@ void DragonTale::DataLog(uint64_t timestamp)
 void DragonTale::LogInformation()
 {
 	// TODO: Remove this logging once we have datalogging and have both robots in a swell condition :)
-	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "Coral In Sensor", GetCoralInSensorState());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "Coral Out Sensor", GetCoralOutSensorState());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "Algae Sensor", GetAlgaeSensorState());
 	Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DragonTale", "Arm Angle Method (Abs)", GetArmAngle().value());

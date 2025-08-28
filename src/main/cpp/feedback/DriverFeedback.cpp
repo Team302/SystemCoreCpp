@@ -168,7 +168,7 @@ void DriverFeedback::UpdateDiagnosticLEDs()
         auto taleMgr = taleStateManager != nullptr ? dynamic_cast<DragonTale *>(taleStateManager) : nullptr;
         if (taleMgr != nullptr)
         {
-            coralInSensor = taleMgr->GetCoralInSensorState();
+            coralInSensor = false;
             coralOutSensor = taleMgr->GetCoralOutSensorState();
             algaeSensor = taleMgr->GetAlgaeSensorState();
         }

@@ -27,14 +27,14 @@
 #include "ctre/phoenix6/controls/Follower.hpp"
 #include "ctre/phoenix6/configs/Configs.hpp"
 #include "ctre/phoenix6/TalonFXS.hpp"
-#include <frc/DigitalInput.h>
-#include <frc/filter/Debouncer.h>
-#include <ctre/phoenix6/CANcoder.hpp>
-#include <ctre/phoenix6/configs/Configurator.hpp>
-#include <ctre/phoenix6/signals/SpnEnums.hpp>
+#include "frc/filter/Debouncer.h"
+#include "ctre/phoenix6/CANcoder.hpp"
+#include "ctre/phoenix6/configs/Configurator.hpp"
+#include "ctre/phoenix6/signals/SpnEnums.hpp"
 #include "ctre/phoenix6/SignalLogger.hpp"
-#include <ctre/phoenix6/CANrange.hpp>
-#include <frc/controller/ProfiledPIDController.h>
+#include "ctre/phoenix6/CANrange.hpp"
+#include "ctre/phoenix6/CANdi.hpp"
+#include "frc/controller/ProfiledPIDController.h"
 
 #include "mechanisms/base/BaseMech.h"
 #include "state/StateMgr.h"
@@ -156,9 +156,8 @@ public:
 	ctre::phoenix6::hardware::TalonFXS *GetCoral() const { return m_Coral; }
 	ctre::phoenix6::hardware::TalonFXS *GetAlgaeTalonFXS() const { return m_AlgaeTalonFXS; }
 
-	bool GetCoralInSensorState() const { return m_activeRobotId == RobotIdentifier::COMP_BOT_302 ? !m_CoralInSensor->Get() : m_CoralInSensor->Get(); }
-	bool GetCoralOutSensorState() const { return m_CoralOutSensor->Get(); }
-	bool GetAlgaeSensorState() const { return m_AlgaeSensor->Get(); }
+	bool GetCoralOutSensorState() const { return m_ArmSensors->GetS1Closed().GetValue(); }
+	bool GetAlgaeSensorState() const { return m_ArmSensors->GetS2Closed().GetValue(); }
 	bool GetBranchCANRangeState() const { return false; }
 	// bool GetBranchCANRangeState() const { return m_BranchCANRange != nullptr ? m_BranchCANRange->GetIsDetected().GetValue() : false; }
 	// bool GetBranchCANRangeState() const { return false; }
@@ -173,7 +172,7 @@ public:
 	ControlData *GetPercentOutput() const { return m_PercentOutput; }
 
 	units::length::inch_t GetElevatorHeight() { return units::length::inch_t(m_ElevatorLeader->GetPosition().GetValueAsDouble()); }
-	bool AllSensorsFalse() { return !GetCoralInSensorState() && !GetCoralOutSensorState() && !GetAlgaeSensorState(); }
+	bool AllSensorsFalse() { return !GetCoralOutSensorState() && !GetAlgaeSensorState(); }
 
 	units::angle::degree_t GetArmAngle() { return m_ArmAngleSensor->GetAbsolutePosition().GetValue(); }
 
@@ -224,9 +223,7 @@ private:
 	ctre::phoenix6::hardware::TalonFX *m_ElevatorFollower;
 	ctre::phoenix6::hardware::TalonFXS *m_Coral;
 	ctre::phoenix6::hardware::TalonFXS *m_AlgaeTalonFXS;
-	frc::DigitalInput *m_CoralInSensor;
-	frc::DigitalInput *m_CoralOutSensor;
-	frc::DigitalInput *m_AlgaeSensor;
+	ctre::phoenix6::hardware::CANdi *m_ArmSensors;
 	ctre::phoenix6::hardware::CANrange *m_BranchCANRange;
 	ctre::phoenix6::hardware::CANrange *m_ElevatorCANRange;
 	ctre::phoenix6::hardware::CANcoder *m_ArmAngleSensor;

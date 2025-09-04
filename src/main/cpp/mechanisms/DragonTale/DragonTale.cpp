@@ -375,25 +375,26 @@ void DragonTale::CreatePRACTICE_BOT9999()
 void DragonTale::CreateCOMP_BOT302()
 {
 	m_ntName = "DragonTale";
-	m_Arm = new ctre::phoenix6::hardware::TalonFX(17, "canivore");
-	m_ElevatorLeader = new ctre::phoenix6::hardware::TalonFX(4, "canivore");
-	m_ElevatorFollower = new ctre::phoenix6::hardware::TalonFX(16, "canivore");
-	m_Coral = new ctre::phoenix6::hardware::TalonFXS(18, "canivore");
-	m_AlgaeTalonFXS = new ctre::phoenix6::hardware::TalonFXS(19, "canivore");
+	string dragonTaleBusName = "canivore";
+	m_Arm = new ctre::phoenix6::hardware::TalonFX(17, dragonTaleBusName);
+	m_ElevatorLeader = new ctre::phoenix6::hardware::TalonFX(4, dragonTaleBusName);
+	m_ElevatorFollower = new ctre::phoenix6::hardware::TalonFX(16, dragonTaleBusName);
+	m_Coral = new ctre::phoenix6::hardware::TalonFXS(18, dragonTaleBusName);
+	m_AlgaeTalonFXS = new ctre::phoenix6::hardware::TalonFXS(19, dragonTaleBusName);
 
-	m_ArmSensors = new ctre::phoenix6::hardware::CANdi(2, "canivore");
-	m_ElevatorCANRange = new ctre::phoenix6::hardware::CANrange(31, "canivore");
-	m_BranchCANRange = new ctre::phoenix6::hardware::CANrange(32, "canivore");
+	m_ArmSensors = new ctre::phoenix6::hardware::CANdi(2, dragonTaleBusName);
+	m_ElevatorCANRange = new ctre::phoenix6::hardware::CANrange(31, dragonTaleBusName);
+	m_BranchCANRange = new ctre::phoenix6::hardware::CANrange(32, dragonTaleBusName);
 
 	ctre::phoenix6::configs::CANcoderConfiguration ArmAngleSensorConfigs{};
 	ArmAngleSensorConfigs.MagnetSensor.MagnetOffset = units::angle::turn_t(-0.031738);
 	ArmAngleSensorConfigs.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::CounterClockwise_Positive;
-	m_ArmAngleSensor = new ctre::phoenix6::hardware::CANcoder(17, "canivore");
+	m_ArmAngleSensor = new ctre::phoenix6::hardware::CANcoder(17, dragonTaleBusName);
 	m_ArmAngleSensor->GetConfigurator().Apply(ArmAngleSensorConfigs);
 	ctre::phoenix6::configs::CANcoderConfiguration ElevatorHeightSensorConfigs{};
 	ElevatorHeightSensorConfigs.MagnetSensor.MagnetOffset = units::angle::turn_t(-0.11962890625);
 	ElevatorHeightSensorConfigs.MagnetSensor.SensorDirection = ctre::phoenix6::signals::SensorDirectionValue::CounterClockwise_Positive;
-	m_ElevatorHeightSensor = new ctre::phoenix6::hardware::CANcoder(4, "canivore");
+	m_ElevatorHeightSensor = new ctre::phoenix6::hardware::CANcoder(4, dragonTaleBusName);
 	m_ElevatorHeightSensor->GetConfigurator().Apply(ElevatorHeightSensorConfigs);
 
 	ctre::phoenix6::configs::CANrangeConfiguration BranchCANRangeConfigs{};
@@ -410,8 +411,8 @@ void DragonTale::CreateCOMP_BOT302()
 	m_ElevatorCANRange->GetConfigurator().Apply(ElevatorCANRangeConfigs);
 
 	ctre::phoenix6::configs::CANdiConfiguration ArmSensorsConfigs{};
-	ArmSensorsConfigs.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenHigh;
-	ArmSensorsConfigs.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenHigh;
+	ArmSensorsConfigs.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenNotFloating;
+	ArmSensorsConfigs.DigitalInputs.S1CloseState = ctre::phoenix6::signals::S1CloseStateValue::CloseWhenNotFloating;
 
 	m_ArmSensors->GetConfigurator().Apply(ArmSensorsConfigs);
 

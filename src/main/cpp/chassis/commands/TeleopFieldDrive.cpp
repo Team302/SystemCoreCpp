@@ -56,6 +56,7 @@ void TeleopFieldDrive::Execute()
     {
         FaceReef();
         m_chassis->SetControl(m_fieldHeadingDriveRequest.WithVelocityX(forward * m_maxSpeed)
+                                  .WithForwardPerspective(ctre::phoenix6::swerve::requests::ForwardPerspectiveValue::BlueAlliance)
                                   .WithVelocityY(strafe * m_maxSpeed)
                                   .WithTargetDirection(m_targetHeading));
     }
@@ -86,6 +87,6 @@ void TeleopFieldDrive::FaceReef()
     if (info.has_value())
     {
         auto targetpose = get<1>(info.value());
-        m_targetHeading = targetpose.Rotation().Degrees();
+        m_targetHeading = targetpose.Rotation().Degrees() - 180_deg;
     }
 }

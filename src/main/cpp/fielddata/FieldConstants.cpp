@@ -106,7 +106,6 @@ FieldConstants::FieldConstants()
 
     m_aprilTagPoseMap[1] = GetAprilTagPoseFromLayout(1);
     m_aprilTagPoseMap[2] = GetAprilTagPoseFromLayout(2);
-    m_aprilTagPoseMap[2] = GetAprilTagPoseFromLayout(2);
     m_aprilTagPoseMap[3] = GetAprilTagPoseFromLayout(3);
     m_aprilTagPoseMap[4] = GetAprilTagPoseFromLayout(4);
     m_aprilTagPoseMap[5] = GetAprilTagPoseFromLayout(5);

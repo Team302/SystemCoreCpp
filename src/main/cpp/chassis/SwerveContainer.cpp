@@ -102,7 +102,7 @@ void SwerveContainer::CreateReefscapeDriveToCommands(TeleopControl *controller)
     auto driveToAglee = controller->GetCommandTrigger(TeleopControlFunctions::AUTO_ALIGN_ALGAE);
 
     driveToBarge.WhileTrue(frc2::ProxyCommand(m_driveToBarge.get()).ToPtr());
-    if (m_climbMode)
+    if (!m_climbMode)
     {
         driveToAglee.WhileTrue(frc2::ProxyCommand(m_driveToAlgae.get()).ToPtr());
     }

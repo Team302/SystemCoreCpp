@@ -22,8 +22,9 @@
 #include "fielddata/DragonTargetFinder.h"
 #include <units/velocity.h>
 #include <units/angular_velocity.h>
+#include "state/IRobotStateChangeSubscriber.h"
 
-class TeleopFieldDrive : public frc2::CommandHelper<frc2::Command, TeleopFieldDrive>
+class TeleopFieldDrive : public frc2::CommandHelper<frc2::Command, TeleopFieldDrive>, public IRobotStateChangeSubscriber
 {
 public:
     TeleopFieldDrive(subsystems::CommandSwerveDrivetrain *chassis,
@@ -35,6 +36,7 @@ public:
     void Execute() override;
     bool IsFinished() override;
     void End(bool interrupted) override;
+    void NotifyStateUpdate(RobotStateChanges::StateChange change, int value) override;
 
 private:
     subsystems::CommandSwerveDrivetrain *m_chassis;
@@ -46,6 +48,8 @@ private:
     static constexpr double m_heading_kP{10.0};
     static constexpr double m_heading_kI{1.0};
     static constexpr double m_heading_kD{0.0};
+
+    RobotStateChanges::ClimbMode m_climbMode = RobotStateChanges::ClimbMode::ClimbModeOff;
 
     swerve::requests::FieldCentric m_fieldDriveRequest = swerve::requests::FieldCentric{}
                                                              .WithDeadband(m_maxSpeed * 0.1)                                  // TODO: Investigate this deadband vs controller deadband
@@ -59,4 +63,5 @@ private:
                                                                                .WithDesaturateWheelSpeeds(true);
 
     void FaceReef();
+    void FaceBarge();
 };

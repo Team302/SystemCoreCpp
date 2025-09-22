@@ -31,17 +31,17 @@ FieldConstants::FieldConstants()
     ReadFieldCalibrationData();
 
     // Blue AprilTag locations
-    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_CORAL_STATION_LEFT] = GetAprilTagPoseFromLayout(13);
-    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_CORAL_STATION_RIGHT] = GetAprilTagPoseFromLayout(12);
-    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_PROCESSOR] = GetAprilTagPoseFromLayout(16);
-    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_BARGE_FRONT] = GetAprilTagPoseFromLayout(14);
-    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_BARGE_BACK] = GetAprilTagPoseFromLayout(4);
-    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_REEF_AB] = GetAprilTagPoseFromLayout(18);
-    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_REEF_CD] = GetAprilTagPoseFromLayout(17);
-    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_REEF_EF] = GetAprilTagPoseFromLayout(22);
-    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_REEF_GH] = GetAprilTagPoseFromLayout(21);
-    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_REEF_IJ] = GetAprilTagPoseFromLayout(20);
-    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_REEF_KL] = GetAprilTagPoseFromLayout(19);
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_CORAL_STATION_LEFT] = GetAprilTagPoseFromLayout(BLUE_CORAL_STATION_LEFT_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_CORAL_STATION_RIGHT] = GetAprilTagPoseFromLayout(BLUE_CORAL_STATION_RIGHT_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_PROCESSOR] = GetAprilTagPoseFromLayout(BLUE_PROCESSOR_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_BARGE_FRONT] = GetAprilTagPoseFromLayout(BLUE_BARGE_FRONT_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_BARGE_BACK] = GetAprilTagPoseFromLayout(BLUE_BARGE_BACK_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_REEF_AB] = GetAprilTagPoseFromLayout(BLUE_REEF_AB_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_REEF_CD] = GetAprilTagPoseFromLayout(BLUE_REEF_CD_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_REEF_EF] = GetAprilTagPoseFromLayout(BLUE_REEF_EF_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_REEF_GH] = GetAprilTagPoseFromLayout(BLUE_REEF_GH_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_REEF_IJ] = GetAprilTagPoseFromLayout(BLUE_REEF_IJ_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_REEF_KL] = GetAprilTagPoseFromLayout(BLUE_REEF_KL_TAG);
 
     // Blue Calculated Positions
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_CORAL_STATION_LEFT_ALLIANCE] = m_placeholder;
@@ -68,17 +68,17 @@ FieldConstants::FieldConstants()
     fieldConstantsPoseMap[FIELD_ELEMENT::BLUE_PROCESSOR_CALCULATED] = m_placeholder;
 
     // Red AprilTag locations
-    fieldConstantsPoseMap[FIELD_ELEMENT::RED_CORAL_STATION_LEFT] = GetAprilTagPoseFromLayout(1);
-    fieldConstantsPoseMap[FIELD_ELEMENT::RED_CORAL_STATION_RIGHT] = GetAprilTagPoseFromLayout(2);
-    fieldConstantsPoseMap[FIELD_ELEMENT::RED_PROCESSOR] = GetAprilTagPoseFromLayout(3);
-    fieldConstantsPoseMap[FIELD_ELEMENT::RED_BARGE_FRONT] = GetAprilTagPoseFromLayout(5);
-    fieldConstantsPoseMap[FIELD_ELEMENT::RED_BARGE_BACK] = GetAprilTagPoseFromLayout(15);
-    fieldConstantsPoseMap[FIELD_ELEMENT::RED_REEF_AB] = GetAprilTagPoseFromLayout(7);
-    fieldConstantsPoseMap[FIELD_ELEMENT::RED_REEF_CD] = GetAprilTagPoseFromLayout(8);
-    fieldConstantsPoseMap[FIELD_ELEMENT::RED_REEF_EF] = GetAprilTagPoseFromLayout(9);
-    fieldConstantsPoseMap[FIELD_ELEMENT::RED_REEF_GH] = GetAprilTagPoseFromLayout(10);
-    fieldConstantsPoseMap[FIELD_ELEMENT::RED_REEF_IJ] = GetAprilTagPoseFromLayout(11);
-    fieldConstantsPoseMap[FIELD_ELEMENT::RED_REEF_KL] = GetAprilTagPoseFromLayout(6);
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_CORAL_STATION_LEFT] = GetAprilTagPoseFromLayout(RED_CORAL_STATION_LEFT_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_CORAL_STATION_RIGHT] = GetAprilTagPoseFromLayout(RED_CORAL_STATION_RIGHT_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_PROCESSOR] = GetAprilTagPoseFromLayout(RED_PROCESSOR_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_BARGE_FRONT] = GetAprilTagPoseFromLayout(RED_BARGE_FRONT_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_BARGE_BACK] = GetAprilTagPoseFromLayout(RED_BARGE_BACK_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_REEF_AB] = GetAprilTagPoseFromLayout(RED_REEF_AB_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_REEF_CD] = GetAprilTagPoseFromLayout(RED_REEF_CD_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_REEF_EF] = GetAprilTagPoseFromLayout(RED_REEF_EF_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_REEF_GH] = GetAprilTagPoseFromLayout(RED_REEF_GH_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_REEF_IJ] = GetAprilTagPoseFromLayout(RED_REEF_IJ_TAG);
+    fieldConstantsPoseMap[FIELD_ELEMENT::RED_REEF_KL] = GetAprilTagPoseFromLayout(RED_REEF_KL_TAG);
 
     // Red Calculated Positions
     fieldConstantsPoseMap[FIELD_ELEMENT::RED_CORAL_STATION_LEFT_ALLIANCE] = m_placeholder;

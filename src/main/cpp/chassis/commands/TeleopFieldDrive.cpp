@@ -60,7 +60,7 @@ void TeleopFieldDrive::Execute()
         {
             if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kBlue)
             {
-                m_targetHeading = units::angle::degree_t(270);
+                m_targetHeading = units::angle::degree_t(-90);
             }
             else
             {

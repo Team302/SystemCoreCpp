@@ -26,6 +26,7 @@
 #include "state/RobotState.h"
 #include "utils/DragonPower.h"
 
+#include "ctre/phoenix6/CANBus.hpp"
 #include "ctre/phoenix6/TalonFX.hpp"
 #include "ctre/phoenix6/TalonFXS.hpp"
 #include "ctre/phoenix6/controls/Follower.hpp"
@@ -55,6 +56,9 @@ using ctre::phoenix6::signals::StaticFeedforwardSignValue;
 
 using std::string;
 using namespace ClimberManagerStates;
+
+#define CANBUS_302_NAME "canivore"
+#define CANBUS_9999_NAME "canivore"
 
 void ClimberManager::CreateAndRegisterStates()
 {
@@ -97,7 +101,7 @@ std::map<std::string, ClimberManager::STATE_NAMES> ClimberManager::stringToSTATE
 void ClimberManager::CreatePRACTICE_BOT9999()
 {
 	m_ntName = "ClimberManager";
-	m_Climber = new ctre::phoenix6::hardware::TalonFX(7, "canivore");
+	m_Climber = new ctre::phoenix6::hardware::TalonFX(7, ctre::phoenix6::CANBus(CANBUS_9999_NAME));
 
 	m_PositionDegree = new ControlData(
 		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
@@ -172,7 +176,7 @@ void ClimberManager::CreatePRACTICE_BOT9999()
 void ClimberManager::CreateCOMP_BOT302()
 {
 	m_ntName = "ClimberManager";
-	m_Climber = new ctre::phoenix6::hardware::TalonFX(7, "canivore");
+	m_Climber = new ctre::phoenix6::hardware::TalonFX(7, ctre::phoenix6::CANBus(CANBUS_302_NAME));
 
 	m_PositionDegree = new ControlData(
 		ControlModes::CONTROL_TYPE::POSITION_DEGREES,	  // ControlModes::CONTROL_TYPE mode
@@ -345,7 +349,7 @@ void ClimberManager::InitializeTalonFXClimberCOMP_BOT302()
 	configs.MotorOutput.DutyCycleNeutralDeadband = 0;
 
 	configs.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue::RotorSensor;
-	configs.Feedback.SensorToMechanismRatio = 1.0495;
+	configs.Feedback.SensorToMechanismRatio = 1.0405;
 
 	configs.Slot0.kP = m_PositionDegree->GetP();
 	configs.Slot0.kI = m_PositionDegree->GetI();

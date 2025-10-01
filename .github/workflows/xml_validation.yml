@@ -1,0 +1,38 @@
+# workflow for validating auton xml
+# this only validates that all of the json and dtd are ok with each other
+
+name: xml validation
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**/*.xml'
+      - '**/*.dtd'
+
+jobs:
+  validate-xml:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install xmllint
+        run: sudo apt-get update && sudo apt-get install -y libxml2-utils
+
+      - name: Validate XML Files
+        run: |
+          # Loop through each XML file in the repository
+          for file in $(find . -type f -name '*.xml'); do
+            echo "Validating ${file}"
+            # If your XML file already includes a DOCTYPE declaration referencing your DTD,
+            # xmllint will use it automatically. Otherwise, specify the DTD file with --dtdvalid.
+            # Example if specifying a DTD (adjust the path as needed):
+            # xmllint --noout --dtdvalid path/to/your.dtd "$file"
+            # if the file is under the path mechansisms, then specify the dtd
+            if [[ "$file" == *"mechanisms"* ]]; then
+              xmllint --noout --dtdvalid src/main/deploy/mechanisms/mechanisms.dtd "$file" 
+            else
+              xmllint --noout "$file"
+            fi 
+          done

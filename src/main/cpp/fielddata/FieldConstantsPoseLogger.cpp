@@ -16,7 +16,7 @@
 #include <fielddata/FieldConstantsPoseLogger.h>
 
 #ifdef INCLUDE_FIELD_ELEMENT_POSE_LOGGER
-#include "wpi/DataLog.h"
+#include "wpi/datalog/DataLog.h"
 #include "frc/DataLogManager.h"
 #include "frc/geometry/Pose3d.h"
 #include "magic_enum/magic_enum.hpp"

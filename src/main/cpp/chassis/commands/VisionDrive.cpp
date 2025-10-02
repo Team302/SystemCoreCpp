@@ -14,6 +14,7 @@
 //====================================================================================================================================================
 
 #include "chassis/commands/VisionDrive.h"
+#include "utils/logging/debug/Logger.h"
 
 // Note the simplified constructor and AddRequirements call
 VisionDrive::VisionDrive(subsystems::CommandSwerveDrivetrain *chassis,
@@ -25,29 +26,35 @@ VisionDrive::VisionDrive(subsystems::CommandSwerveDrivetrain *chassis,
                                                                                          m_maxAngularRate(maxAngularRate)
 {
     AddRequirements(m_chassis);
-    m_drivePID.SetIZone(5.0);
-    m_rotatePID.SetIZone(5.0);
+    m_drivePID.SetIZone(10.0);
+    m_rotatePID.SetIZone(10.0);
 }
 
 void VisionDrive::Initialize()
 {
     if (m_vision != nullptr)
     {
-        m_vision->SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS, DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL);
+        m_vision->SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE, DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL);
     }
+    m_drivePID.Reset();
+    m_rotatePID.Reset();
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "VisionDrive", "end", false);
 }
 
 void VisionDrive::Execute()
 {
 
-    bool hasTarget = m_vision->HasTarget(DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS);
+    bool hasTarget = m_vision->HasTarget(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE);
+
     if (hasTarget)
     {
-        auto tx = m_vision->GetTx(DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS);
-        auto ty = -m_vision->GetTy(DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS);
+        auto tx = m_vision->GetTx(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE);
+        auto ty = m_vision->GetTy(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE);
 
         auto rotate = std::clamp(units::angular_velocity::degrees_per_second_t(m_rotatePID.Calculate(tx.value())), -m_visionAngularRate, m_visionAngularRate);
-        auto forward = std::clamp(units::velocity::meters_per_second_t(m_drivePID.Calculate(ty.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
+        auto forward = 0_mps; // std::clamp(units::velocity::meters_per_second_t(m_drivePID.Calculate(ty.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "VisionDrive", "tx", tx.value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "VisionDrive", "rotate", rotate.value());
 
         m_chassis->SetControl(
             m_RobotDriveRequest.WithVelocityX(forward)
@@ -76,5 +83,8 @@ bool VisionDrive::IsFinished()
 
 void VisionDrive::End(bool interrupted)
 {
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "VisionDrive", "end", interrupted);
     m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
+    m_counter++;
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "VisionDrive", "counter", m_counter);
 }

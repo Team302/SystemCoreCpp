@@ -42,8 +42,8 @@ private:
     units::angular_velocity::degrees_per_second_t m_maxAngularRate;
 
     swerve::requests::RobotCentric m_RobotDriveRequest = swerve::requests::RobotCentric{}
-                                                             .WithDeadband(m_maxSpeed * 0.1)
-                                                             .WithRotationalDeadband(m_maxAngularRate * 0.1) // Add a 10% deadband
+                                                             .WithDeadband(m_maxSpeed * 0.025)
+                                                             .WithRotationalDeadband(m_maxAngularRate * 0.025)
                                                              .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage)
                                                              .WithDesaturateWheelSpeeds(true);
 };

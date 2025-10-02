@@ -54,20 +54,14 @@ private:
     double m_rotationkI = 3.0;
     double m_rotationkD = 0.0;
 
-    int m_counter = 0;
-
-    frc::PIDController m_drivePID{m_forwardkP, m_forwardkI, m_forwardkD};
-    frc::PIDController m_rotatePID{m_rotationkP, m_rotationkI, m_rotationkD};
+    frc::PIDController m_drivePID{m_forwardkP, m_forwardkI, m_forwardkD, 20_ms};
+    frc::PIDController m_rotatePID{m_rotationkP, m_rotationkI, m_rotationkD, 20_ms};
 
     swerve::requests::RobotCentric m_RobotDriveRequest = swerve::requests::RobotCentric{}
-                                                             .WithDeadband(m_maxSpeed * 0.1)
-                                                             .WithRotationalDeadband(m_maxAngularRate * 0.1) // Add a 10% deadband
                                                              .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage)
                                                              .WithDesaturateWheelSpeeds(true); // Use open-loop control for drive motors
 
     swerve::requests::FieldCentric m_fieldDriveRequest = swerve::requests::FieldCentric{}
-                                                             .WithDeadband(m_maxSpeed * 0.1)                                  // TODO: Investigate this deadband vs controller deadband
-                                                             .WithRotationalDeadband(m_maxAngularRate * 0.1)                  // TODO: Investigate this deadband vs controller deadband
                                                              .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage) // Use open-loop voltage for drive
                                                              .WithDesaturateWheelSpeeds(true);
 };

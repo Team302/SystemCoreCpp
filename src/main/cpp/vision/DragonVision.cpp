@@ -273,7 +273,7 @@ std::optional<VisionData> DragonVision::GetVisionDataToNearestTag()
 
 std::optional<VisionData> DragonVision::GetVisionDataFromAlgae(VISION_ELEMENT element)
 {
-	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS);
+	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE);
 	return GetRawVisionDataFromObject(cameras, DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL);
 }
 

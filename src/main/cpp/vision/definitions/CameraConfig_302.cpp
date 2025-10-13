@@ -45,12 +45,12 @@ void CameraConfig_302::BuildCameraConfig()
                                                 DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::ALGAE_CAMERA,
                                                 DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4,              // PIPELINE initialPipeline,
                                                 DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE, // PIPELINE initialPipeline,
-                                                units::length::meter_t(0.0),                           // units::length::inch_t mountingXOffset, /// <I> x offset of cam from robot center (forward relative to robot)
-                                                units::length::meter_t(0.0),                           // units::length::inch_t mountingYOffset, /// <I> y offset of cam from robot center (left relative to robot)
-                                                units::length::meter_t(0.0),                           // units::length::inch_t mountingZOffset, /// <I> z offset of cam from robot center (up relative to robot)
-                                                units::angle::degree_t(0.0),                           // units::angle::degree_t pitch,          /// <I> - Pitch of Camera
-                                                units::angle::degree_t(0.0),                           // units::angle::degree_t yaw,            /// <I> - Yaw of Camera
-                                                units::angle::degree_t(0.0),                           // units::angle::degree_t roll,           /// <I> - Roll of Camera
+                                                units::length::meter_t(m_ll2MountingXOffset),          // units::length::inch_t mountingXOffset, /// <I> x offset of cam from robot center (forward relative to robot)
+                                                units::length::meter_t(m_ll2MountingYOffset),          // units::length::inch_t mountingYOffset, /// <I> y offset of cam from robot center (left relative to robot)
+                                                units::length::meter_t(m_ll2MountingZOffset),          // units::length::inch_t mountingZOffset, /// <I> z offset of cam from robot center (up relative to robot)
+                                                units::angle::degree_t(m_ll2Pitch),                    // units::angle::degree_t pitch,          /// <I> - Pitch of Camera
+                                                units::angle::degree_t(m_ll2Yaw),                      // units::angle::degree_t yaw,            /// <I> - Yaw of Camera
+                                                units::angle::degree_t(m_ll2Roll),                     // units::angle::degree_t roll,           /// <I> - Roll of Camera
                                                 DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL,        /// <I> enum for starting pipeline
                                                 DRAGON_LIMELIGHT_LED_MODE::LED_OFF,                    // DRAGON_LIMELIGHT_LED_MODE ledMode,
                                                 DRAGON_LIMELIGHT_CAM_MODE::CAM_VISION                  // CAM_MODE camMode,

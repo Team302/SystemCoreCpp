@@ -338,3 +338,30 @@ void DragonTargetFinder::DataLog(uint64_t timestamp)
         }
     }
 }
+
+/// @brief Calculates the X, Y, and Yaw errors to a desired final position relative to the vision target.
+/// @param visionDataOpt The optional vision data containing the target's current pose.
+/// @param desiredXOffset The desired final distance from the target on the X-axis (forward/backward).
+/// @param desiredYOffset The desired final distance from the target on the Y-axis (left/right).
+/// @return An optional containing the errors, or std::nullopt if no vision data is available.
+std::optional<TargetErrors> DragonTargetFinder::CalculateTargetingErrors(
+    const std::optional<VisionData> &visionDataOpt,
+    units::length::inch_t desiredXOffset,
+    units::length::inch_t desiredYOffset)
+{
+    // If there's no vision data, there are no errors to calculate.
+    if (!visionDataOpt.has_value())
+    {
+        return std::nullopt;
+    }
+
+    frc::Translation3d currentTranslation = visionDataOpt.value().translationToTarget;
+    frc::Rotation3d currentRotation = visionDataOpt.value().rotationToTarget;
+
+    TargetErrors errors{
+        .xError = currentTranslation.X() - desiredXOffset,
+        .yError = currentTranslation.Y() - desiredYOffset,
+        .yawError = currentRotation.Z()};
+
+    return errors;
+}

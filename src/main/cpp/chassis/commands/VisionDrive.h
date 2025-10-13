@@ -23,6 +23,7 @@
 #include "units/velocity.h"
 #include "units/angular_velocity.h"
 #include "frc/controller/PIDController.h"
+#include "fielddata/DragonTargetFinder.h"
 
 class VisionDrive : public frc2::CommandHelper<frc2::Command, VisionDrive>
 {
@@ -30,7 +31,10 @@ public:
     VisionDrive(subsystems::CommandSwerveDrivetrain *chassis,
                 TeleopControl *controller,
                 units::velocity::meters_per_second_t maxSpeed,
-                units::angular_velocity::degrees_per_second_t maxAngularRate);
+                units::angular_velocity::degrees_per_second_t maxAngularRate,
+                DragonVision::VISION_ELEMENT visionElement,
+                units::length::inch_t xOffset,
+                units::length::inch_t yOffset);
 
     void Initialize() override;
     void Execute() override;
@@ -44,6 +48,9 @@ private:
     units::velocity::meters_per_second_t m_maxVisionSpeed = 1.25_mps;
     units::angular_velocity::degrees_per_second_t m_visionAngularRate = 360_deg_per_s;
     units::angular_velocity::degrees_per_second_t m_maxAngularRate;
+    DragonVision::VISION_ELEMENT m_visionElement;
+    units::length::inch_t m_xOffset;
+    units::length::inch_t m_yOffset;
 
     DragonVision *m_vision = DragonVision::GetDragonVision();
 
@@ -55,6 +62,7 @@ private:
     double m_rotationkD = 0.0;
 
     frc::PIDController m_drivePID{m_forwardkP, m_forwardkI, m_forwardkD, 20_ms};
+    frc::PIDController m_strafePID{m_forwardkP, m_forwardkI, m_forwardkD, 20_ms};
     frc::PIDController m_rotatePID{m_rotationkP, m_rotationkI, m_rotationkD, 20_ms};
 
     swerve::requests::RobotCentric m_RobotDriveRequest = swerve::requests::RobotCentric{}

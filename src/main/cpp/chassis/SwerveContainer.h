@@ -65,6 +65,9 @@ private:
     bool m_climbMode = false;
     RobotStateChanges::DesiredCoralSide m_desiredCoralSide = RobotStateChanges::DesiredCoralSide::Sidewall;
 
+    units::length::inch_t m_algaeXOffset = 15_in;
+    units::length::inch_t m_algaeYOffset = 6.5_in;
+
     void ConfigureBindings();
     void SetSysIDBinding(TeleopControl *controller);
     void CreateStandardDriveCommands(TeleopControl *controller);

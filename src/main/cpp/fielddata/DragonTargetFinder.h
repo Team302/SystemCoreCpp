@@ -50,6 +50,13 @@ enum class DragonTargetFinderData
     VISION_ODOMETRY_FUSED = 11
 };
 
+struct TargetErrors
+{
+    units::length::inch_t xError;    // Forward/backward error
+    units::length::inch_t yError;    // Left/right (strafe) error
+    units::angle::degree_t yawError; // Rotational error
+};
+
 class DragonTargetFinder : public DragonDataLogger
 {
 public:
@@ -57,6 +64,11 @@ public:
 
     static DragonTargetFinder *GetInstance();
     std::optional<std::tuple<DragonTargetFinderData, frc::Pose2d>> GetPose(DragonTargetFinderTarget item);
+
+    std::optional<TargetErrors> CalculateTargetingErrors(
+        const std::optional<VisionData> &visionDataOpt,
+        units::length::inch_t desiredXOffset,
+        units::length::inch_t desiredYOffset);
 
     void ResetGoalPose();
 

@@ -156,6 +156,8 @@ public:
     std::optional<units::length::inch_t> EstimateTargetYDistance_RelToRobotCoords();
     std::optional<units::length::inch_t> EstimateTargetZDistance_RelToRobotCoords();
 
+    std::optional<frc::Pose3d> CalculateTargetPoseRobotFrame(units::length::meter_t targetHeight);
+
     units::length::inch_t CalcXTargetToRobot(units::angle::degree_t camPitch, units::length::inch_t mountHeight, units::length::inch_t camXOffset, units::angle::degree_t tY);
     units::length::inch_t CalcYTargetToRobot(units::angle::degree_t camYaw, units::length::inch_t xTargetDistance, units::length::inch_t camYOffset, units::length::inch_t camXOffset, units::angle::degree_t tX);
 
@@ -228,4 +230,6 @@ protected:
     const double m_roll = 0.0;
     const double m_rollRate = 0.0;
     int m_numberOfTags;
+
+    frc::Transform3d m_llMountingTrasnform;
 };

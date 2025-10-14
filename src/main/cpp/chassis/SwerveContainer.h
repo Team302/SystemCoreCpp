@@ -46,6 +46,8 @@ private:
 
     units::meters_per_second_t m_maxSpeed;
     static constexpr units::radians_per_second_t m_maxAngularRate{1.5_tps};
+    static constexpr units::length::inch_t m_algaeXOffset = 15_in;
+    static constexpr units::length::inch_t m_algaeYOffset = 6.5_in;
 
     Telemetry logger;
 
@@ -64,9 +66,6 @@ private:
 
     bool m_climbMode = false;
     RobotStateChanges::DesiredCoralSide m_desiredCoralSide = RobotStateChanges::DesiredCoralSide::Sidewall;
-
-    units::length::inch_t m_algaeXOffset = 15_in;
-    units::length::inch_t m_algaeYOffset = 6.5_in;
 
     void ConfigureBindings();
     void SetSysIDBinding(TeleopControl *controller);

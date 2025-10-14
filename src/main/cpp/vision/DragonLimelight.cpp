@@ -72,7 +72,9 @@ DragonLimelight::DragonLimelight(
                                          m_identifier(identifier),
                                          m_networktable(nt::NetworkTableInstance::GetDefault().GetTable(std::string(networkTableName))),
                                          m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
-                                         m_cameraPose(frc::Pose3d(mountingXOffset, mountingYOffset, mountingZOffset, frc::Rotation3d(roll, pitch, yaw)))
+                                         m_cameraPose(frc::Pose3d(mountingXOffset, mountingYOffset, mountingZOffset, frc::Rotation3d(roll, pitch, yaw))),
+                                         m_llMountingTrasnform(frc::Transform3d(frc::Translation3d{mountingXOffset, mountingYOffset, mountingZOffset},
+                                                                                frc::Rotation3d(roll, pitch, yaw)))
 {
     SetLEDMode(ledMode);
     SetCamMode(camMode);
@@ -662,4 +664,45 @@ void DragonLimelight::SetRobotPose(const frc::Pose2d &pose)
                                           pitchrate,
                                           roll,
                                           rollrate);
+}
+
+/**
+ * @brief Calculates the full 3D pose of the target relative to the robot's center,
+ * accounting for all camera mounting offsets. This function calculates the pose in three steps:
+ * 1. Calculate the distance to the target using the known target height and the camera's pitch and vertical offset.
+ * 2. Use the distance and the horizontal and vertical angles to find the target's position in the camera's 3D coordinate frame.
+ * 3. Apply the camera's mounting transform to get the pose in the robot's frame.
+ *
+ * @param targetHeight The known height of the target from the floor.
+ * @return An optional containing the target's Pose3d relative to the robot, or std::nullopt on error.
+ */
+std::optional<frc::Pose3d> DragonLimelight::CalculateTargetPoseRobotFrame(
+    units::length::meter_t targetHeight)
+{
+    units::angle::degree_t cameraPitch = m_cameraPose.Rotation().Y();
+
+    units::length::meter_t cameraHeight = m_cameraPose.Z();
+    units::angle::degree_t tY = GetTy();
+    units::angle::degree_t tX = -GetTx();
+
+    units::angle::degree_t totalPitch = cameraPitch + tY;
+    units::length::meter_t distanceToTarget = (targetHeight - cameraHeight) / units::math::sin(totalPitch);
+
+    if (distanceToTarget < 0_m || !HasTarget())
+    {
+        return std::nullopt;
+    }
+
+    units::length::meter_t xCam = distanceToTarget * units::math::cos(tY) * units::math::cos(tX);
+    units::length::meter_t yCam = distanceToTarget * units::math::cos(tY) * units::math::sin(tX);
+    units::length::meter_t zCam = distanceToTarget * units::math::sin(tY);
+
+    frc::Translation3d targetTranslationInCamFrame{xCam, yCam, zCam};
+    frc::Rotation3d targetRotationInCamFrame{0_deg, -tY, tX};
+
+    frc::Pose3d targetPoseInCamFrame{targetTranslationInCamFrame, targetRotationInCamFrame};
+
+    frc::Pose3d targetPoseInRobotFrame = targetPoseInCamFrame.TransformBy(m_llMountingTrasnform);
+
+    return targetPoseInRobotFrame;
 }

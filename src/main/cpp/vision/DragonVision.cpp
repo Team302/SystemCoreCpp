@@ -281,32 +281,24 @@ std::optional<VisionData> DragonVision::GetRawVisionDataFromObject(std::vector<D
 {
 	for (auto cam : cameras)
 	{
-		if (cam->GetPipeline() == DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL)
+		if (cam->GetPipeline() == DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL || true)
 		{
 			if (cam->HasTarget())
 			{
-				// create translation using 3 estimated distances
-				if (cam->EstimateTargetXDistance_RelToRobotCoords().has_value() ||
-					cam->EstimateTargetZDistance_RelToRobotCoords().has_value() ||
-					cam->EstimateTargetYDistance_RelToRobotCoords().has_value())
-				{
-					frc::Translation3d translationToTarget = frc::Translation3d(cam->EstimateTargetXDistance_RelToRobotCoords().value(),
-																				cam->EstimateTargetYDistance_RelToRobotCoords().value(),
-																				cam->EstimateTargetZDistance_RelToRobotCoords().value());
-					frc::Rotation3d rotationToTarget = frc::Rotation3d();
+				std::optional<frc::Pose3d> targetPose = cam->CalculateTargetPoseRobotFrame(m_algaeTargetHeight);
 
-					// create rotation3d with pitch and yaw (don't have access to roll)
-					rotationToTarget = frc::Rotation3d(units::angle::degree_t(0.0),
-													   cam->GetTargetPitchRobotFrame().value(),
-													   cam->GetTargetYawRobotFrame().value());
+				frc::Translation3d translationToTarget = frc::Translation3d(targetPose->X(), targetPose->Y(), targetPose->Z());
+				frc::Rotation3d rotationToTarget = frc::Rotation3d();
 
-					// return VisionData with new translation and rotation
-					return VisionData{frc::Transform3d(translationToTarget, rotationToTarget), translationToTarget, rotationToTarget, -1};
-				}
+				rotationToTarget = frc::Rotation3d(units::angle::degree_t(0.0),
+												   units::angle::degree_t(0.0),
+												   units::math::atan2(translationToTarget.Y(), translationToTarget.X())); // roll pitch yaw
+
+				// return VisionData with new translation and rotation
+				return VisionData{frc::Transform3d(translationToTarget, rotationToTarget), translationToTarget, rotationToTarget, -1};
 			}
 		}
 	}
-	// if we don't have a selected cam
 	return std::nullopt;
 }
 

@@ -60,11 +60,11 @@ void VisionDrive::Execute()
     if (visionDatan.has_value())
     {
         auto dragonTargetFinderInst = DragonTargetFinder::GetInstance();
-        auto erros = dragonTargetFinderInst->CalculateTargetingErrors(visionDatan.value(), m_xOffset, m_yOffset);
+        auto errors = dragonTargetFinderInst->CalculateTargetingErrors(visionDatan.value(), m_xOffset, m_yOffset);
 
-        auto rotate = std::clamp(units::angular_velocity::degrees_per_second_t(m_rotatePID.Calculate(erros.value().yawError.value())), -m_visionAngularRate, m_visionAngularRate);
-        auto forward = std::clamp(units::velocity::meters_per_second_t(m_drivePID.Calculate(erros.value().xError.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
-        auto strafe = std::clamp(units::velocity::meters_per_second_t(m_strafePID.Calculate(erros.value().yError.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
+        auto rotate = std::clamp(units::angular_velocity::degrees_per_second_t(m_rotatePID.Calculate(-errors.value().yawError.value())), -m_visionAngularRate, m_visionAngularRate);
+        auto forward = std::clamp(units::velocity::meters_per_second_t(m_drivePID.Calculate(-errors.value().xError.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
+        auto strafe = std::clamp(units::velocity::meters_per_second_t(m_strafePID.Calculate(-errors.value().yError.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
 
         m_chassis->SetControl(
             m_RobotDriveRequest.WithVelocityX(forward)

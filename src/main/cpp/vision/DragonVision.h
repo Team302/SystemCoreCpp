@@ -121,4 +121,6 @@ private:
     static DragonVision *m_dragonVision;
     std::multimap<DRAGON_LIMELIGHT_CAMERA_USAGE, DragonLimelight *> m_dragonLimelightMap;
     std::vector<DragonVisionPoseEstimator *> m_poseEstimators;
+
+    units::length::inch_t m_algaeTargetHeight{8.25};
 };

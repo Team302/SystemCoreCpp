@@ -59,6 +59,24 @@ void CameraConfig_302::BuildCameraConfig()
     DragonVision::GetDragonVision()->AddLimelight(back, DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE);
     m_limelightIndexs.push_back(1);
 
+    DragonLimelight *side = new DragonLimelight(std::string("limelight-cage"), // networkTableName
+                                                DRAGON_LIMELIGHT_CAMERA_IDENTIFIER::CAGE_CAMERA,
+                                                DRAGON_LIMELIGHT_CAMERA_TYPE::LIMELIGHT4,             // PIPELINE initialPipeline,
+                                                DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_CAGE, // PIPELINE initialPipeline,
+                                                units::length::meter_t(m_ll3MountingXOffset),         // units::length::inch_t mountingXOffset, /// <I> x offset of cam from robot center (forward relative to robot)
+                                                units::length::meter_t(m_ll3MountingYOffset),         // units::length::inch_t mountingYOffset, /// <I> y offset of cam from robot center (left relative to robot)
+                                                units::length::meter_t(m_ll3MountingZOffset),         // units::length::inch_t mountingZOffset, /// <I> z offset of cam from robot center (up relative to robot)
+                                                units::angle::degree_t(m_ll3Pitch),                   // units::angle::degree_t pitch,          /// <I> - Pitch of Camera
+                                                units::angle::degree_t(m_ll3Yaw),                     // units::angle::degree_t yaw,            /// <I> - Yaw of Camera
+                                                units::angle::degree_t(m_ll3Roll),                    // units::angle::degree_t roll,           /// <I> - Roll of Camera
+                                                DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL,       /// <I> enum for starting pipeline
+                                                DRAGON_LIMELIGHT_LED_MODE::LED_OFF,                   // DRAGON_LIMELIGHT_LED_MODE ledMode,
+                                                DRAGON_LIMELIGHT_CAM_MODE::CAM_VISION                 // CAM_MODE camMode,
+
+    ); // additional parameter
+    DragonVision::GetDragonVision()->AddLimelight(side, DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_CAGE);
+    m_limelightIndexs.push_back(2);
+
     new DragonQuest(units::length::inch_t(m_questMountingXOffset), // <I> x offset of Quest from robot center (forward relative to robot)
                     units::length::inch_t(m_questMountingYOffset), // <I> y offset of Quest from robot center (left relative to robot)
                     units::length::inch_t(m_questMountingZOffset), // <I> z offset of Quest from robot center (up relative to robot)

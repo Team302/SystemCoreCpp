@@ -48,7 +48,8 @@ public:
         CORAL_STATION,
         PROCESSOR,
         REEF,
-        NEAREST_APRILTAG
+        NEAREST_APRILTAG,
+        CAGE
     };
 
     std::optional<frc::Pose3d> GetAprilTagPose(FieldConstants::AprilTagIDs tagId) const;

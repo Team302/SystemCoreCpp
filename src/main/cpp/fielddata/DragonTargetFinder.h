@@ -68,7 +68,8 @@ public:
     std::optional<TargetErrors> CalculateTargetingErrors(
         const std::optional<VisionData> &visionDataOpt,
         units::length::inch_t desiredXOffset,
-        units::length::inch_t desiredYOffset);
+        units::length::inch_t desiredYOffset,
+        units::angle::degree_t desiredYawOffset);
 
     void ResetGoalPose();
 

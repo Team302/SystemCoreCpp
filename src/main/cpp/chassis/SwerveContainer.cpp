@@ -46,8 +46,8 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_driveToBarge(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::BARGE)),
                                      m_driveToLeftCage(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::LEFT_CAGE)),
                                      m_driveToRightCage(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::RIGHT_CAGE)),
-                                     m_driveToCenterCage(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::CENTER_CAGE)),
-                                     m_driveToAlgae(std::make_unique<VisionDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate, DragonVision::VISION_ELEMENT::ALGAE, m_algaeXOffset, m_algaeYOffset)),
+                                     m_driveToCenterCage(std::make_unique<VisionDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate, DragonVision::VISION_ELEMENT::CAGE, m_cageXOffset, m_cageYOffset, m_cageDegreeOffset)),
+                                     m_driveToAlgae(std::make_unique<VisionDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate, DragonVision::VISION_ELEMENT::ALGAE, m_algaeXOffset, m_algaeYOffset, m_algaeDegreeOffset)),
                                      m_trajectoryDrive(std::make_unique<TrajectoryDrive>(m_chassis))
 
 {

@@ -47,6 +47,13 @@ private:
     static constexpr units::angle::degree_t m_ll2Yaw{-40};                   // 40 degrees to the right
     static constexpr units::angle::degree_t m_ll2Roll{0};                    // 0 degrees
 
+    static constexpr units::length::meter_t m_ll3MountingXOffset{0.5};
+    static constexpr units::length::meter_t m_ll3MountingYOffset{-0.5};
+    static constexpr units::length::meter_t m_ll3MountingZOffset{0.5};
+    static constexpr units::angle::degree_t m_ll3Pitch{0.0};
+    static constexpr units::angle::degree_t m_ll3Yaw{40};
+    static constexpr units::angle::degree_t m_ll3Roll{0};
+
     static constexpr units::length::inch_t m_questMountingXOffset{-12.3};
     static constexpr units::length::inch_t m_questMountingYOffset{-2.5};
     static constexpr units::length::inch_t m_questMountingZOffset{12.574};

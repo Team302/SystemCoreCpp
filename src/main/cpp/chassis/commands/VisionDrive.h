@@ -34,7 +34,8 @@ public:
                 units::angular_velocity::degrees_per_second_t maxAngularRate,
                 DragonVision::VISION_ELEMENT visionElement,
                 units::length::inch_t xOffset,
-                units::length::inch_t yOffset);
+                units::length::inch_t yOffset,
+                units::angle::degree_t degreeOffset);
 
     void Initialize() override;
     void Execute() override;
@@ -51,6 +52,7 @@ private:
     DragonVision::VISION_ELEMENT m_visionElement;
     units::length::inch_t m_xOffset;
     units::length::inch_t m_yOffset;
+    units::angle::degree_t m_degreeOffset;
 
     DragonVision *m_vision = DragonVision::GetDragonVision();
 

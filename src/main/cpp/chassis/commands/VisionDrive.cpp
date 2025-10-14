@@ -22,13 +22,15 @@ VisionDrive::VisionDrive(subsystems::CommandSwerveDrivetrain *chassis,
                          units::angular_velocity::degrees_per_second_t maxAngularRate,
                          DragonVision::VISION_ELEMENT visionElement,
                          units::length::inch_t xOffset,
-                         units::length::inch_t yOffset) : m_chassis(chassis),
-                                                          m_controller(controller),
-                                                          m_maxSpeed(maxSpeed),
-                                                          m_maxAngularRate(maxAngularRate),
-                                                          m_visionElement(visionElement),
-                                                          m_xOffset(xOffset),
-                                                          m_yOffset(yOffset)
+                         units::length::inch_t yOffset,
+                         units::angle::degree_t degreeOffset) : m_chassis(chassis),
+                                                                m_controller(controller),
+                                                                m_maxSpeed(maxSpeed),
+                                                                m_maxAngularRate(maxAngularRate),
+                                                                m_visionElement(visionElement),
+                                                                m_xOffset(xOffset),
+                                                                m_yOffset(yOffset),
+                                                                m_degreeOffset(degreeOffset)
 {
     AddRequirements(m_chassis);
     m_drivePID.SetIZone(5.0);
@@ -60,7 +62,7 @@ void VisionDrive::Execute()
     if (visionDatan.has_value())
     {
         auto dragonTargetFinderInst = DragonTargetFinder::GetInstance();
-        auto errors = dragonTargetFinderInst->CalculateTargetingErrors(visionDatan.value(), m_xOffset, m_yOffset);
+        auto errors = dragonTargetFinderInst->CalculateTargetingErrors(visionDatan.value(), m_xOffset, m_yOffset, m_degreeOffset);
 
         auto rotate = std::clamp(units::angular_velocity::degrees_per_second_t(m_rotatePID.Calculate(-errors.value().yawError.value())), -m_visionAngularRate, m_visionAngularRate);
         auto forward = std::clamp(units::velocity::meters_per_second_t(m_drivePID.Calculate(-errors.value().xError.value())), -m_maxVisionSpeed, m_maxVisionSpeed);

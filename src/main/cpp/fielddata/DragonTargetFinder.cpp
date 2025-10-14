@@ -347,7 +347,8 @@ void DragonTargetFinder::DataLog(uint64_t timestamp)
 std::optional<TargetErrors> DragonTargetFinder::CalculateTargetingErrors(
     const std::optional<VisionData> &visionDataOpt,
     units::length::inch_t desiredXOffset,
-    units::length::inch_t desiredYOffset)
+    units::length::inch_t desiredYOffset,
+    units::angle::degree_t desiredYawOffset)
 {
     // If there's no vision data, there are no errors to calculate.
     if (!visionDataOpt.has_value())
@@ -361,7 +362,7 @@ std::optional<TargetErrors> DragonTargetFinder::CalculateTargetingErrors(
     TargetErrors errors{
         .xError = currentTranslation.X() - desiredXOffset,
         .yError = currentTranslation.Y() - desiredYOffset,
-        .yawError = currentRotation.Z()};
+        .yawError = currentRotation.Z() - desiredYawOffset};
 
     return errors;
 }

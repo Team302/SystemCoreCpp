@@ -669,7 +669,7 @@ void DragonLimelight::SetRobotPose(const frc::Pose2d &pose)
 /**
  * @brief Calculates the full 3D pose of the target relative to the robot's center,
  * accounting for all camera mounting offsets. This function calculates the pose in three steps:
- * 1. Calculate the distance to the target using the known target height and the camera's pitch and vertical offset.
+ * 1. Calculate the horizontal distance to the target using the known target height and the camera's pitch and vertical offset.
  * 2. Use the distance and the horizontal and vertical angles to find the target's position in the camera's 3D coordinate frame.
  * 3. Apply the camera's mounting transform to get the pose in the robot's frame.
  *
@@ -679,30 +679,50 @@ void DragonLimelight::SetRobotPose(const frc::Pose2d &pose)
 std::optional<frc::Pose3d> DragonLimelight::CalculateTargetPoseRobotFrame(
     units::length::meter_t targetHeight)
 {
-    units::angle::degree_t cameraPitch = m_cameraPose.Rotation().Y();
-
-    units::length::meter_t cameraHeight = m_cameraPose.Z();
-    units::angle::degree_t tY = GetTy();
-    units::angle::degree_t tX = -GetTx();
-
-    units::angle::degree_t totalPitch = cameraPitch + tY;
-    units::length::meter_t distanceToTarget = (targetHeight - cameraHeight) / units::math::sin(totalPitch);
-
-    if (distanceToTarget < 0_m || !HasTarget())
+    if (!HasTarget())
     {
         return std::nullopt;
     }
 
-    units::length::meter_t xCam = distanceToTarget * units::math::cos(tY) * units::math::cos(tX);
-    units::length::meter_t yCam = distanceToTarget * units::math::cos(tY) * units::math::sin(tX);
-    units::length::meter_t zCam = distanceToTarget * units::math::sin(tY);
+    units::angle::degree_t cameraPitch = m_cameraPose.Rotation().Y();
+    units::length::meter_t cameraHeight = m_cameraPose.Z();
+    
+    units::angle::degree_t tY = GetTy();
+    units::angle::degree_t tX = -GetTx(); // Convert from limelight's right-positive to FRC's left-positive
 
+    units::angle::degree_t totalPitch = cameraPitch + tY;
+    
+    units::length::meter_t heightDifference = targetHeight - cameraHeight;
+    
+    auto tanTotalPitch = units::math::tan(totalPitch);
+    if (std::abs(tanTotalPitch) < 0.001) // Avoid division by very small numbers
+    {
+        return std::nullopt;
+    }
+    
+    units::length::meter_t horizontalDistance = heightDifference / tanTotalPitch;    
+    if (horizontalDistance < 0_m)
+    {
+        return std::nullopt;
+    }
+
+    //  Calculate the target position in camera frame
+    units::length::meter_t xCam = horizontalDistance * units::math::cos(tX);
+    units::length::meter_t yCam = horizontalDistance * units::math::sin(tX);
+    units::length::meter_t zCam = heightDifference;
+
+    // Create the translation in camera frame
     frc::Translation3d targetTranslationInCamFrame{xCam, yCam, zCam};
-    frc::Rotation3d targetRotationInCamFrame{0_deg, -tY, tX};
+    
+    // Apply the camera mounting transform to convert from camera space to robot space
+    // The camera pose contains the position and orientation of the camera relative to robot center
+    frc::Translation3d targetTranslationInRobotFrame = m_cameraPose.Translation() + targetTranslationInCamFrame.RotateBy(m_cameraPose.Rotation());
+    
+    // For rotation, we can estimate the target is facing toward the robot
+    // This is a simple assumption - adjust based on your specific needs
+    frc::Rotation3d targetRotationInRobotFrame{0_deg, 0_deg, units::math::atan2(targetTranslationInRobotFrame.Y(), targetTranslationInRobotFrame.X())};
 
-    frc::Pose3d targetPoseInCamFrame{targetTranslationInCamFrame, targetRotationInCamFrame};
-
-    frc::Pose3d targetPoseInRobotFrame = targetPoseInCamFrame.TransformBy(m_llMountingTrasnform);
+    frc::Pose3d targetPoseInRobotFrame{targetTranslationInRobotFrame, targetRotationInRobotFrame};
 
     return targetPoseInRobotFrame;
 }

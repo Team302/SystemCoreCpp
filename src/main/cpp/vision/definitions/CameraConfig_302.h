@@ -40,10 +40,10 @@ private:
     static constexpr units::angle::degree_t m_ll1Yaw{0};                    // 0 degrees
     static constexpr units::angle::degree_t m_ll1Roll{0};                   // 0 degrees
 
-    static constexpr units::length::meter_t m_ll2MountingXOffset{0.262};    // 10.3 inches
-    static constexpr units::length::meter_t m_ll2MountingYOffset{0.279908}; // 11.03 inches Left
-    static constexpr units::length::meter_t m_ll2MountingZOffset{0.2286};   // 32.4 inches
-    static constexpr units::angle::degree_t m_ll2Pitch{12.0};               // 12 degrees
+    static constexpr units::length::meter_t m_ll2MountingXOffset{0.262};    // 9.558 inches
+    static constexpr units::length::meter_t m_ll2MountingYOffset{0.279908}; // 11.219 inches Left
+    static constexpr units::length::meter_t m_ll2MountingZOffset{0.2286};   // 9.625 inches
+    static constexpr units::angle::degree_t m_ll2Pitch{5.0};                // 12 degrees
     static constexpr units::angle::degree_t m_ll2Yaw{-40};                  // 40 degrees to the right
     static constexpr units::angle::degree_t m_ll2Roll{0};                   // 0 degrees
 

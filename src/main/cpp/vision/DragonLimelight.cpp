@@ -141,17 +141,17 @@ std::optional<int> DragonLimelight::GetAprilTagID()
 
 bool DragonLimelight::HasTarget()
 {
-    return true; // m_tv;
+    return m_tv;
 }
 
 units::angle::degree_t DragonLimelight::GetTx() const
 {
-    return -10.52_deg; // m_tx;
+    return m_tx;
 }
 
 units::angle::degree_t DragonLimelight::GetTy() const
 {
-    return -16.24_deg; // m_ty;
+    return m_ty;
 }
 
 std::optional<units::angle::degree_t> DragonLimelight::GetTargetYaw()

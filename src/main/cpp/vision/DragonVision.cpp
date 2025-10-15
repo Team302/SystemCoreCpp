@@ -113,6 +113,10 @@ std::optional<VisionData> DragonVision::GetVisionData(VISION_ELEMENT element)
 	{
 		return GetVisionDataFromAlgae(element);
 	}
+	else if (element == VISION_ELEMENT::CAGE)
+	{
+		return GetVisionDataFromCage(element);
+	}
 	else if (element == VISION_ELEMENT::NEAREST_APRILTAG) // nearest april tag
 	{
 		return GetVisionDataToNearestTag();
@@ -274,10 +278,16 @@ std::optional<VisionData> DragonVision::GetVisionDataToNearestTag()
 std::optional<VisionData> DragonVision::GetVisionDataFromAlgae(VISION_ELEMENT element)
 {
 	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE);
-	return GetRawVisionDataFromObject(cameras, DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL);
+	return GetRawVisionDataFromObject(cameras, DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL, m_algaeTargetHeight);
 }
 
-std::optional<VisionData> DragonVision::GetRawVisionDataFromObject(std::vector<DragonLimelight *> cameras, DRAGON_LIMELIGHT_PIPELINE pipeline)
+std::optional<VisionData> DragonVision::GetVisionDataFromCage(VISION_ELEMENT element)
+{
+	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_CAGE);
+	return GetRawVisionDataFromObject(cameras, DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL, m_cageTargetHeight);
+}
+
+std::optional<VisionData> DragonVision::GetRawVisionDataFromObject(std::vector<DragonLimelight *> cameras, DRAGON_LIMELIGHT_PIPELINE pipeline, units::length::inch_t targetHeight)
 {
 	for (auto cam : cameras)
 	{
@@ -285,7 +295,7 @@ std::optional<VisionData> DragonVision::GetRawVisionDataFromObject(std::vector<D
 		{
 			if (cam->HasTarget())
 			{
-				std::optional<frc::Pose3d> targetPose = cam->CalculateTargetPoseRobotFrame(m_algaeTargetHeight);
+				std::optional<frc::Pose3d> targetPose = cam->CalculateTargetPoseRobotFrame(targetHeight);
 
 				frc::Translation3d translationToTarget = frc::Translation3d(targetPose->X(), targetPose->Y(), targetPose->Z());
 				frc::Rotation3d rotationToTarget = frc::Rotation3d();

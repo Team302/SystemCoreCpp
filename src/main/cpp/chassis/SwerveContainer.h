@@ -46,8 +46,8 @@ private:
 
     units::meters_per_second_t m_maxSpeed;
     static constexpr units::radians_per_second_t m_maxAngularRate{1.5_tps};
-    static constexpr units::length::inch_t m_algaeXOffset = 15_in;
-    static constexpr units::length::inch_t m_algaeYOffset = 6.5_in;
+    static constexpr units::length::inch_t m_algaeXOffset = 20_in;
+    static constexpr units::length::inch_t m_algaeYOffset = -12.5_in;
     static constexpr units::angle::degree_t m_algaeDegreeOffset = 0_deg;
     static constexpr units::length::inch_t m_cageXOffset = 15_in;
     static constexpr units::length::inch_t m_cageYOffset = 12_in;

@@ -52,7 +52,7 @@ private:
     RobotStateChanges::ClimbMode m_climbMode = RobotStateChanges::ClimbMode::ClimbModeOff;
 
     swerve::requests::FieldCentric m_fieldDriveRequest = swerve::requests::FieldCentric{}
-                                                             .WithDeadband(m_maxSpeed * 0.05)
+                                                             .WithDeadband(m_maxSpeed * 0.075)
                                                              .WithRotationalDeadband(m_maxAngularRate * 0.05)
                                                              .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage) // Use open-loop voltage for drive
                                                              .WithDesaturateWheelSpeeds(true);

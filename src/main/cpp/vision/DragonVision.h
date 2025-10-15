@@ -108,6 +108,7 @@ private:
     DragonLimelight *GetCameras(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier) const;
 
     std::optional<VisionData> GetVisionDataFromAlgae(VISION_ELEMENT element);
+    std::optional<VisionData> GetVisionDataFromCage(VISION_ELEMENT element);
     std::optional<VisionData> GetVisionDataFromElement(VISION_ELEMENT element);
     std::optional<VisionData> GetVisionDataToNearestTag();
     std::vector<int> GetReefTags(frc::DriverStation::Alliance allianceColor) const;
@@ -117,11 +118,12 @@ private:
 
     std::optional<VisionData> GetVisionDataToNearestFieldElementAprilTag(VISION_ELEMENT element);
     std::optional<VisionData> SingleTagToElement(frc::Pose3d elementPose, int idToSearch);
-    std::optional<VisionData> GetRawVisionDataFromObject(std::vector<DragonLimelight *> cameras, DRAGON_LIMELIGHT_PIPELINE pipeline);
+    std::optional<VisionData> GetRawVisionDataFromObject(std::vector<DragonLimelight *> cameras, DRAGON_LIMELIGHT_PIPELINE pipeline, units::length::inch_t targetHeight);
 
     static DragonVision *m_dragonVision;
     std::multimap<DRAGON_LIMELIGHT_CAMERA_USAGE, DragonLimelight *> m_dragonLimelightMap;
     std::vector<DragonVisionPoseEstimator *> m_poseEstimators;
 
     units::length::inch_t m_algaeTargetHeight{8.25};
+    units::length::inch_t m_cageTargetHeight{27.125};
 };

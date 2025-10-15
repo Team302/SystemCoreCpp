@@ -14,6 +14,7 @@
 //====================================================================================================================================================
 
 #include "chassis/commands/VisionDrive.h"
+#include "utils/logging/debug/Logger.h"
 
 // Note the simplified constructor and AddRequirements call
 VisionDrive::VisionDrive(subsystems::CommandSwerveDrivetrain *chassis,
@@ -64,6 +65,10 @@ void VisionDrive::Execute()
         auto dragonTargetFinderInst = DragonTargetFinder::GetInstance();
         auto errors = dragonTargetFinderInst->CalculateTargetingErrors(visionDatan.value(), m_xOffset, m_yOffset, m_degreeOffset);
 
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Yaw Error", errors.value().yawError.value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Y Error", errors.value().yError.value());
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "X Error", errors.value().xError.value());
+
         auto rotate = std::clamp(units::angular_velocity::degrees_per_second_t(m_rotatePID.Calculate(-errors.value().yawError.value())), -m_visionAngularRate, m_visionAngularRate);
         auto forward = std::clamp(units::velocity::meters_per_second_t(m_drivePID.Calculate(-errors.value().xError.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
         auto strafe = std::clamp(units::velocity::meters_per_second_t(m_strafePID.Calculate(-errors.value().yError.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
@@ -71,7 +76,7 @@ void VisionDrive::Execute()
         m_chassis->SetControl(
             m_RobotDriveRequest.WithVelocityX(forward)
                 .WithVelocityY(strafe)
-                .WithRotationalRate(rotate));
+                .WithRotationalRate(0_deg_per_s));
     }
     else
     {

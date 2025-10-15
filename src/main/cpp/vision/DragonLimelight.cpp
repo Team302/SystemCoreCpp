@@ -141,17 +141,17 @@ std::optional<int> DragonLimelight::GetAprilTagID()
 
 bool DragonLimelight::HasTarget()
 {
-    return m_tv;
+    return true; // m_tv;
 }
 
 units::angle::degree_t DragonLimelight::GetTx() const
 {
-    return m_tx;
+    return -10.52_deg; // m_tx;
 }
 
 units::angle::degree_t DragonLimelight::GetTy() const
 {
-    return m_ty;
+    return -16.24_deg; // m_ty;
 }
 
 std::optional<units::angle::degree_t> DragonLimelight::GetTargetYaw()
@@ -686,21 +686,21 @@ std::optional<frc::Pose3d> DragonLimelight::CalculateTargetPoseRobotFrame(
 
     units::angle::degree_t cameraPitch = m_cameraPose.Rotation().Y();
     units::length::meter_t cameraHeight = m_cameraPose.Z();
-    
+
     units::angle::degree_t tY = GetTy();
     units::angle::degree_t tX = -GetTx(); // Convert from limelight's right-positive to FRC's left-positive
 
     units::angle::degree_t totalPitch = cameraPitch + tY;
-    
+
     units::length::meter_t heightDifference = targetHeight - cameraHeight;
-    
+
     auto tanTotalPitch = units::math::tan(totalPitch);
-    if (std::abs(tanTotalPitch) < 0.001) // Avoid division by very small numbers
+    if (units::math::abs(tanTotalPitch) < 0.001) // Avoid division by very small numbers
     {
         return std::nullopt;
     }
-    
-    units::length::meter_t horizontalDistance = heightDifference / tanTotalPitch;    
+
+    units::length::meter_t horizontalDistance = heightDifference / tanTotalPitch;
     if (horizontalDistance < 0_m)
     {
         return std::nullopt;
@@ -711,16 +711,25 @@ std::optional<frc::Pose3d> DragonLimelight::CalculateTargetPoseRobotFrame(
     units::length::meter_t yCam = horizontalDistance * units::math::sin(tX);
     units::length::meter_t zCam = heightDifference;
 
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "X Cam", units::length::inch_t(xCam).to<double>());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Y Cam", units::length::inch_t(yCam).to<double>());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Z Cam", units::length::inch_t(zCam).to<double>());
+
     // Create the translation in camera frame
     frc::Translation3d targetTranslationInCamFrame{xCam, yCam, zCam};
-    
+
     // Apply the camera mounting transform to convert from camera space to robot space
     // The camera pose contains the position and orientation of the camera relative to robot center
     frc::Translation3d targetTranslationInRobotFrame = m_cameraPose.Translation() + targetTranslationInCamFrame.RotateBy(m_cameraPose.Rotation());
-    
+
     // For rotation, we can estimate the target is facing toward the robot
     // This is a simple assumption - adjust based on your specific needs
     frc::Rotation3d targetRotationInRobotFrame{0_deg, 0_deg, units::math::atan2(targetTranslationInRobotFrame.Y(), targetTranslationInRobotFrame.X())};
+
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Yaw to Target", targetRotationInRobotFrame.ToRotation2d().Degrees().value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Robot X", units::length::inch_t(targetTranslationInRobotFrame.X()).value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Robot Y", units::length::inch_t(targetTranslationInRobotFrame.Y()).value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Robot Z", units::length::inch_t(targetTranslationInRobotFrame.Z()).value());
 
     frc::Pose3d targetPoseInRobotFrame{targetTranslationInRobotFrame, targetRotationInRobotFrame};
 

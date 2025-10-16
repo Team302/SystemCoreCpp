@@ -677,7 +677,7 @@ void DragonLimelight::SetRobotPose(const frc::Pose2d &pose)
  * @return An optional containing the target's Pose3d relative to the robot, or std::nullopt on error.
  */
 std::optional<frc::Pose3d> DragonLimelight::CalculateTargetPoseRobotFrame(
-    units::length::meter_t targetHeight)
+    units::length::inch_t targetHeight)
 {
     if (!HasTarget())
     {
@@ -690,6 +690,9 @@ std::optional<frc::Pose3d> DragonLimelight::CalculateTargetPoseRobotFrame(
     units::angle::degree_t tY = GetTy();
     units::angle::degree_t tX = -GetTx(); // Convert from limelight's right-positive to FRC's left-positive
 
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Tx", tX.value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Ty", tY.value());
+
     units::angle::degree_t totalPitch = cameraPitch + tY;
 
     units::length::meter_t heightDifference = targetHeight - cameraHeight;
@@ -700,20 +703,21 @@ std::optional<frc::Pose3d> DragonLimelight::CalculateTargetPoseRobotFrame(
         return std::nullopt;
     }
 
-    units::length::meter_t horizontalDistance = heightDifference / tanTotalPitch;
+    units::length::inch_t horizontalDistance = heightDifference / tanTotalPitch;
     if (horizontalDistance < 0_m)
     {
         return std::nullopt;
     }
 
     //  Calculate the target position in camera frame
-    units::length::meter_t xCam = horizontalDistance * units::math::cos(tX);
-    units::length::meter_t yCam = horizontalDistance * units::math::sin(tX);
-    units::length::meter_t zCam = heightDifference;
+    units::length::inch_t xCam = horizontalDistance * units::math::cos(tX);
+    units::length::inch_t yCam = horizontalDistance * units::math::sin(tX);
+    units::length::inch_t zCam = heightDifference;
 
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "X Cam", units::length::inch_t(xCam).to<double>());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Y Cam", units::length::inch_t(yCam).to<double>());
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Z Cam", units::length::inch_t(zCam).to<double>());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "X Cam", xCam.value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Y Cam", yCam.value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Z Cam", zCam.value());
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Horizontal Distance", horizontalDistance.value());
 
     // Create the translation in camera frame
     frc::Translation3d targetTranslationInCamFrame{xCam, yCam, zCam};

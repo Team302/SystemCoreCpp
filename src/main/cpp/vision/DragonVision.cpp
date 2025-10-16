@@ -604,6 +604,10 @@ std::vector<DragonLimelight *> DragonVision::GetCameras(DRAGON_LIMELIGHT_CAMERA_
 					{
 						addCam = pipe == DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL || pipe == DRAGON_LIMELIGHT_PIPELINE::COLOR_THRESHOLD;
 					}
+					else if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_CAGE)
+					{
+						addCam = pipe == DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL || pipe == DRAGON_LIMELIGHT_PIPELINE::COLOR_THRESHOLD;
+					}
 				}
 			}
 		}

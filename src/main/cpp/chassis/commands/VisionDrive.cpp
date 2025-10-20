@@ -14,7 +14,7 @@
 //====================================================================================================================================================
 
 #include "chassis/commands/VisionDrive.h"
-#include "utils/logging/debug/Logger.h"
+#include "utils/FMSData.h"
 
 // Note the simplified constructor and AddRequirements call
 VisionDrive::VisionDrive(subsystems::CommandSwerveDrivetrain *chassis,
@@ -50,12 +50,11 @@ void VisionDrive::Initialize()
     if (m_vision != nullptr)
     {
         m_vision->SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE, DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL);
-        m_vision->SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_CAGE, DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL);
+        m_vision->SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_CAGE, FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed ? DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL : DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG);
     }
     m_drivePID.Reset();
     m_strafePID.Reset();
     m_rotatePID.Reset();
-    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Target Found", 0);
 }
 
 void VisionDrive::Execute()
@@ -64,31 +63,30 @@ void VisionDrive::Execute()
 
     if (visionData.has_value())
     {
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Target Found", 1);
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "X", visionData.value().transformToTarget.X().value());
-
-        auto dragonTargetFinderInst = DragonTargetFinder::GetInstance();
-        auto errors = dragonTargetFinderInst->CalculateTargetingErrors(visionData.value(), m_xOffset, m_yOffset, m_degreeOffset);
-        if (errors.has_value())
+        if (m_visionElement == DragonVision::VISION_ELEMENT::CAGE)
         {
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Yaw Error", errors.value().yawError.value());
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Y Error", errors.value().yError.value());
-            Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "X Error", errors.value().xError.value());
-
-            auto rotate = std::clamp(units::angular_velocity::degrees_per_second_t(m_rotatePID.Calculate(-errors.value().yawError.value())), -m_visionAngularRate, m_visionAngularRate);
-            auto forward = std::clamp(units::velocity::meters_per_second_t(m_drivePID.Calculate(-errors.value().xError.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
-            auto strafe = std::clamp(units::velocity::meters_per_second_t(m_strafePID.Calculate(-errors.value().yError.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
-
-            m_chassis->SetControl(
-                m_RobotDriveRequest.WithVelocityX(0_mps)
-                    .WithVelocityY(0_mps)
-                    .WithRotationalRate(0_deg_per_s));
+            DriveToCage();
         }
+        else if (m_visionElement == DragonVision::VISION_ELEMENT::ALGAE)
+        {
+            DriveToAlgae();
+        }
+        // auto dragonTargetFinderInst = DragonTargetFinder::GetInstance();
+        // auto errors = dragonTargetFinderInst->CalculateTargetingErrors(visionData.value(), m_xOffset, m_yOffset, m_degreeOffset);
+        // if (errors.has_value())
+        // {
+        //     auto rotate = std::clamp(units::angular_velocity::degrees_per_second_t(m_rotatePID.Calculate(-errors.value().yawError.value())), -m_visionAngularRate, m_visionAngularRate);
+        //     auto forward = std::clamp(units::velocity::meters_per_second_t(m_drivePID.Calculate(-errors.value().xError.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
+        //     auto strafe = std::clamp(units::velocity::meters_per_second_t(m_strafePID.Calculate(-errors.value().yError.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
+
+        //     m_chassis->SetControl(
+        //         m_RobotDriveRequest.WithVelocityX(forward)
+        //             .WithVelocityY(strafe)
+        //             .WithRotationalRate(rotate));
+        // }
     }
     else
     {
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Vision", "Target Found", 0);
-
         double forward = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_FORWARD);
         double strafe = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE);
         double rotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
@@ -110,4 +108,33 @@ bool VisionDrive::IsFinished()
 void VisionDrive::End(bool interrupted)
 {
     m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
+}
+
+void VisionDrive::DriveToCage()
+{
+    auto tx = m_vision->GetTx(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_CAGE);
+    auto ty = m_vision->GetTy(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_CAGE);
+
+    auto strafe = std::clamp(units::velocity::meters_per_second_t(m_strafePID.Calculate(ty.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
+    auto forward = -std::clamp(units::velocity::meters_per_second_t(m_drivePID.Calculate(tx.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
+
+    m_chassis->SetControl(
+        m_RobotDriveRequest.WithVelocityX(forward)
+            .WithVelocityY(strafe)
+            .WithRotationalRate(0_deg_per_s));
+}
+
+void VisionDrive::DriveToAlgae()
+{
+    auto tx = m_vision->GetTx(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE);
+    auto ty = m_vision->GetTy(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE);
+
+    auto strafe = std::clamp(units::velocity::meters_per_second_t(m_strafePID.Calculate(tx.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
+    auto forward = std::clamp(units::velocity::meters_per_second_t(m_drivePID.Calculate(ty.value())), -m_maxVisionSpeed, m_maxVisionSpeed);
+    auto rotate = std::clamp(units::angular_velocity::degrees_per_second_t(m_rotatePID.Calculate(tx.value())), -m_maxAngularRate, m_maxAngularRate);
+
+    m_chassis->SetControl(
+        m_RobotDriveRequest.WithVelocityX(forward)
+            .WithVelocityY(0_mps)
+            .WithRotationalRate(rotate));
 }

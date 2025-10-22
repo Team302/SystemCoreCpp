@@ -107,7 +107,10 @@ bool DragonLimelight::IsLimelightRunning()
     return false;
 }
 
-std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetVisionTargetInfo(VisionTargetOption option, DragonTargetType targetType)
+std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetVisionTargetInfo(
+    VisionTargetOption option,
+    DragonTargetType targetType,
+    std::vector<FieldAprilTagIDs> validAprilTagIDs)
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
 
@@ -118,7 +121,7 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetVisionTarge
 
     if (targetType == DragonTargetType::APRIL_TAG)
     {
-        targets = ProcessAprilTags(option);
+        targets = ProcessAprilTags(option, validAprilTagIDs);
     }
     else if (targetType == DragonTargetType::AGLAE)
     {
@@ -128,7 +131,9 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetVisionTarge
     return targets;
 }
 
-std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessAprilTags(VisionTargetOption option)
+std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessAprilTags(
+    VisionTargetOption option,
+    std::vector<FieldAprilTagIDs> validAprilTagIDs)
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
     auto nt = m_networktable.get();

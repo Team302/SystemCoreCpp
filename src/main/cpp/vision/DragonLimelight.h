@@ -33,6 +33,7 @@
 
 // Team 302 includes
 #include "chassis/ChassisConfigMgr.h"
+#include "fielddata/FieldAprilTagIDs.h"
 #include "vision/DragonVisionEnums.h"
 #include "vision/DragonVisionStruct.h"
 
@@ -68,7 +69,9 @@ public:
     ///-----------------------------------------------------------------------------------
     ~DragonLimelight() = default;
 
-    std::vector<std::unique_ptr<DragonVisionStruct>> GetVisionTargetInfo(VisionTargetOption, DragonTargetType targetType = DragonTargetType::APRIL_TAG);
+    std::vector<std::unique_ptr<DragonVisionStruct>> GetVisionTargetInfo(VisionTargetOption option,
+                                                                         DragonTargetType targetType = DragonTargetType::APRIL_TAG,
+                                                                         std::vector<FieldAprilTagIDs> validAprilTags = {});
     bool IsLimelightRunning();
 
     void SetLEDMode(DRAGON_LIMELIGHT_LED_MODE mode);
@@ -105,7 +108,8 @@ protected:
     };
 
 private:
-    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessAprilTags(VisionTargetOption option);
+    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessAprilTags(VisionTargetOption option,
+                                                                      std::vector<FieldAprilTagIDs> validTag);
     std::vector<std::unique_ptr<DragonVisionStruct>> ProcessAlgae(VisionTargetOption option);
 
     units::length::inch_t m_driveThroughOffset = units::length::inch_t(0.0);

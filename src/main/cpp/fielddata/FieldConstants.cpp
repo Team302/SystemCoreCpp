@@ -12,9 +12,10 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#include "FieldConstants.h"
+#include "fielddata/FieldConstants.h"
 
-#include "FieldElementCalculator.h"
+#include "fielddata/FieldAprilTags.h"
+#include "fielddata/FieldElementCalculator.h"
 
 FieldConstants *FieldConstants::m_instance = nullptr;
 FieldConstants *FieldConstants::GetInstance()
@@ -163,12 +164,12 @@ void FieldConstants::ReadFieldCalibrationData()
     }
 }
 
-frc::Pose3d FieldConstants::GetAprilTagPose(AprilTagIDs tag)
+frc::Pose3d FieldConstants::GetAprilTagPose(FieldAprilTagIDs tag)
 {
-    return m_aprilTagPoseMap[tag];
+    return m_aprilTagPoseMap[static_cast<unsigned int>(tag)];
 }
 
-frc::Pose2d FieldConstants::GetAprilTagPose2d(AprilTagIDs tag)
+frc::Pose2d FieldConstants::GetAprilTagPose2d(FieldAprilTagIDs tag)
 {
     return m_aprilTag2dPoses[static_cast<unsigned int>(tag)];
 }

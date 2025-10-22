@@ -13,13 +13,12 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include "chassis/commands/DriveToTarget.h" // Update path if needed
-#include "utils/AngleUtils.h"
-#include "utils/logging/debug/Logger.h"
+#include "fielddata/BargeHelper.h"
+#include "fielddata/ReefHelper.h"
 #include "frc/geometry/Rotation2d.h"
 #include "frc/geometry/Translation2d.h"
-#include "vision/DragonVisionStructLogger.h"
-#include "fielddata/ReefHelper.h"
-#include "fielddata/BargeHelper.h"
+#include "utils/AngleUtils.h"
+#include "utils/logging/debug/Logger.h"
 
 DriveToTarget::DriveToTarget(
     subsystems::CommandSwerveDrivetrain *chassis,
@@ -77,9 +76,6 @@ void DriveToTarget::Execute()
         {
             m_currentPose = m_chassis->GetPose();
             CalculateFeedForward(chassisSpeeds);
-
-            DragonVisionStructLogger::logPose2d("current pose", m_currentPose);
-            DragonVisionStructLogger::logPose2d("target pose", m_endPose);
 
             if (m_currentType != DragonTargetFinderData::NOT_FOUND)
             {

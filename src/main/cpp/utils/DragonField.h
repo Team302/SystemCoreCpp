@@ -15,11 +15,10 @@
 #pragma once
 
 // FRC Include
+#include <frc/geometry/Pose2d.h>
 #include <frc/smartdashboard/Field2d.h>
 #include <frc/smartdashboard/FieldObject2d.h>
-#include <frc/geometry/Pose2d.h>
 #include <frc/trajectory/Trajectory.h>
-#include <vision/DragonVisionStructs.h>
 
 class DragonField
 {
@@ -32,7 +31,7 @@ public:
     void AddPose(std::string name, frc::Pose2d pose);
     void AddTrajectory(std::string name, frc::Trajectory trajectory);
     void UpdateObject(std::string name, frc::Pose2d pose);
-    void UpdateObjectVisionPose(std::string name, std::optional<VisionPose> visionPose);
+    // void UpdateObjectVisionPose(std::string name, std::optional<VisionPose> visionPose);
 
     /// @brief get the singeleton of FMSData
     static DragonField *GetInstance();

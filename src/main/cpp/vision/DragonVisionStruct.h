@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2025 Lake Orion Robotics FIRST Team 302
 //
@@ -12,16 +11,26 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
-//====================================================================================================================================================
-
+//====================================================================================================================================================#pragma once
 #pragma once
 
-///  @brief	    Interface for loggable items that can be mixed in with other interfaces
-class SensorData
-{
-public:
-	SensorData();
-	virtual ~SensorData() = default;
+#include "units/angle.h"
+#include "units/length.h"
+#include "units/time.h"
+#include <string>
 
-	virtual void PeriodicCacheData() = 0;
+#include "vision/DragonVisionEnums.h"
+
+struct DragonVisionStruct
+{
+    int targetID;
+    DragonTargetType targetType;
+    std::string className; // only used by Machine Learning
+    units::angle::degree_t horizontalOffset;
+    units::angle::degree_t verticalOffset;
+    double targetArea;
+    units::time::millisecond_t pipelineLatency; // should be tl + cl
+    units::length::meter_t distanceToCamera;
+    units::length::meter_t distanceToRobot;
+    double ambiguity; // only april tags
 };

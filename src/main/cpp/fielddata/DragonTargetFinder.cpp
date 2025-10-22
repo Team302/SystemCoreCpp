@@ -21,6 +21,7 @@
 #include "fielddata/BargeHelper.h"
 #include "fielddata/CoralStationHelper.h"
 #include "fielddata/DragonTargetFinder.h"
+#include "fielddata/FieldAprilTags.h"
 #include "fielddata/FieldConstants.h"
 #include "fielddata/FieldElementCalculator.h"
 #include "fielddata/ProcessorHelper.h"
@@ -30,7 +31,6 @@
 #include "units/angle.h"
 #include "utils/DragonField.h"
 #include "utils/FMSData.h"
-#include "vision/DragonVisionStructLogger.h"
 
 // Debugging
 #include "utils/logging/debug/Logger.h"
@@ -187,7 +187,7 @@ optional<tuple<DragonTargetFinderData, Pose2d>> DragonTargetFinder::GetPose(Drag
     targetInfo = make_tuple(DragonTargetFinderData::NOT_FOUND, pose2d);
     return targetInfo;
 }
-std::optional<FieldConstants::AprilTagIDs> DragonTargetFinder::GetAprilTag(DragonVision::VISION_ELEMENT item)
+std::optional<FieldAprilTagIDs> DragonTargetFinder::GetAprilTag(DragonVision::VISION_ELEMENT item)
 {
     SetChassis();
     if (item == DragonVision::VISION_ELEMENT::REEF)
@@ -227,7 +227,7 @@ frc::Pose3d DragonTargetFinder::GetAprilTagPose(DragonVision::VISION_ELEMENT ite
     auto aprilTag = GetAprilTag(item);
     if (aprilTag.has_value())
     {
-        auto pose = DragonVision::GetAprilTagLayout().GetTagPose(aprilTag.value());
+        auto pose = DragonVision::GetAprilTagLayout().GetTagPose(static_cast<int>(aprilTag.value()));
         if (pose)
         {
             return pose.value();
@@ -260,21 +260,21 @@ void DragonTargetFinder::ResetGoalPose()
  * @param data The vision data containing the transform from the robot to the target game piece.
  * @return std::optional<frc::Pose2d> The calculated goal pose for the robot's center, or std::nullopt if not possible.
  */
-std::optional<frc::Pose2d> DragonTargetFinder::GetFieldRelativePose(std::optional<VisionData> data)
-{
-    if (data.has_value() && m_chassis != nullptr)
-    {
-        frc::Pose2d robotFieldPose = m_chassis->GetPose();
-        frc::Transform2d robotToGamePiece = frc::Transform2d(data.value().transformToTarget.Translation().ToTranslation2d(),
-                                                             data.value().transformToTarget.Rotation().ToRotation2d());
-        frc::Pose2d gamePieceFieldPose = robotFieldPose.TransformBy(robotToGamePiece);
+// std::optional<frc::Pose2d> DragonTargetFinder::GetFieldRelativePose(std::optional<VisionData> data)
+// {
+//     if (data.has_value() && m_chassis != nullptr)
+//     {
+//         frc::Pose2d robotFieldPose = m_chassis->GetPose();
+//         frc::Transform2d robotToGamePiece = frc::Transform2d(data.value().transformToTarget.Translation().ToTranslation2d(),
+//                                                              data.value().transformToTarget.Rotation().ToRotation2d());
+//         frc::Pose2d gamePieceFieldPose = robotFieldPose.TransformBy(robotToGamePiece);
 
-        frc::Pose2d goalRobotFieldPose = gamePieceFieldPose.TransformBy(m_intakeOffset.Inverse());
+//         frc::Pose2d goalRobotFieldPose = gamePieceFieldPose.TransformBy(m_intakeOffset.Inverse());
 
-        return goalRobotFieldPose;
-    }
-    return std::nullopt;
-}
+//         return goalRobotFieldPose;
+//     }
+//     return std::nullopt;
+// }
 
 bool DragonTargetFinder::SwitchToVision(std::optional<frc::Pose3d> visTagPose) // TODO: Update when we switch to ML and raw vision correction on reef sticks
 {

@@ -12,15 +12,13 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#include "FieldElementCalculator.h"
+#include "fielddata/FieldElementCalculator.h"
 
-#include <frc/RobotController.h>
-
-#include "FieldConstantsPoseLogger.h"
 #include "RobotIdentifier.h"
+#include "fielddata/FieldConstantsPoseLogger.h"
+#include "frc/RobotController.h"
 #include "utils/FMSData.h"
 #include "utils/logging/debug/Logger.h"
-#include "vision/DragonVisionStructLogger.h"
 
 void FieldElementCalculator::CalcPositionsForField(robin_hood::unordered_map<FieldConstants::FIELD_ELEMENT, frc::Pose3d> &fieldConstantsPoseMap)
 {

@@ -20,25 +20,25 @@
 #include "units/time.h"
 #include "wpi/array.h"
 
-struct DragonVisionPoseEstimatorStruct
-{
-public:
-    DragonVisionPoseEstimatorStruct() : m_confidenceLevel(ConfidenceLevel::NONE),
-                                        m_visionPose(frc::Pose2d{}),
-                                        m_timeStamp(units::time::second_t(0.0)),
-                                        m_stds(wpi::array(0.9, 0.9, 0.9)) {};
-    ~DragonVisionPoseEstimatorStruct() = default;
+// struct DragonVisionPoseEstimatorStruct
+// {
+// public:
+//     DragonVisionPoseEstimatorStruct() : m_confidenceLevel(ConfidenceLevel::NONE),
+//                                         m_visionPose(frc::Pose2d{}),
+//                                         m_timeStamp(units::time::second_t(0.0)),
+//                                         m_stds(wpi::array(0.9, 0.9, 0.9)) {};
+//     ~DragonVisionPoseEstimatorStruct() = default;
 
-    enum ConfidenceLevel
-    {
-        NONE,
-        LOW,
-        MEDIUM,
-        HIGH
-    };
+//     enum ConfidenceLevel
+//     {
+//         NONE,
+//         LOW,
+//         MEDIUM,
+//         HIGH
+//     };
 
-    ConfidenceLevel m_confidenceLevel;
-    frc::Pose2d m_visionPose;
-    units::time::second_t m_timeStamp;
-    wpi::array<double, 3> m_stds;
-};
+//     ConfidenceLevel m_confidenceLevel;
+//     frc::Pose2d m_visionPose;
+//     units::time::second_t m_timeStamp;
+//     wpi::array<double, 3> m_stds;
+// };

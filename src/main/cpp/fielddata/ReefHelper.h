@@ -18,28 +18,31 @@
 
 #include <optional>
 
+#include "auton/ZoneParams.h"
+#include "auton/ZoneParser.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "fielddata/FieldAprilTags.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/DriverStation.h"
 #include "frc/geometry/Pose2d.h"
-#include "auton/ZoneParams.h"
-#include "auton/ZoneParser.h"
 #include "state/RobotState.h"
+
 class ReefHelper
 {
 public:
     static ReefHelper *GetInstance();
     void IsInZone();
     void InitZones();
-    std::optional<FieldConstants::AprilTagIDs> GetNearestReefTag();
-    std::optional<FieldConstants::FIELD_ELEMENT> GetNearestLeftReefBranch(FieldConstants::AprilTagIDs tag);
-    std::optional<FieldConstants::FIELD_ELEMENT> GetNearestRightReefBranch(FieldConstants::AprilTagIDs tag);
+    std::optional<FieldAprilTagIDs> GetNearestReefTag();
+    std::optional<FieldConstants::FIELD_ELEMENT> GetNearestLeftReefBranch(FieldAprilTagIDs tag);
+    std::optional<FieldConstants::FIELD_ELEMENT> GetNearestRightReefBranch(FieldAprilTagIDs tag);
 
 private:
     ReefHelper();
     ~ReefHelper() = default;
     static ReefHelper *m_instance;
 
-    units::length::meter_t CalcDistanceToAprilTag(FieldConstants::AprilTagIDs tag, frc::Pose2d currentPose);
+    units::length::meter_t CalcDistanceToAprilTag(FieldAprilTagIDs tag, frc::Pose2d currentPose);
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
     frc::DriverStation::Alliance m_allianceColor;

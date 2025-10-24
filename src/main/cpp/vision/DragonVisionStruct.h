@@ -23,14 +23,14 @@
 
 struct DragonVisionStruct
 {
-    int targetID;
-    DragonTargetType targetType;
-    std::string className; // only used by Machine Learning
-    units::angle::degree_t horizontalOffset;
-    units::angle::degree_t verticalOffset;
-    double targetArea;
-    units::time::millisecond_t pipelineLatency; // should be tl + cl
-    units::length::meter_t distanceToCamera;
-    units::length::meter_t distanceToRobot;
-    double ambiguity; // only april tags
+    int targetID = -1;
+    DragonTargetType targetType = DragonTargetType::UNKNOWN;
+    std::string className = ""; // only used by Machine Learning
+    units::angle::degree_t horizontalOffset = 0_deg;
+    units::angle::degree_t verticalOffset = 0_deg;
+    double targetAreaPercent = 0.0;
+    units::time::millisecond_t pipelineLatency = 0_ms; // should be tl + cl
+    units::length::meter_t distanceToCamera = 0_m;
+    units::length::meter_t distanceToRobot = 0_m;
+    double ambiguity = 1.0; // only april tags
 };

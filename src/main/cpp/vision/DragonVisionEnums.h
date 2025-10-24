@@ -23,6 +23,7 @@ enum class VisionTargetOption
 
 enum class DragonTargetType
 {
+    UNKNOWN,
     APRIL_TAG,
     AGLAE
 };

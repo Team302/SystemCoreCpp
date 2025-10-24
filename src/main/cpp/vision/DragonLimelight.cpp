@@ -41,6 +41,25 @@
 // Third Party Includes
 #include "Limelight/LimelightHelpers.h"
 
+namespace
+{
+    bool IsValidAprilTag(std::vector<FieldAprilTagIDs> validTags, int tagID)
+    {
+        if (validTags.empty())
+        {
+            return true;
+        }
+        for (auto validTag : validTags)
+        {
+            if (static_cast<int>(validTag) == tagID)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+}
+
 ///-----------------------------------------------------------------------------------
 /// Method:         DragonLimelight (constructor)
 /// Description:    Create the object
@@ -59,7 +78,7 @@ DragonLimelight::DragonLimelight(
     DRAGON_LIMELIGHT_PIPELINE initialPipeline, /// <I> enum for pipeline
     DRAGON_LIMELIGHT_LED_MODE ledMode,
     DRAGON_LIMELIGHT_CAM_MODE camMode) : m_identifier(identifier),
-                                         m_networktable(nt::NetworkTableInstance::GetDefault().GetTable(std::string(networkTableName))),
+                                         m_limelightNT(nt::NetworkTableInstance::GetDefault().GetTable(LimelightHelpers::sanitizeName(std::string(networkTableName)))),
                                          m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
                                          m_cameraPose(frc::Pose3d(mountingXOffset, mountingYOffset, mountingZOffset, frc::Rotation3d(roll, pitch, yaw)))
 {
@@ -67,7 +86,7 @@ DragonLimelight::DragonLimelight(
     SetCamMode(camMode);
     SetPipeline(initialPipeline);
     SetCameraPose_RobotSpace(mountingXOffset.to<double>(), mountingYOffset.to<double>(), mountingZOffset.to<double>(), roll.to<double>(), pitch.to<double>(), yaw.to<double>());
-    m_cameraName = networkTableName;
+    m_cameraName = LimelightHelpers::sanitizeName(std::string(networkTableName));
     m_healthTimer = new frc::Timer();
     for (int port = 5800; port <= 5809; port++)
     {
@@ -82,7 +101,7 @@ bool DragonLimelight::IsLimelightRunning()
         return true; // In simulation, we don't have a limelight, so just return true
     }
 
-    auto nt = m_networktable.get();
+    auto nt = m_limelightNT.get();
     if (nt != nullptr)
     {
         double currentHb = nt->GetNumber("hb", START_HB);
@@ -114,18 +133,13 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetVisionTarge
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
 
-    if (frc::RobotBase::IsSimulation())
-    {
-        return targets; // In simulation, we don't have a limelight, so just return empty vector
-    }
-
     if (targetType == DragonTargetType::APRIL_TAG)
     {
-        targets = ProcessAprilTags(option, validAprilTagIDs);
+        return ProcessAprilTags(option, validAprilTagIDs);
     }
     else if (targetType == DragonTargetType::AGLAE)
     {
-        targets = ProcessAlgae(option);
+        return ProcessMLObjects(option);
     }
 
     return targets;
@@ -136,46 +150,40 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessAprilTa
     std::vector<FieldAprilTagIDs> validAprilTagIDs)
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
-    auto nt = m_networktable.get();
+    auto nt = m_limelightNT.get();
     if (nt != nullptr)
     {
-        // auto aprilTags = LimelightHelpers::getRawHelpers(m_cameraName);
+        auto aprilTags = LimelightHelpers::getRawFiducials(m_limelightNT);
 
-        auto tagID = GetAprilTagID();
-        if (tagID.has_value())
+        for (auto aprilTag : aprilTags)
         {
+            auto isValid = IsValidAprilTag(validAprilTagIDs, aprilTag.id);
+
+            if (!isValid)
+            {
+                continue; // skip this tag
+            }
+
             auto aprilTagValue = std::make_unique<DragonVisionStruct>();
-            aprilTagValue.get()->targetID = tagID.value();
+            aprilTagValue.get()->targetID = aprilTag.id;
             aprilTagValue.get()->targetType = DragonTargetType::APRIL_TAG;
             aprilTagValue.get()->className = "AprilTag";
-            aprilTagValue.get()->horizontalOffset = GetTx();
-            aprilTagValue.get()->verticalOffset = GetTy();
-            aprilTagValue.get()->targetArea = nt->GetNumber("ta", 0.0);
-            aprilTagValue.get()->pipelineLatency = units::millisecond_t(LimelightHelpers::getLatency_Pipeline(m_cameraName) + LimelightHelpers::getLatency_Capture(m_cameraName));
-            // aprilTagValue.get()->distanceToCamera = EstimateTargetXDistance().value_or(units::length::meter_t(0.0));
-            // aprilTagValue.get()->distanceToRobot = EstimateTargetXDistance_RelToRobotCoords().value_or(units::length::meter_t(0.0));
-            aprilTagValue.get()->distanceToCamera = units::length::meter_t(0.0); // TODO: Get Values
-            aprilTagValue.get()->distanceToRobot = units::length::meter_t(0.0);  // TODO: Get Values
-            aprilTagValue.get()->ambiguity = 0.0;                                // TODO: only april tags
+            aprilTagValue.get()->horizontalOffset = units::angle::degree_t(aprilTag.txnc);
+            aprilTagValue.get()->verticalOffset = units::angle::degree_t(aprilTag.tync);
+            aprilTagValue.get()->targetAreaPercent = aprilTag.ta;
+            aprilTagValue.get()->pipelineLatency = units::millisecond_t(LimelightHelpers::getLatency_Pipeline(m_limelightNT) + LimelightHelpers::getLatency_Capture(m_limelightNT));
+            aprilTagValue.get()->distanceToCamera = units::length::meter_t(aprilTag.distToCamera);
+            aprilTagValue.get()->distanceToRobot = units::length::meter_t(aprilTag.distToRobot);
+            aprilTagValue.get()->ambiguity = aprilTag.ambiguity;
+
+            targets.emplace_back(std::move(aprilTagValue));
         }
     }
-    // aprilTagValue.get()->targetID = GetAprilTagID();
-
-    // int targetID;
-    // DragonTargetType targetType;
-    // std::string className; // only used by Machine Learning
-    // units::angle::degree_t horizontalOffset;
-    // units::angle::degree_t verticalOffset;
-    // double targetArea;
-    // units::time::millisecond_t pipelineLatency; // should be tl + cl
-    // units::length::meter_t distanceToCamera;
-    // units::length::meter_t distanceToRobot;
-    // double ambiguity; // only april tags
 
     return targets;
 }
 
-std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessAlgae(VisionTargetOption option)
+std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessMLObjects(VisionTargetOption option)
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
 
@@ -211,7 +219,7 @@ std::optional<units::angle::degree_t> DragonLimelight::GetTargetYaw()
 
 std::optional<double> DragonLimelight::GetTargetArea()
 {
-    auto nt = m_networktable.get();
+    auto nt = m_limelightNT.get();
     if (nt != nullptr)
     {
         return nt->GetNumber("ta", 0.0);
@@ -222,9 +230,9 @@ std::optional<double> DragonLimelight::GetTargetArea()
 
 std::optional<units::angle::degree_t> DragonLimelight::GetTargetSkew()
 {
-    if (m_networktable != nullptr)
+    if (m_limelightNT != nullptr)
     {
-        return units::angle::degree_t(m_networktable->GetNumber("ts", 0.0));
+        return units::angle::degree_t(m_limelightNT->GetNumber("ts", 0.0));
     }
 
     return std::nullopt;
@@ -232,7 +240,7 @@ std::optional<units::angle::degree_t> DragonLimelight::GetTargetSkew()
 
 std::optional<units::time::millisecond_t> DragonLimelight::GetPipelineLatency()
 {
-    auto nt = m_networktable.get();
+    auto nt = m_limelightNT.get();
     if (nt != nullptr)
     {
         return units::time::second_t(LimelightHelpers::getLatency_Pipeline(m_cameraName));
@@ -263,7 +271,7 @@ void DragonLimelight::SetLEDMode(DRAGON_LIMELIGHT_LED_MODE mode)
 
 void DragonLimelight::SetCamMode(DRAGON_LIMELIGHT_CAM_MODE mode)
 {
-    auto nt = m_networktable.get();
+    auto nt = m_limelightNT.get();
     if (nt != nullptr)
     {
         nt->PutNumber("camMode", static_cast<int>(mode));

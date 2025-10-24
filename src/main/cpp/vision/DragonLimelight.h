@@ -110,12 +110,12 @@ protected:
 private:
     std::vector<std::unique_ptr<DragonVisionStruct>> ProcessAprilTags(VisionTargetOption option,
                                                                       std::vector<FieldAprilTagIDs> validTag);
-    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessAlgae(VisionTargetOption option);
+    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessMLObjects(VisionTargetOption option);
 
     units::length::inch_t m_driveThroughOffset = units::length::inch_t(0.0);
 
     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER m_identifier;
-    std::shared_ptr<nt::NetworkTable> m_networktable;
+    std::shared_ptr<nt::NetworkTable> m_limelightNT;
 
     const double START_HB = -9999;
     const double MAX_HB = 2000000000;

@@ -191,65 +191,6 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessObjectD
     return targets;
 }
 
-/// @brief Assume that the current pipeline is AprilTag and that a target is detected
-/// @return -1 if the network table cannot be found
-std::optional<int> DragonLimelight::GetAprilTagID()
-{
-    return LimelightHelpers::getFiducialID(m_cameraName);
-}
-
-bool DragonLimelight::HasTarget()
-{
-    return LimelightHelpers::getTV(m_cameraName);
-}
-
-units::angle::degree_t DragonLimelight::GetTx() const
-{
-    return units::angle::degree_t(LimelightHelpers::getTX(m_cameraName));
-}
-
-units::angle::degree_t DragonLimelight::GetTy() const
-{
-    return units::angle::degree_t(LimelightHelpers::getTY(m_cameraName));
-}
-
-std::optional<units::angle::degree_t> DragonLimelight::GetTargetYaw()
-{
-    return -1.0 * GetTx();
-}
-
-std::optional<double> DragonLimelight::GetTargetArea()
-{
-    auto nt = m_limelightNT.get();
-    if (nt != nullptr)
-    {
-        return nt->GetNumber("ta", 0.0);
-    }
-
-    return std::nullopt;
-}
-
-std::optional<units::angle::degree_t> DragonLimelight::GetTargetSkew()
-{
-    if (m_limelightNT != nullptr)
-    {
-        return units::angle::degree_t(m_limelightNT->GetNumber("ts", 0.0));
-    }
-
-    return std::nullopt;
-}
-
-std::optional<units::time::millisecond_t> DragonLimelight::GetPipelineLatency()
-{
-    auto nt = m_limelightNT.get();
-    if (nt != nullptr)
-    {
-        return units::time::second_t(LimelightHelpers::getLatency_Pipeline(m_cameraName));
-    }
-
-    return std::nullopt;
-}
-
 void DragonLimelight::SetLEDMode(DRAGON_LIMELIGHT_LED_MODE mode)
 {
     switch (mode)

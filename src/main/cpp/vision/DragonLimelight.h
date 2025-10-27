@@ -79,23 +79,11 @@ public:
     void SetCamMode(DRAGON_LIMELIGHT_CAM_MODE mode);
     void SetPipeline(DRAGON_LIMELIGHT_PIPELINE pipeline);
 
-    std::string GetCameraName() const { return m_cameraName; }
     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER GetCameraIdentifier() { return m_identifier; }
 
 protected:
-    bool HasTarget();
-
-    virtual std::optional<units::angle::degree_t> GetTargetYaw();
-    std::optional<double> GetTargetArea();
-    std::optional<units::angle::degree_t> GetTargetSkew();
-    std::optional<units::time::millisecond_t> GetPipelineLatency();
-    std::optional<int> GetAprilTagID();
-
     void SetPriorityTagID(int id);
     void SetCameraPose_RobotSpace(double forward, double left, double up, double roll, double pitch, double yaw);
-
-    units::angle::degree_t GetTx() const;
-    units::angle::degree_t GetTy() const;
 
     enum class LIMELIGHT_IMU_MODE
     {
@@ -107,8 +95,6 @@ protected:
     };
 
 private:
-    units::length::inch_t m_driveThroughOffset = units::length::inch_t(0.0);
-
     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER m_identifier;
     std::shared_ptr<nt::NetworkTable> m_limelightNT;
 

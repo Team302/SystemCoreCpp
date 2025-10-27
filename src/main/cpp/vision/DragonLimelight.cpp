@@ -43,21 +43,8 @@
 
 namespace
 {
-    bool IsValidAprilTag(std::vector<FieldAprilTagIDs> validTags, int tagID)
-    {
-        if (validTags.empty())
-        {
-            return true;
-        }
-        for (auto validTag : validTags)
-        {
-            if (static_cast<int>(validTag) == tagID)
-            {
-                return true;
-            }
-        }
-        return false;
-    }
+    bool IsValidAprilTag(std::vector<FieldAprilTagIDs> validTags, int tagID);
+    bool IsValidObjectClass(std::vector<int> validClasses, int classID);
 }
 
 ///-----------------------------------------------------------------------------------
@@ -126,25 +113,6 @@ bool DragonLimelight::IsLimelightRunning()
     return false;
 }
 
-std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetVisionTargetInfo(
-    VisionTargetOption option,
-    DragonTargetType targetType,
-    std::vector<FieldAprilTagIDs> validAprilTagIDs)
-{
-    std::vector<std::unique_ptr<DragonVisionStruct>> targets;
-
-    if (targetType == DragonTargetType::APRIL_TAG)
-    {
-        return ProcessAprilTags(option, validAprilTagIDs);
-    }
-    else if (targetType == DragonTargetType::AGLAE)
-    {
-        return ProcessMLObjects(option);
-    }
-
-    return targets;
-}
-
 std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessAprilTags(
     VisionTargetOption option,
     std::vector<FieldAprilTagIDs> validAprilTagIDs)
@@ -165,16 +133,15 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessAprilTa
             }
 
             auto aprilTagValue = std::make_unique<DragonVisionStruct>();
-            aprilTagValue.get()->targetID = aprilTag.id;
+            aprilTagValue.get()->aprilTagData.tagID = static_cast<FieldAprilTagIDs>(aprilTag.id);
             aprilTagValue.get()->targetType = DragonTargetType::APRIL_TAG;
-            aprilTagValue.get()->className = "AprilTag";
             aprilTagValue.get()->horizontalOffset = units::angle::degree_t(aprilTag.txnc);
             aprilTagValue.get()->verticalOffset = units::angle::degree_t(aprilTag.tync);
             aprilTagValue.get()->targetAreaPercent = aprilTag.ta;
             aprilTagValue.get()->pipelineLatency = units::millisecond_t(LimelightHelpers::getLatency_Pipeline(m_limelightNT) + LimelightHelpers::getLatency_Capture(m_limelightNT));
-            aprilTagValue.get()->distanceToCamera = units::length::meter_t(aprilTag.distToCamera);
-            aprilTagValue.get()->distanceToRobot = units::length::meter_t(aprilTag.distToRobot);
-            aprilTagValue.get()->ambiguity = aprilTag.ambiguity;
+            aprilTagValue.get()->aprilTagData.distToCamera = units::length::meter_t(aprilTag.distToCamera);
+            aprilTagValue.get()->aprilTagData.distToRobot = units::length::meter_t(aprilTag.distToRobot);
+            aprilTagValue.get()->aprilTagData.ambiguity = aprilTag.ambiguity;
 
             targets.emplace_back(std::move(aprilTagValue));
         }
@@ -183,9 +150,43 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessAprilTa
     return targets;
 }
 
-std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessMLObjects(VisionTargetOption option)
+std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessObjectDection(VisionTargetOption option,
+                                                                                       std::vector<int> validClasses)
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
+    auto nt = m_limelightNT.get();
+    if (nt != nullptr)
+    {
+        auto objects = LimelightHelpers::getRawDetections(m_limelightNT);
+
+        for (auto object : objects)
+        {
+            auto isValid = IsValidObjectClass(validClasses, object.classId);
+
+            if (!isValid)
+            {
+                continue; // skip this tag
+            }
+
+            auto objectValue = std::make_unique<DragonVisionStruct>();
+            objectValue.get()->objectDetectionData.classID = object.classId;
+            objectValue.get()->targetType = DragonTargetType::OBJECT_DETECTION;
+            objectValue.get()->horizontalOffset = units::angle::degree_t(object.txnc);
+            objectValue.get()->verticalOffset = units::angle::degree_t(object.tync);
+            objectValue.get()->targetAreaPercent = object.ta;
+            objectValue.get()->pipelineLatency = units::millisecond_t(LimelightHelpers::getLatency_Pipeline(m_limelightNT) + LimelightHelpers::getLatency_Capture(m_limelightNT));
+            objectValue.get()->objectDetectionData.corner0X = object.corner0_X;
+            objectValue.get()->objectDetectionData.corner0Y = object.corner0_Y;
+            objectValue.get()->objectDetectionData.corner1X = object.corner1_X;
+            objectValue.get()->objectDetectionData.corner1Y = object.corner1_Y;
+            objectValue.get()->objectDetectionData.corner2X = object.corner2_X;
+            objectValue.get()->objectDetectionData.corner2Y = object.corner2_Y;
+            objectValue.get()->objectDetectionData.corner3X = object.corner3_X;
+            objectValue.get()->objectDetectionData.corner3Y = object.corner3_Y;
+
+            targets.emplace_back(std::move(objectValue));
+        }
+    }
 
     return targets;
 }
@@ -297,15 +298,33 @@ void DragonLimelight::SetCameraPose_RobotSpace(double forward, double left, doub
     LimelightHelpers::setCameraPose_RobotSpace(m_cameraName, forward, left, up, roll, pitch, yaw);
 }
 
-void DragonLimelight::PrintValues()
-{ /*
-    Should do something similar but in DragonCamera instead of DragonLimelight
+namespace
+{
+    bool IsValidAprilTag(std::vector<FieldAprilTagIDs> validTags, int tagID)
+    {
+        if (validTags.empty())
+        {
+            return true;
+        }
 
-     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("DragonLimelight"), string("PrintValues HasTarget"), to_string(HasTarget()));
-     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("DragonLimelight"), string("PrintValues XOffset"), to_string(GetTargetHorizontalOffset().to<double>()));
-     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("DragonLimelight"), string("PrintValues YOffset"), to_string(GetTargetVerticalOffset().to<double>()));
-     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("DragonLimelight"), string("PrintValues Area"), to_string(GetTargetArea()));
-     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("DragonLimelight"), string("PrintValues Skew"), to_string(GetTargetSkew().to<double>()));
-     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("DragonLimelight"), string("PrintValues Latency"), to_string(GetPipelineLatency().to<double>()));
- */
+        auto it = std::find_if(validTags.begin(), validTags.end(),
+                               [&tagID](const FieldAprilTagIDs &validTags)
+                               { return static_cast<int>(validTags) == tagID; });
+
+        return it != validTags.end();
+    }
+
+    bool IsValidObjectClass(std::vector<int> validClasses, int classID)
+    {
+        if (validClasses.empty())
+        {
+            return true;
+        }
+
+        auto it = std::find_if(validClasses.begin(), validClasses.end(),
+                               [&classID](const int &validClass)
+                               { return validClass == classID; });
+
+        return it != validClasses.end();
+    }
 }

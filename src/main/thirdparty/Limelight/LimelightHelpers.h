@@ -732,6 +732,75 @@ namespace LimelightHelpers
         return getRawFiducials(getLimelightNTTable(limelightName));
     }
 
+    class RawDetection
+    {
+    public:
+        int classId{-1};
+        double txnc{0.0};
+        double tync{9.0}; // It seems like you intentionally set this to 9.0, so I kept it as is.
+        double ta{0.0};
+        double corner0_X{0.0};
+        double corner0_Y{0.0};
+        double corner1_X{0.0};
+        double corner1_Y{0.0};
+        double corner2_X{0.0};
+        double corner2_Y{0.0};
+        double corner3_X{0.0};
+        double corner3_Y{0.0};
+
+        RawDetection(int classId, double txnc, double tync, double ta,
+                     double corner0_X, double corner0_Y,
+                     double corner1_X, double corner1_Y,
+                     double corner2_X, double corner2_Y,
+                     double corner3_X, double corner3_Y)
+            : classId(classId), txnc(txnc), tync(tync), ta(ta),
+              corner0_X(corner0_X), corner0_Y(corner0_Y),
+              corner1_X(corner1_X), corner1_Y(corner1_Y),
+              corner2_X(corner2_X), corner2_Y(corner2_Y),
+              corner3_X(corner3_X), corner3_Y(corner3_Y) {}
+    };
+
+    inline std::vector<RawDetection> getRawDetections(std::shared_ptr<nt::NetworkTable> limelightNT)
+    {
+        auto entry = limelightNT.get()->GetEntry("rawdetections");
+        std::vector<double> rawDetectionArray = entry.GetDoubleArray({});
+        int valsPerEntry = 11;
+
+        if (rawDetectionArray.size() % valsPerEntry != 0)
+        {
+            return {};
+        }
+
+        int numDetections = rawDetectionArray.size() / valsPerEntry;
+        std::vector<RawDetection> rawDetections;
+
+        for (int i = 0; i < numDetections; ++i)
+        {
+            int baseIndex = i * valsPerEntry;
+            int classId = static_cast<int>(extractArrayEntry(rawDetectionArray, baseIndex));
+            double txnc = extractArrayEntry(rawDetectionArray, baseIndex + 1);
+            double tync = extractArrayEntry(rawDetectionArray, baseIndex + 2);
+            double ta = extractArrayEntry(rawDetectionArray, baseIndex + 3);
+            double corner0_X = extractArrayEntry(rawDetectionArray, baseIndex + 4);
+            double corner0_Y = extractArrayEntry(rawDetectionArray, baseIndex + 5);
+            double corner1_X = extractArrayEntry(rawDetectionArray, baseIndex + 6);
+            double corner1_Y = extractArrayEntry(rawDetectionArray, baseIndex + 7);
+            double corner2_X = extractArrayEntry(rawDetectionArray, baseIndex + 8);
+            double corner2_Y = extractArrayEntry(rawDetectionArray, baseIndex + 9);
+            double corner3_X = extractArrayEntry(rawDetectionArray, baseIndex + 10);
+            double corner3_Y = extractArrayEntry(rawDetectionArray, baseIndex + 11);
+
+            rawDetections.emplace_back(classId, txnc, tync, ta, corner0_X, corner0_Y, corner1_X, corner1_Y, corner2_X, corner2_Y, corner3_X, corner3_Y);
+        }
+
+        return rawDetections;
+    }
+
+    inline std::vector<RawDetection> getRawDetections(const std::string &limelightName)
+    {
+        return getRawDetections(getLimelightNTTable(limelightName));
+    }
+
     /**
      * Represents a 3D Pose Estimate.
      */

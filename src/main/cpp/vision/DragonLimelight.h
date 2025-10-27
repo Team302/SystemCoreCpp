@@ -69,9 +69,10 @@ public:
     ///-----------------------------------------------------------------------------------
     ~DragonLimelight() = default;
 
-    std::vector<std::unique_ptr<DragonVisionStruct>> GetVisionTargetInfo(VisionTargetOption option,
-                                                                         DragonTargetType targetType = DragonTargetType::APRIL_TAG,
-                                                                         std::vector<FieldAprilTagIDs> validAprilTags = {});
+    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessAprilTags(VisionTargetOption option,
+                                                                      std::vector<FieldAprilTagIDs> validTag);
+    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessObjectDection(VisionTargetOption option,
+                                                                          std::vector<int> validClasses);
     bool IsLimelightRunning();
 
     void SetLEDMode(DRAGON_LIMELIGHT_LED_MODE mode);
@@ -96,8 +97,6 @@ protected:
     units::angle::degree_t GetTx() const;
     units::angle::degree_t GetTy() const;
 
-    void PrintValues(); // Prints out all values to ensure everything is working and connected
-
     enum class LIMELIGHT_IMU_MODE
     {
         USE_EXTERNAL_IMU_ONLY = 0,
@@ -108,10 +107,6 @@ protected:
     };
 
 private:
-    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessAprilTags(VisionTargetOption option,
-                                                                      std::vector<FieldAprilTagIDs> validTag);
-    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessMLObjects(VisionTargetOption option);
-
     units::length::inch_t m_driveThroughOffset = units::length::inch_t(0.0);
 
     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER m_identifier;

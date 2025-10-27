@@ -19,18 +19,38 @@
 #include "units/time.h"
 #include <string>
 
+#include "fielddata/FieldAprilTagIDs.h"
 #include "vision/DragonVisionEnums.h"
+
+struct AprilTagSpecificData
+{
+    FieldAprilTagIDs tagID;                    // AprilTag ID enum
+    units::length::meter_t distToCamera = 0_m; // Distance to camera in meters
+    units::length::meter_t distToRobot = 0_m;  // Distance to robot center in meters
+    double ambiguity = 1.0;                    // Ambiguity of tag detection
+};
+
+struct ObjectDectcionSpecificData
+{
+    int classID = -1;
+    double corner0X = 0.0;
+    double corner0Y = 0.0;
+    double corner1X = 0.0;
+    double corner1Y = 0.0;
+    double corner2X = 0.0;
+    double corner2Y = 0.0;
+    double corner3X = 0.0;
+    double corner3Y = 0.0;
+};
 
 struct DragonVisionStruct
 {
-    int targetID = -1;
     DragonTargetType targetType = DragonTargetType::UNKNOWN;
-    std::string className = ""; // only used by Machine Learning
+    int ID = -1; // AprilTagID or ClassID for ML models
     units::angle::degree_t horizontalOffset = 0_deg;
     units::angle::degree_t verticalOffset = 0_deg;
     double targetAreaPercent = 0.0;
     units::time::millisecond_t pipelineLatency = 0_ms; // should be tl + cl
-    units::length::meter_t distanceToCamera = 0_m;
-    units::length::meter_t distanceToRobot = 0_m;
-    double ambiguity = 1.0; // only april tags
+    AprilTagSpecificData aprilTagData;
+    ObjectDectcionSpecificData objectDetectionData;
 };

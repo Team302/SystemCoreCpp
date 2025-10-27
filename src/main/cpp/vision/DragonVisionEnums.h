@@ -25,7 +25,7 @@ enum class DragonTargetType
 {
     UNKNOWN,
     APRIL_TAG,
-    AGLAE
+    OBJECT_DETECTION
 };
 
 enum class DRAGON_LIMELIGHT_CAMERA_TYPE

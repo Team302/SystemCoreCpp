@@ -14,7 +14,9 @@
 //====================================================================================================================================================
 
 // C++ Includes
+#include <memory>
 #include <string>
+#include <vector>
 
 // FRC Includes
 #include "frc/Timer.h"
@@ -29,6 +31,13 @@
 
 // Third Party Includes
 #include "Limelight/LimelightHelpers.h"
+
+// namespace
+// {
+// 	std::vector<std::unique_ptr<DragonVisionStruct>> ProcessOutputOption(
+// 		VisionTargetOption option,
+// 		std::vector<std::unique_ptr<DragonVisionStruct>> &targets);
+// } // namespace
 
 DragonVision *DragonVision::m_dragonVision = nullptr;
 DragonVision *DragonVision::GetDragonVision()
@@ -83,72 +92,43 @@ void DragonVision::AddLimelight(DragonLimelight *camera, DRAGON_LIMELIGHT_CAMERA
 {
 	m_dragonLimelightMap.insert(std::pair<DRAGON_LIMELIGHT_CAMERA_USAGE, DragonLimelight *>(usage, camera));
 }
+std::vector<std::unique_ptr<DragonVisionStruct>> DragonVision::ProcessAprilTags(VisionTargetOption option,
+																				const std::vector<FieldAprilTagIDs> &validAprilTagIDs) const
 
-std::vector<int> DragonVision::GetReefTags(frc::DriverStation::Alliance allianceColor) const
 {
-	std::vector<int> tagIdsToCheck = {};
-	if (allianceColor == frc::DriverStation::Alliance::kBlue)
+
+	std::vector<std::unique_ptr<DragonVisionStruct>> targets;
+	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
+	if (!cameras.empty())
 	{
-		tagIdsToCheck.emplace_back(17);
-		tagIdsToCheck.emplace_back(18);
-		tagIdsToCheck.emplace_back(19);
-		tagIdsToCheck.emplace_back(20);
-		tagIdsToCheck.emplace_back(21);
-		tagIdsToCheck.emplace_back(22);
+		return cameras[0]->ProcessAprilTags(validAprilTagIDs);
 	}
-	else
-	{
-		tagIdsToCheck.emplace_back(6);
-		tagIdsToCheck.emplace_back(7);
-		tagIdsToCheck.emplace_back(8);
-		tagIdsToCheck.emplace_back(9);
-		tagIdsToCheck.emplace_back(10);
-		tagIdsToCheck.emplace_back(11);
-	}
-	return tagIdsToCheck;
+	// for (auto cam : cameras)
+	// {
+	// 	auto camTargets = cam->ProcessAprilTags(validAprilTagIDs);
+	// 	targets.insert((targets.end(), std::make_move_iterator(camTargets.begin()), std::make_move_iterator(camTargets.end())));
+	// }
+
+	// return ProcessOutputOption(option, targets);
+	return {};
 }
-std::vector<int> DragonVision::GetCoralStationsTags(frc::DriverStation::Alliance allianceColor) const
+
+std::vector<std::unique_ptr<DragonVisionStruct>> DragonVision::ProcessObjectDection(VisionTargetOption option,
+																					const std::vector<int> &validClasses) const
 {
-	std::vector<int> tagIdsToCheck = {};
-	if (allianceColor == frc::DriverStation::Alliance::kBlue)
+	std::vector<std::unique_ptr<DragonVisionStruct>> targets;
+	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE);
+	if (!cameras.empty())
 	{
-		tagIdsToCheck.emplace_back(12);
-		tagIdsToCheck.emplace_back(13);
+		return cameras[0]->ProcessObjectDection(validClasses);
 	}
-	else
-	{
-		tagIdsToCheck.emplace_back(1);
-		tagIdsToCheck.emplace_back(2);
-	}
-	return tagIdsToCheck;
-}
-std::vector<int> DragonVision::GetProcessorTags(frc::DriverStation::Alliance allianceColor) const
-{
-	std::vector<int> tagIdsToCheck = {};
-	if (allianceColor == frc::DriverStation::Alliance::kBlue)
-	{
-		tagIdsToCheck.emplace_back(16);
-	}
-	else
-	{
-		tagIdsToCheck.emplace_back(3);
-	}
-	return tagIdsToCheck;
-}
-std::vector<int> DragonVision::GetBargeTags(frc::DriverStation::Alliance allianceColor) const
-{
-	std::vector<int> tagIdsToCheck = {};
-	if (allianceColor == frc::DriverStation::Alliance::kBlue)
-	{
-		tagIdsToCheck.emplace_back(4);
-		tagIdsToCheck.emplace_back(14);
-	}
-	else
-	{
-		tagIdsToCheck.emplace_back(5);
-		tagIdsToCheck.emplace_back(15);
-	}
-	return tagIdsToCheck;
+	// for (auto cam : cameras)
+	// {
+	// 	auto camTargets = cam->ProcessObjectDection(validClasses);
+	// 	targets.insert((targets.end(), std::make_move_iterator(camTargets.begin()), std::make_move_iterator(camTargets.end())));
+	// }
+	// return ProcessOutputOption(option, targets);
+	return {};
 }
 
 std::vector<DragonLimelight *> DragonVision::GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE usage) const
@@ -223,3 +203,41 @@ void DragonVision::SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE position, DRAGON_LI
 		// }
 	}
 }
+
+// namespace
+// {
+// 	std::vector<std::unique_ptr<DragonVisionStruct>> ProcessOutputOption(
+// 		VisionTargetOption option,
+// 		std::vector<std::unique_ptr<DragonVisionStruct>> &targets)
+// 	{
+
+// 		switch (option)
+// 		{
+// 		case VisionTargetOption::CLOSEST_VALID_TARGET:
+// 		{
+// 			if (!targets.empty())
+// 			{
+// 				auto closestTargetIt = std::min_element(
+// 					targets.begin(),
+// 					targets.end(),
+// 					[](const std::unique_ptr<DragonVisionStruct> &a, const std::unique_ptr<DragonVisionStruct> &b)
+// 					{
+// 						return a->targetAreaPercent > b->targetAreaPercent;
+// 					});
+// 				std::vector<std::unique_ptr<DragonVisionStruct>> closestTarget;
+// 				closestTarget.emplace_back(std::move(*closestTargetIt));
+// 				return closestTarget;
+// 			}
+// 			break;
+// 		}
+// 		case VisionTargetOption::FUSED_TARGET_INFO:
+// 		{
+// 			// TODO Fusion logic
+// 			break;
+// 		}
+// 		default:
+// 			break;
+// 		}
+// 		return targets;
+// 	}
+// } // namespace

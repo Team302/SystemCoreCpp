@@ -43,8 +43,8 @@
 
 namespace
 {
-    bool IsValidAprilTag(std::vector<FieldAprilTagIDs> validTags, int tagID);
-    bool IsValidObjectClass(std::vector<int> validClasses, int classID);
+    bool IsValidAprilTag(const std::vector<FieldAprilTagIDs> &validTags, int tagID);
+    bool IsValidObjectClass(const std::vector<int> &validClasses, int classID);
 }
 
 ///-----------------------------------------------------------------------------------
@@ -113,9 +113,7 @@ bool DragonLimelight::IsLimelightRunning()
     return false;
 }
 
-std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessAprilTags(
-    VisionTargetOption option,
-    std::vector<FieldAprilTagIDs> validAprilTagIDs)
+std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessAprilTags(const std::vector<FieldAprilTagIDs> &validAprilTagIDs) const
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
     auto nt = m_limelightNT.get();
@@ -150,8 +148,7 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessAprilTa
     return targets;
 }
 
-std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessObjectDection(VisionTargetOption option,
-                                                                                       std::vector<int> validClasses)
+std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessObjectDection(const std::vector<int> &validClasses) const
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
     auto nt = m_limelightNT.get();
@@ -241,7 +238,7 @@ void DragonLimelight::SetCameraPose_RobotSpace(double forward, double left, doub
 
 namespace
 {
-    bool IsValidAprilTag(std::vector<FieldAprilTagIDs> validTags, int tagID)
+    bool IsValidAprilTag(const std::vector<FieldAprilTagIDs> &validTags, int tagID)
     {
         if (validTags.empty())
         {
@@ -255,7 +252,7 @@ namespace
         return it != validTags.end();
     }
 
-    bool IsValidObjectClass(std::vector<int> validClasses, int classID)
+    bool IsValidObjectClass(const std::vector<int> &validClasses, int classID)
     {
         if (validClasses.empty())
         {

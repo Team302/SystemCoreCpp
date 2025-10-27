@@ -69,10 +69,8 @@ public:
     ///-----------------------------------------------------------------------------------
     ~DragonLimelight() = default;
 
-    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessAprilTags(VisionTargetOption option,
-                                                                      std::vector<FieldAprilTagIDs> validTag);
-    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessObjectDection(VisionTargetOption option,
-                                                                          std::vector<int> validClasses);
+    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessAprilTags(const std::vector<FieldAprilTagIDs> &validTag = {}) const;
+    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessObjectDection(const std::vector<int> &validClasses = {}) const;
     bool IsLimelightRunning();
 
     void SetLEDMode(DRAGON_LIMELIGHT_LED_MODE mode);

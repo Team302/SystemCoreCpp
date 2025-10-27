@@ -58,6 +58,11 @@ public:
 
     static frc::AprilTagFieldLayout m_aprilTagLayout;
 
+    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessAprilTags(VisionTargetOption option,
+                                                                      const std::vector<FieldAprilTagIDs> &validTag) const;
+    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessObjectDection(VisionTargetOption option,
+                                                                          const std::vector<int> &validClasses) const;
+
     bool HealthCheck(DRAGON_LIMELIGHT_CAMERA_USAGE position);
     bool HealthCheck(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier);
 
@@ -69,11 +74,6 @@ private:
 
     std::vector<DragonLimelight *> GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE usage) const;
     DragonLimelight *GetCameras(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier) const;
-
-    std::vector<int> GetReefTags(frc::DriverStation::Alliance allianceColor) const;
-    std::vector<int> GetCoralStationsTags(frc::DriverStation::Alliance allianceColor) const;
-    std::vector<int> GetProcessorTags(frc::DriverStation::Alliance allianceColor) const;
-    std::vector<int> GetBargeTags(frc::DriverStation::Alliance allianceColor) const;
 
     static DragonVision *m_dragonVision;
     std::multimap<DRAGON_LIMELIGHT_CAMERA_USAGE, DragonLimelight *> m_dragonLimelightMap;

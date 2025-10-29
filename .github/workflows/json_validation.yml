@@ -1,0 +1,27 @@
+# workflow for validating json files
+# this only validates that the json is valid, not that it follows a specific schema
+
+name: json validation
+
+on:
+  pull_request:
+    branches: [ main ]
+    paths:
+      - '**/*.traj'
+      - '**/*.path'
+      - '**/*.vpr'
+      - '**/*.json'
+
+jobs:
+  validate-json:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate JSON Files
+        run: |
+          for file in $(find . -name "*.traj" -o -name "*.path" -o -name "*.vpr" -o -name "*.json" ! -path "*/launch.json" ); do
+            echo "Validating $file"
+            jq empty "$file" || exit 1
+          done

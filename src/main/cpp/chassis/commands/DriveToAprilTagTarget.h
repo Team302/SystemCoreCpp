@@ -21,7 +21,7 @@
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "fielddata/DragonTargetFinder.h"
 
-class DriveToTarget : public frc2::CommandHelper<frc2::Command, DriveToTarget>
+class DriveToAprilTagTarget : public frc2::CommandHelper<frc2::Command, DriveToAprilTagTarget>
 {
 public:
     /**
@@ -30,7 +30,7 @@ public:
      * @param chassis A pointer to the swerve drive subsystem.
      * @param target The specific field element to target.
      */
-    DriveToTarget(subsystems::CommandSwerveDrivetrain *chassis, DragonTargetFinderTarget target);
+    DriveToAprilTagTarget(subsystems::CommandSwerveDrivetrain *chassis, DragonTargetFinderTarget target);
 
     // FRC Command Lifecycle methods
     void Initialize() override;

@@ -18,7 +18,7 @@
 #include "frc2/command/button/RobotModeTriggers.h"
 #include "chassis/commands/TeleopFieldDrive.h"
 #include "chassis/commands/TeleopRobotDrive.h"
-#include "chassis/commands/DriveToTarget.h"
+#include "chassis/commands/DriveToAprilTagTarget.h"
 #include "chassis/commands/VisionDrive.h"
 #include "state/RobotState.h"
 #include "state/IRobotStateChangeSubscriber.h"
@@ -39,14 +39,14 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_maxSpeed(ChassisConfigMgr::GetInstance()->GetMaxSpeed()),
                                      m_fieldDrive(std::make_unique<TeleopFieldDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate)),
                                      m_robotDrive(std::make_unique<TeleopRobotDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate)),
-                                     m_driveToCoralStationSidewall(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::CLOSEST_CORAL_STATION_SIDWALL_SIDE)),
-                                     m_driveToCoralStationAlliance(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::CLOSEST_CORAL_STATION_ALLIANCE_SIDE)),
-                                     m_driveToCoralRightBranch(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::CLOSEST_RIGHT_REEF_BRANCH)),
-                                     m_driveToCoralLeftBranch(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::CLOSEST_LEFT_REEF_BRANCH)),
-                                     m_driveToBarge(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::BARGE)),
-                                     m_driveToLeftCage(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::LEFT_CAGE)),
-                                     m_driveToRightCage(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::RIGHT_CAGE)),
-                                     m_driveToCenterCage(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::CENTER_CAGE)),
+                                     m_driveToCoralStationSidewall(std::make_unique<DriveToAprilTagTarget>(m_chassis, DragonTargetFinderTarget::CLOSEST_CORAL_STATION_SIDWALL_SIDE)),
+                                     m_driveToCoralStationAlliance(std::make_unique<DriveToAprilTagTarget>(m_chassis, DragonTargetFinderTarget::CLOSEST_CORAL_STATION_ALLIANCE_SIDE)),
+                                     m_driveToCoralRightBranch(std::make_unique<DriveToAprilTagTarget>(m_chassis, DragonTargetFinderTarget::CLOSEST_RIGHT_REEF_BRANCH)),
+                                     m_driveToCoralLeftBranch(std::make_unique<DriveToAprilTagTarget>(m_chassis, DragonTargetFinderTarget::CLOSEST_LEFT_REEF_BRANCH)),
+                                     m_driveToBarge(std::make_unique<DriveToAprilTagTarget>(m_chassis, DragonTargetFinderTarget::BARGE)),
+                                     m_driveToLeftCage(std::make_unique<DriveToAprilTagTarget>(m_chassis, DragonTargetFinderTarget::LEFT_CAGE)),
+                                     m_driveToRightCage(std::make_unique<DriveToAprilTagTarget>(m_chassis, DragonTargetFinderTarget::RIGHT_CAGE)),
+                                     m_driveToCenterCage(std::make_unique<DriveToAprilTagTarget>(m_chassis, DragonTargetFinderTarget::CENTER_CAGE)),
                                      m_driveToAlgae(std::make_unique<VisionDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate)),
                                      m_trajectoryDrive(std::make_unique<TrajectoryDrive>(m_chassis))
 

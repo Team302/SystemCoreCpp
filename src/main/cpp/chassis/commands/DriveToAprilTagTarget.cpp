@@ -12,7 +12,7 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#include "chassis/commands/DriveToTarget.h" // Update path if needed
+#include "chassis/commands/DriveToAprilTagTarget.h" // Update path if needed
 #include "fielddata/BargeHelper.h"
 #include "fielddata/ReefHelper.h"
 #include "frc/geometry/Rotation2d.h"
@@ -20,7 +20,7 @@
 #include "utils/AngleUtils.h"
 #include "utils/logging/debug/Logger.h"
 
-DriveToTarget::DriveToTarget(
+DriveToAprilTagTarget::DriveToAprilTagTarget(
     subsystems::CommandSwerveDrivetrain *chassis,
     DragonTargetFinderTarget target) : m_chassis(chassis),
                                        m_target(target),
@@ -35,7 +35,7 @@ DriveToTarget::DriveToTarget(
     m_feedForwardRange = m_ffMaxRadius - m_ffMinRadius;
 }
 
-void DriveToTarget::Initialize()
+void DriveToAprilTagTarget::Initialize()
 {
     m_chassis->ResetSamePose();
     auto dragonTargetFinderInst = DragonTargetFinder::GetInstance();
@@ -66,7 +66,7 @@ void DriveToTarget::Initialize()
     }
 }
 
-void DriveToTarget::Execute()
+void DriveToAprilTagTarget::Execute()
 {
     frc::ChassisSpeeds chassisSpeeds{};
     if (m_chassis != nullptr)
@@ -116,7 +116,7 @@ void DriveToTarget::Execute()
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElementIsDone_Bool, IsFinished());
 }
 
-bool DriveToTarget::IsFinished()
+bool DriveToAprilTagTarget::IsFinished()
 {
     bool isDone = false;
     bool isSamePose = false;
@@ -138,12 +138,12 @@ bool DriveToTarget::IsFinished()
     return (isDone || isSamePose);
 }
 
-void DriveToTarget::End(bool interrupted)
+void DriveToAprilTagTarget::End(bool interrupted)
 {
     m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
 }
 
-void DriveToTarget::CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds)
+void DriveToAprilTagTarget::CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds)
 {
     if (m_chassis != nullptr)
     {

@@ -31,10 +31,8 @@ VisionDrive::VisionDrive(subsystems::CommandSwerveDrivetrain *chassis,
 
 void VisionDrive::Initialize()
 {
-    if (m_vision != nullptr)
-    {
-        m_vision->SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS, DRAGON_LIMELIGHT_PIPELINE::MACHINE_LEARNING_PL);
-    }
+    m_drivePID.Reset();
+    m_rotatePID.Reset();
 }
 
 void VisionDrive::Execute()

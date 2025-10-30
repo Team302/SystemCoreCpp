@@ -53,7 +53,6 @@
 #include "mechanisms/DragonTale/ManualGrabAlgaeReefState.h"
 #include "mechanisms/DragonTale/ManualGrabAlgaeFloorState.h"
 #include "mechanisms/DragonTale/LaunchNetState.h"
-#include "fielddata/DragonTargetFinder.h"
 #include "utils/logging/debug/Logger.h"
 #include "utils/DragonPower.h"
 #include "teleopcontrol/TeleopControl.h"

@@ -19,7 +19,6 @@
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/geometry/Pose2d.h>
 #include "chassis/generated/CommandSwerveDrivetrain.h"
-#include "fielddata/DragonTargetFinder.h"
 
 class DriveToAprilTagTarget : public frc2::CommandHelper<frc2::Command, DriveToAprilTagTarget>
 {
@@ -45,7 +44,6 @@ private:
     void CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds);
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
-    DragonTargetFinderData m_currentType = DragonTargetFinderData::NOT_FOUND;
 
     swerve::requests::FieldCentricFacingAngle m_driveRequest;
 

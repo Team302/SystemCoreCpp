@@ -55,20 +55,17 @@ void DriveToAprilTagTarget::Execute()
         m_currentPose = m_chassis->GetPose();
         CalculateFeedForward(chassisSpeeds);
 
-        if (m_currentType != DragonTargetFinderData::NOT_FOUND)
+        if (m_distanceError > m_pidResetThreshold)
         {
-            if (m_distanceError > m_pidResetThreshold)
-            {
-                m_translationPIDX.Reset(m_currentPose.X(), chassisSpeeds.vx);
-                m_translationPIDY.Reset(m_currentPose.Y(), chassisSpeeds.vy);
-            }
-            else
-            {
-                chassisSpeeds.vx += units::velocity::meters_per_second_t(m_translationPIDX.Calculate(m_currentPose.X(), m_endPose.X()));
-                chassisSpeeds.vy += units::velocity::meters_per_second_t(m_translationPIDY.Calculate(m_currentPose.Y(), m_endPose.Y()));
-                chassisSpeeds.vx = std::clamp(chassisSpeeds.vx, -kMaxVelocity, kMaxVelocity);
-                chassisSpeeds.vy = std::clamp(chassisSpeeds.vy, -kMaxVelocity, kMaxVelocity);
-            }
+            m_translationPIDX.Reset(m_currentPose.X(), chassisSpeeds.vx);
+            m_translationPIDY.Reset(m_currentPose.Y(), chassisSpeeds.vy);
+        }
+        else
+        {
+            chassisSpeeds.vx += units::velocity::meters_per_second_t(m_translationPIDX.Calculate(m_currentPose.X(), m_endPose.X()));
+            chassisSpeeds.vy += units::velocity::meters_per_second_t(m_translationPIDY.Calculate(m_currentPose.Y(), m_endPose.Y()));
+            chassisSpeeds.vx = std::clamp(chassisSpeeds.vx, -kMaxVelocity, kMaxVelocity);
+            chassisSpeeds.vy = std::clamp(chassisSpeeds.vy, -kMaxVelocity, kMaxVelocity);
         }
     }
     m_chassis->SetControl(

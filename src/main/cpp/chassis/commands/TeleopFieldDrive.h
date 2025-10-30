@@ -19,7 +19,6 @@
 #include "frc2/command/Command.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "teleopcontrol/TeleopControl.h"
-#include "fielddata/DragonTargetFinder.h"
 #include <units/velocity.h>
 #include <units/angular_velocity.h>
 #include "state/IRobotStateChangeSubscriber.h"
@@ -43,7 +42,6 @@ private:
     TeleopControl *m_controller;
     units::velocity::meters_per_second_t m_maxSpeed;
     units::angular_velocity::degrees_per_second_t m_maxAngularRate;
-    DragonTargetFinder *m_targetFinder;
     units::angle::degree_t m_targetHeading{0_deg};
     static constexpr double m_heading_kP{10.0};
     static constexpr double m_heading_kI{1.0};
@@ -61,7 +59,4 @@ private:
                                                                                .WithDeadband(m_maxSpeed * 0.1)                                  // TODO: Investigate this deadband vs controller deadband
                                                                                .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage) // Use open-loop voltage for drive
                                                                                .WithDesaturateWheelSpeeds(true);
-
-    void FaceReef();
-    void FaceBarge();
 };

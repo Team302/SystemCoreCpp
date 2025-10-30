@@ -28,7 +28,6 @@
 #include "auton/AutonGrid.h"
 #include "auton/ZoneParser.h"
 #include "auton/ZoneParams.h"
-#include "fielddata/DragonTargetFinder.h"
 
 enum class BargeZones
 {

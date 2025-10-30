@@ -58,18 +58,10 @@ void TeleopFieldDrive::Execute()
     {
         if (m_climbMode == RobotStateChanges::ClimbMode::ClimbModeOn)
         {
-            if (FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kBlue)
-            {
-                m_targetHeading = units::angle::degree_t(-90);
-            }
-            else
-            {
-                m_targetHeading = units::angle::degree_t(90);
-            }
+            m_targetHeading = units::angle::degree_t(-90);
         }
 
         m_chassis->SetControl(m_fieldHeadingDriveRequest.WithVelocityX(forward * m_maxSpeed)
-                                  .WithForwardPerspective(ctre::phoenix6::swerve::requests::ForwardPerspectiveValue::BlueAlliance)
                                   .WithVelocityY(strafe * m_maxSpeed)
                                   .WithTargetDirection(m_targetHeading));
     }

@@ -45,7 +45,6 @@ public:
     void IsInZone();
     void InitZones();
     std::optional<units::length::meter_t> ClampChassisY();
-    frc::Pose2d GetCagePose(DragonTargetFinderTarget target);
 
     frc::Pose2d CalcBargePose();
 

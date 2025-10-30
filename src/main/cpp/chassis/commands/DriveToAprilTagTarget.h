@@ -30,7 +30,7 @@ public:
      * @param chassis A pointer to the swerve drive subsystem.
      * @param target The specific field element to target.
      */
-    DriveToAprilTagTarget(subsystems::CommandSwerveDrivetrain *chassis, DragonTargetFinderTarget target);
+    DriveToAprilTagTarget(subsystems::CommandSwerveDrivetrain *chassis);
 
     // FRC Command Lifecycle methods
     void Initialize() override;
@@ -38,19 +38,18 @@ public:
     bool IsFinished() override;
     void End(bool interrupted) override;
 
+protected:
+    frc::Pose2d m_endPose;
+
 private:
     void CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds);
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
-    DragonTargetFinderTarget m_target;
-    DragonTargetFinder *m_targetFinder;
     DragonTargetFinderData m_currentType = DragonTargetFinderData::NOT_FOUND;
 
     swerve::requests::FieldCentricFacingAngle m_driveRequest;
 
-    bool m_hasTarget = false;
     bool m_isSamePose = false;
-    frc::Pose2d m_endPose;
     frc::Pose2d m_prevPose;
     frc::Pose2d m_currentPose;
     const units::length::inch_t m_distanceThreshold{0.25};

@@ -13,19 +13,14 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #include "chassis/commands/DriveToAprilTagTarget.h" // Update path if needed
-#include "fielddata/BargeHelper.h"
-#include "fielddata/ReefHelper.h"
 #include "frc/geometry/Rotation2d.h"
 #include "frc/geometry/Translation2d.h"
 #include "utils/AngleUtils.h"
+#include "state/RobotState.h"
 #include "utils/logging/debug/Logger.h"
 
 DriveToAprilTagTarget::DriveToAprilTagTarget(
-    subsystems::CommandSwerveDrivetrain *chassis,
-    DragonTargetFinderTarget target) : m_chassis(chassis),
-                                       m_target(target),
-                                       m_targetFinder(DragonTargetFinder::GetInstance()),
-                                       m_hasTarget(false)
+    subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis)
 
 {
     AddRequirements(m_chassis);
@@ -38,31 +33,16 @@ DriveToAprilTagTarget::DriveToAprilTagTarget(
 void DriveToAprilTagTarget::Initialize()
 {
     m_chassis->ResetSamePose();
-    auto dragonTargetFinderInst = DragonTargetFinder::GetInstance();
-    dragonTargetFinderInst->ResetGoalPose();
-    auto info = dragonTargetFinderInst->GetPose(m_target);
-    m_hasTarget = false;
+    auto speeds = m_chassis->GetState().Speeds;
 
-    if (info.has_value())
+    m_translationPIDX.Reset(m_currentPose.X(), speeds.vx);
+    m_translationPIDY.Reset(m_currentPose.Y(), speeds.vy);
+
+    if (m_chassis != nullptr)
     {
-        m_currentType = get<0>(info.value());
-        m_hasTarget = m_currentType != DragonTargetFinderData::NOT_FOUND;
-        if (m_hasTarget)
-        {
-            m_endPose = get<1>(info.value());
-
-            if (m_chassis != nullptr)
-            {
-                m_currentPose = m_chassis->GetPose();
-                m_translationPIDX.SetGoal(m_endPose.X());
-                m_translationPIDY.SetGoal(m_endPose.Y());
-
-                auto speeds = m_chassis->GetState().Speeds;
-
-                m_translationPIDX.Reset(m_currentPose.X(), speeds.vx);
-                m_translationPIDY.Reset(m_currentPose.Y(), speeds.vy);
-            }
-        }
+        m_currentPose = m_chassis->GetPose();
+        m_translationPIDX.SetGoal(m_endPose.X());
+        m_translationPIDY.SetGoal(m_endPose.Y());
     }
 }
 
@@ -71,68 +51,47 @@ void DriveToAprilTagTarget::Execute()
     frc::ChassisSpeeds chassisSpeeds{};
     if (m_chassis != nullptr)
     {
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "target found", m_hasTarget);
-        if (m_hasTarget)
-        {
-            m_currentPose = m_chassis->GetPose();
-            CalculateFeedForward(chassisSpeeds);
 
-            if (m_currentType != DragonTargetFinderData::NOT_FOUND)
+        m_currentPose = m_chassis->GetPose();
+        CalculateFeedForward(chassisSpeeds);
+
+        if (m_currentType != DragonTargetFinderData::NOT_FOUND)
+        {
+            if (m_distanceError > m_pidResetThreshold)
             {
-                if (m_distanceError > m_pidResetThreshold)
-                {
-                    m_translationPIDX.Reset(m_currentPose.X(), chassisSpeeds.vx);
-                    m_translationPIDY.Reset(m_currentPose.Y(), chassisSpeeds.vy);
-                }
-                else
-                {
-                    chassisSpeeds.vx += units::velocity::meters_per_second_t(m_translationPIDX.Calculate(m_currentPose.X(), m_endPose.X()));
-                    chassisSpeeds.vy += units::velocity::meters_per_second_t(m_translationPIDY.Calculate(m_currentPose.Y(), m_endPose.Y()));
-                    chassisSpeeds.vx = std::clamp(chassisSpeeds.vx, -kMaxVelocity, kMaxVelocity);
-                    chassisSpeeds.vy = std::clamp(chassisSpeeds.vy, -kMaxVelocity, kMaxVelocity);
-                }
+                m_translationPIDX.Reset(m_currentPose.X(), chassisSpeeds.vx);
+                m_translationPIDY.Reset(m_currentPose.Y(), chassisSpeeds.vy);
+            }
+            else
+            {
+                chassisSpeeds.vx += units::velocity::meters_per_second_t(m_translationPIDX.Calculate(m_currentPose.X(), m_endPose.X()));
+                chassisSpeeds.vy += units::velocity::meters_per_second_t(m_translationPIDY.Calculate(m_currentPose.Y(), m_endPose.Y()));
+                chassisSpeeds.vx = std::clamp(chassisSpeeds.vx, -kMaxVelocity, kMaxVelocity);
+                chassisSpeeds.vy = std::clamp(chassisSpeeds.vy, -kMaxVelocity, kMaxVelocity);
             }
         }
-        m_chassis->SetControl(
-            m_driveRequest.WithVelocityX(chassisSpeeds.vx)
-                .WithVelocityY(chassisSpeeds.vy)
-                .WithTargetDirection(m_endPose.Rotation().Degrees())
-                .WithHeadingPID(m_rotationKP, m_rotationKI, m_rotationKD)
-                .WithForwardPerspective(ctre::phoenix6::swerve::requests::ForwardPerspectiveValue::BlueAlliance));
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Error", m_endPose.Translation().Distance(m_currentPose.Translation()).value());
     }
-
-    if (m_target == DragonTargetFinderTarget::BARGE) // TODO: Come back and see if there is a better way to implement this including the publishing in End() method
-    {
-        auto bargeHelper = BargeHelper::GetInstance();
-        bargeHelper->IsInZone();
-    }
-    else if (m_target == DragonTargetFinderTarget::CLOSEST_LEFT_REEF_BRANCH || m_target == DragonTargetFinderTarget::CLOSEST_RIGHT_REEF_BRANCH)
-    {
-        auto reefHelper = ReefHelper::GetInstance();
-        reefHelper->IsInZone();
-    }
+    m_chassis->SetControl(
+        m_driveRequest.WithVelocityX(chassisSpeeds.vx)
+            .WithVelocityY(chassisSpeeds.vy)
+            .WithTargetDirection(m_endPose.Rotation().Degrees())
+            .WithHeadingPID(m_rotationKP, m_rotationKI, m_rotationKD)
+            .WithForwardPerspective(ctre::phoenix6::swerve::requests::ForwardPerspectiveValue::BlueAlliance));
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Error", m_endPose.Translation().Distance(m_currentPose.Translation()).value());
 
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElementIsDone_Bool, IsFinished());
 }
-
 bool DriveToAprilTagTarget::IsFinished()
 {
     bool isDone = false;
     bool isSamePose = false;
 
-    if (m_hasTarget && m_chassis != nullptr)
-    {
-        auto distance = m_currentPose.Translation().Distance(m_endPose.Translation());
+    auto distance = m_currentPose.Translation().Distance(m_endPose.Translation());
 
-        isDone = distance < m_distanceThreshold;
-        isSamePose = m_chassis->IsSamePose();
-        m_prevPose = m_currentPose;
-    }
-    else
-    {
-        isDone = true;
-    }
+    isDone = distance < m_distanceThreshold;
+    isSamePose = m_chassis->IsSamePose();
+    m_prevPose = m_currentPose;
+
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Is Done", isDone);
     Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "DriveToFieldElement", "Is SamePose", isSamePose);
     return (isDone || isSamePose);

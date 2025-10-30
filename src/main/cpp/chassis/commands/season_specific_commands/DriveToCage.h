@@ -12,45 +12,30 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-
 #pragma once
 
-#include <optional>
-
-#include "auton/ZoneParams.h"
-#include "auton/ZoneParser.h"
+#include "chassis/commands/DriveToAprilTagTarget.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
-#include "fielddata/FieldAprilTagIDs.h"
-#include "fielddata/FieldConstants.h"
-#include "frc/DriverStation.h"
-#include "frc/geometry/Pose2d.h"
-#include "state/RobotState.h"
+#include "chassis/SwerveContainer.h"
 
-class ReefHelper
+class DriveToCage : public DriveToAprilTagTarget
 {
 public:
-    static ReefHelper *GetInstance();
-    void IsInZone();
-    void InitZones();
-    std::optional<FieldAprilTagIDs> GetNearestReefTag();
-    std::optional<FieldConstants::FIELD_ELEMENT> GetNearestLeftReefBranch(FieldAprilTagIDs tag);
-    std::optional<FieldConstants::FIELD_ELEMENT> GetNearestRightReefBranch(FieldAprilTagIDs tag);
-    std::optional<frc::Pose2d> GetClosestReefTagPose();
+    /**
+     * @brief Creates a command to drive to the Barge AprilTag.
+     *
+     * @param chassis A pointer to the swerve drive subsystem.
+     * @param location The cage location (LEFT, CENTER, RIGHT).
+     */
+    DriveToCage(subsystems::CommandSwerveDrivetrain *chassis, SwerveContainer::CageLocation location);
+
+    /**
+     * @brief Default destructor.
+     */
+    ~DriveToCage() = default;
+
+    void Initialize() override;
 
 private:
-    ReefHelper();
-    ~ReefHelper() = default;
-    static ReefHelper *m_instance;
-
-    units::length::meter_t CalcDistanceToAprilTag(FieldAprilTagIDs tag, frc::Pose2d currentPose);
-
-    subsystems::CommandSwerveDrivetrain *m_chassis;
-    frc::DriverStation::Alliance m_allianceColor;
-    FieldConstants *m_fieldConstants;
-
-    frc::Pose2d m_redReefCenter;
-    frc::Pose2d m_blueReefCenter;
-
-    ZoneParams *m_reefZonesRed;
-    ZoneParams *m_reefZonesBlue;
+    SwerveContainer::CageLocation m_location;
 };

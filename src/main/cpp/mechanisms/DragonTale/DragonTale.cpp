@@ -62,6 +62,7 @@
 #include "utils/FMSData.h"
 #include "tuple"
 #include "frc/DataLogManager.h"
+#include "fielddata/ReefHelper.h"
 
 #define CANBUS_302_NAME "canivore"
 #define CANBUS_9999_NAME "canivore"
@@ -1186,10 +1187,10 @@ void DragonTale::SetAlgaeReefPosition()
 	units::length::inch_t algeHeight = isBlue ? m_grabAlgaeLow : m_grabAlgaeHigh;
 	units::angle::degree_t algeAngle = isBlue ? m_grabAlgaeLowAngle : m_grabAlgaeHighAngle;
 	// Adjust the angle to the nearest 60-degree increment
-	auto info = (DragonTargetFinder::GetInstance()->GetPose(DragonTargetFinderTarget::CLOSEST_REEF_ALGAE));
-	if (info)
+	auto info = (ReefHelper::GetInstance())->GetClosestReefTagPose();
+	if (info.has_value())
 	{
-		frc::Pose2d algaePose = std::get<frc::Pose2d>(info.value());
+		frc::Pose2d algaePose = info.value();
 
 		int closestMultiple = static_cast<int>((algaePose.Rotation().Degrees() + 180.5_deg).value());
 

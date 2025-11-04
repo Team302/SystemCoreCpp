@@ -40,6 +40,7 @@
 Robot::Robot()
 {
     Logger::GetLogger()->PutLoggingSelectionsOnDashboard();
+    Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "Robot", std::string("init"), std::string("2"));
 
     InitializeRobot();
     InitializeAutonOptions();
@@ -51,6 +52,7 @@ Robot::Robot()
     m_datalogger = DragonDataLoggerMgr::GetInstance();
 
     auto path = AutonUtils::GetTrajectoryFromPathFile("BlueLeftInside_I"); // load choreo library so we don't get loop overruns during autonperiodic
+
 }
 
 void Robot::RobotPeriodic()
@@ -63,10 +65,10 @@ void Robot::RobotPeriodic()
         Logger::GetLogger()->PeriodicLog();
     }
 
-    // if (m_datalogger != nullptr && !frc::DriverStation::IsDisabled())
-    // {
-    //     m_datalogger->PeriodicDataLog();
-    // }
+    if (m_datalogger != nullptr && !frc::DriverStation::IsDisabled())
+    {
+        m_datalogger->PeriodicDataLog();
+    }
 
     if (m_robotState != nullptr)
     {

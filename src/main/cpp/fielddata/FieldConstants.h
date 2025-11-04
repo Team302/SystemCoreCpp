@@ -23,7 +23,6 @@
 #include <frc/apriltag/AprilTagFields.h>
 #include "frc/apriltag/AprilTagFieldLayout.h"
 #include "RobinHood/robin_hood.h"
-#include "RobinHood/robin_hood.h"
 #include "units/angle.h"
 #include "units/base.h"
 

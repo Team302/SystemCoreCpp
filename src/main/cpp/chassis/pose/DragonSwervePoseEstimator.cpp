@@ -92,3 +92,17 @@ void DragonSwervePoseEstimator::CalculateInitialPose()
     //     }
     // }
 }
+
+// FRC Command Lifecycle methods
+void DragonSwervePoseEstimator::Initialize()
+{
+}
+
+void DragonSwervePoseEstimator::Execute()
+{
+}
+
+bool DragonSwervePoseEstimator::IsFinished()
+{
+    return false;
+}

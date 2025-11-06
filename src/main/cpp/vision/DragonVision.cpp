@@ -92,8 +92,8 @@ void DragonVision::AddLimelight(DragonLimelight *camera, DRAGON_LIMELIGHT_CAMERA
 {
 	m_dragonLimelightMap.insert(std::pair<DRAGON_LIMELIGHT_CAMERA_USAGE, DragonLimelight *>(usage, camera));
 }
-std::vector<std::unique_ptr<DragonVisionStruct>> DragonVision::ProcessAprilTags(VisionTargetOption option,
-																				const std::vector<FieldAprilTagIDs> &validAprilTagIDs) const
+std::vector<std::unique_ptr<DragonVisionStruct>> DragonVision::GetAprilTagVisionTargetInfo(VisionTargetOption option,
+																						   const std::vector<FieldAprilTagIDs> &validAprilTagIDs) const
 
 {
 
@@ -101,11 +101,11 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonVision::ProcessAprilTags(
 	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
 	if (!cameras.empty())
 	{
-		return cameras[0]->ProcessAprilTags(validAprilTagIDs);
+		return cameras[0]->GetAprilTagVisionTargetInfo(validAprilTagIDs);
 	}
 	// for (auto cam : cameras)
 	// {
-	// 	auto camTargets = cam->ProcessAprilTags(validAprilTagIDs);
+	// 	auto camTargets = cam->GetAprilTagVisionTargetInfo(validAprilTagIDs);
 	// 	targets.insert((targets.end(), std::make_move_iterator(camTargets.begin()), std::make_move_iterator(camTargets.end())));
 	// }
 
@@ -113,18 +113,18 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonVision::ProcessAprilTags(
 	return {};
 }
 
-std::vector<std::unique_ptr<DragonVisionStruct>> DragonVision::ProcessObjectDection(VisionTargetOption option,
-																					const std::vector<int> &validClasses) const
+std::vector<std::unique_ptr<DragonVisionStruct>> DragonVision::GetObjectDetectionTargetInfo(VisionTargetOption option,
+																							const std::vector<int> &validClasses) const
 {
 	std::vector<std::unique_ptr<DragonVisionStruct>> targets;
 	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE);
 	if (!cameras.empty())
 	{
-		return cameras[0]->ProcessObjectDection(validClasses);
+		return cameras[0]->GetObjectDetectionTargetInfo(validClasses);
 	}
 	// for (auto cam : cameras)
 	// {
-	// 	auto camTargets = cam->ProcessObjectDection(validClasses);
+	// 	auto camTargets = cam->GetObjectDetectionTargetInfo(validClasses);
 	// 	targets.insert((targets.end(), std::make_move_iterator(camTargets.begin()), std::make_move_iterator(camTargets.end())));
 	// }
 	// return ProcessOutputOption(option, targets);
@@ -202,6 +202,11 @@ void DragonVision::SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE position, DRAGON_LI
 		cam->SetPipeline(pipeline);
 		// }
 	}
+}
+
+void DragonVision::Periodic()
+{
+	// Get the Estimated Robot Pose for each camera
 }
 
 // namespace

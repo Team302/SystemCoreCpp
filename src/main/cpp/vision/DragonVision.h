@@ -33,7 +33,9 @@
 
 #include "units/angular_velocity.h"
 
-class DragonVision
+#include <frc2/command/SubsystemBase.h>
+
+class DragonVision : public frc2::SubsystemBase
 {
 public:
     static DragonVision *GetDragonVision();
@@ -58,15 +60,17 @@ public:
 
     static frc::AprilTagFieldLayout m_aprilTagLayout;
 
-    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessAprilTags(VisionTargetOption option,
-                                                                      const std::vector<FieldAprilTagIDs> &validTag) const;
-    std::vector<std::unique_ptr<DragonVisionStruct>> ProcessObjectDection(VisionTargetOption option,
-                                                                          const std::vector<int> &validClasses) const;
+    std::vector<std::unique_ptr<DragonVisionStruct>> GetAprilTagVisionTargetInfo(VisionTargetOption option,
+                                                                                 const std::vector<FieldAprilTagIDs> &validTag) const;
+    std::vector<std::unique_ptr<DragonVisionStruct>> GetObjectDetectionTargetInfo(VisionTargetOption option,
+                                                                                  const std::vector<int> &validClasses) const;
 
     bool HealthCheck(DRAGON_LIMELIGHT_CAMERA_USAGE position);
     bool HealthCheck(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier);
 
     void SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE position, DRAGON_LIMELIGHT_PIPELINE pipeline);
+
+    void Periodic() override;
 
 private:
     DragonVision();

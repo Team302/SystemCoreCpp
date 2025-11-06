@@ -113,7 +113,7 @@ bool DragonLimelight::IsLimelightRunning()
     return false;
 }
 
-std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessAprilTags(const std::vector<FieldAprilTagIDs> &validAprilTagIDs) const
+std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetAprilTagVisionTargetInfo(const std::vector<FieldAprilTagIDs> &validAprilTagIDs) const
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
     auto nt = m_limelightNT.get();
@@ -148,7 +148,7 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessAprilTa
     return targets;
 }
 
-std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::ProcessObjectDection(const std::vector<int> &validClasses) const
+std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetObjectDetectionTargetInfo(const std::vector<int> &validClasses) const
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
     auto nt = m_limelightNT.get();

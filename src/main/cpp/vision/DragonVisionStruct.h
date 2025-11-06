@@ -46,7 +46,6 @@ struct ObjectDectcionSpecificData
 struct DragonVisionStruct
 {
     DragonTargetType targetType = DragonTargetType::UNKNOWN;
-    int ID = -1; // AprilTagID or ClassID for ML models
     units::angle::degree_t horizontalOffset = 0_deg;
     units::angle::degree_t verticalOffset = 0_deg;
     double targetAreaPercent = 0.0;

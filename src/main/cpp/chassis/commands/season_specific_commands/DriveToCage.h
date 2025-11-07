@@ -17,6 +17,7 @@
 #include "chassis/commands/DriveToAprilTagTarget.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "chassis/SwerveContainer.h"
+#include "fielddata/FieldConstants.h"
 
 class DriveToCage : public DriveToAprilTagTarget
 {
@@ -27,15 +28,15 @@ public:
      * @param chassis A pointer to the swerve drive subsystem.
      * @param location The cage location (LEFT, CENTER, RIGHT).
      */
-    DriveToCage(subsystems::CommandSwerveDrivetrain *chassis, SwerveContainer::CageLocation location);
+    DriveToCage(subsystems::CommandSwerveDrivetrain *chassis, FieldConstants::CageLocation location);
 
     /**
      * @brief Default destructor.
      */
     ~DriveToCage() = default;
 
-    void Initialize() override;
+    frc::Pose2d GetEndPose() override;
 
 private:
-    SwerveContainer::CageLocation m_location;
+    FieldConstants::CageLocation m_location;
 };

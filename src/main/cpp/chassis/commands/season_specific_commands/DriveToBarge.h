@@ -32,6 +32,6 @@ public:
      */
     ~DriveToBarge() = default;
 
-    void Initialize() override;
+    frc::Pose2d GetEndPose() override;
     void Execute() override;
 };

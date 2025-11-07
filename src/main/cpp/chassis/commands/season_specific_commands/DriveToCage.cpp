@@ -16,26 +16,24 @@
 #include "fielddata/FieldConstants.h"
 #include "utils/FMSData.h"
 
-DriveToCage::DriveToCage(subsystems::CommandSwerveDrivetrain *chassis, SwerveContainer::CageLocation location)
+DriveToCage::DriveToCage(subsystems::CommandSwerveDrivetrain *chassis, FieldConstants::CageLocation location)
     : DriveToAprilTagTarget(chassis), m_location(location)
 {
 }
 
-void DriveToCage::Initialize()
+frc::Pose2d DriveToCage::GetEndPose()
 {
     auto allianceColor = FMSData::GetAllianceColor();
     auto fieldElement = allianceColor == frc::DriverStation::kRed ? FieldConstants::FIELD_ELEMENT::RED_BARGE_FRONT_CALCULATED : FieldConstants::FIELD_ELEMENT::BLUE_BARGE_FRONT_CALCULATED; // defualt value in front of barge
 
-    if (m_location == SwerveContainer::CageLocation::LEFT)
+    if (m_location == FieldConstants::CageLocation::LEFT)
         fieldElement = allianceColor == frc::DriverStation::kRed ? FieldConstants::FIELD_ELEMENT::RED_LEFT_CAGE : FieldConstants::FIELD_ELEMENT::BLUE_LEFT_CAGE;
-    else if (m_location == SwerveContainer::CageLocation::RIGHT)
+    else if (m_location == FieldConstants::CageLocation::RIGHT)
         fieldElement = allianceColor == frc::DriverStation::kRed ? FieldConstants::FIELD_ELEMENT::RED_RIGHT_CAGE : FieldConstants::FIELD_ELEMENT::BLUE_RIGHT_CAGE;
-    else if (m_location == SwerveContainer::CageLocation::CENTER)
+    else if (m_location == FieldConstants::CageLocation::CENTER)
         fieldElement = allianceColor == frc::DriverStation::kRed ? FieldConstants::FIELD_ELEMENT::RED_CENTER_CAGE : FieldConstants::FIELD_ELEMENT::BLUE_CENTER_CAGE;
 
     auto m_cagePose = FieldConstants::GetInstance()->GetFieldElementPose2d(fieldElement);
 
-    m_endPose = frc::Pose2d(m_cagePose.X(), m_cagePose.Y(), frc::Rotation2d(m_cagePose.Rotation().Degrees() + 90_deg));
-
-    DriveToAprilTagTarget::Initialize();
+    return frc::Pose2d(m_cagePose.X(), m_cagePose.Y(), frc::Rotation2d(m_cagePose.Rotation().Degrees() + 90_deg));
 }

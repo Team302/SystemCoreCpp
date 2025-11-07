@@ -14,30 +14,30 @@
 //====================================================================================================================================================
 #include "chassis/commands/season_specific_commands/DriveToBranch.h"
 #include "fielddata/ReefHelper.h"
-#include "fielddata/FieldConstants.h"
 
-DriveToBranch::DriveToBranch(subsystems::CommandSwerveDrivetrain *chassis, SwerveContainer::BranchLocation location)
+DriveToBranch::DriveToBranch(subsystems::CommandSwerveDrivetrain *chassis, FieldConstants::FIELD_ELEMENT_OFFSETS location)
     : DriveToAprilTagTarget(chassis),
       m_location(location)
 {
 }
 
-void DriveToBranch::Initialize()
+frc::Pose2d DriveToBranch::GetEndPose()
 {
     auto reefHelper = ReefHelper::GetInstance();
     auto taginfo = reefHelper->GetNearestReefTag();
+    frc::Pose2d endPose;
 
     if (taginfo.has_value())
     {
         auto tag = taginfo.value();
-        if (m_location == SwerveContainer::BranchLocation::RIGHT_BRANCH)
+        if (m_location == FieldConstants::FIELD_ELEMENT_OFFSETS::RIGHT_STICK)
         {
             auto rightBranch = ReefHelper::GetInstance()->GetNearestRightReefBranch(tag);
             if (rightBranch.has_value())
             {
                 auto fieldconst = FieldConstants::GetInstance();
                 auto rightBranchpose = fieldconst->GetFieldElementPose2d(rightBranch.value());
-                m_endPose = frc::Pose2d(rightBranchpose.X(), rightBranchpose.Y(), frc::Rotation2d(rightBranchpose.Rotation().Degrees() + 180_deg)); // Have to add 180 degrees since the tag is facing the opposite direction of the robot
+                endPose = frc::Pose2d(rightBranchpose.X(), rightBranchpose.Y(), frc::Rotation2d(rightBranchpose.Rotation().Degrees() + 180_deg)); // Have to add 180 degrees since the tag is facing the opposite direction of the robot
             }
         }
         else
@@ -47,13 +47,13 @@ void DriveToBranch::Initialize()
             {
                 auto fieldconst = FieldConstants::GetInstance();
                 auto leftBranchPose = fieldconst->GetFieldElementPose2d(leftBranch.value());
-                m_endPose = frc::Pose2d(leftBranchPose.X(), leftBranchPose.Y(), frc::Rotation2d(leftBranchPose.Rotation().Degrees() + 180_deg)); // Have to add 180 degrees since the tag is facing the opposite direction of the robot
+                endPose = frc::Pose2d(leftBranchPose.X(), leftBranchPose.Y(), frc::Rotation2d(leftBranchPose.Rotation().Degrees() + 180_deg)); // Have to add 180 degrees since the tag is facing the opposite direction of the robot
             }
         }
     }
-
-    DriveToAprilTagTarget::Initialize();
+    return endPose;
 }
+
 void DriveToBranch::Execute()
 {
     DriveToAprilTagTarget::Execute();

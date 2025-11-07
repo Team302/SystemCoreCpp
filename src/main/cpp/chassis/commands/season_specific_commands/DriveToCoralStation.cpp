@@ -23,10 +23,12 @@ DriveToCoralStation::DriveToCoralStation(subsystems::CommandSwerveDrivetrain *ch
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::DesiredCoralSide_Int);
 }
 
-void DriveToCoralStation::Initialize()
+frc::Pose2d DriveToCoralStation::GetEndPose()
 {
+
     auto taginfo = CoralStationHelper::GetInstance()->GetNearestCoralStationTag();
     auto fieldconst = FieldConstants::GetInstance();
+    frc::Pose2d endPose;
 
     if (taginfo.has_value())
     {
@@ -37,7 +39,7 @@ void DriveToCoralStation::Initialize()
             auto sidewall = CoralStationHelper::GetInstance()->GetNearestSideWallCoralStation(tag);
             if (sidewall.has_value())
             {
-                m_endPose = fieldconst->GetFieldElementPose2d(sidewall.value());
+                endPose = fieldconst->GetFieldElementPose2d(sidewall.value());
             }
         }
         else // CLOSEST_CORAL_STATION_ALLIANCE_SIDE
@@ -45,12 +47,11 @@ void DriveToCoralStation::Initialize()
             auto alliance = CoralStationHelper::GetInstance()->GetNearestAllianceWallCoralStation(tag);
             if (alliance.has_value())
             {
-                m_endPose = fieldconst->GetFieldElementPose2d(alliance.value());
+                endPose = fieldconst->GetFieldElementPose2d(alliance.value());
             }
         }
     }
-
-    DriveToAprilTagTarget::Initialize();
+    return endPose;
 }
 
 void DriveToCoralStation::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)

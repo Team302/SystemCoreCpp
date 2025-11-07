@@ -106,10 +106,17 @@ public:
         RED_PROCESSOR_CALCULATED
     };
 
-    enum FIELD_ELEMENT_OFFSETS
+    enum class FIELD_ELEMENT_OFFSETS
     {
         LEFT_STICK,
         RIGHT_STICK
+    };
+
+    enum class CageLocation
+    {
+        LEFT,
+        CENTER,
+        RIGHT
     };
 
     frc::Pose3d GetFieldElementPose(FIELD_ELEMENT element);

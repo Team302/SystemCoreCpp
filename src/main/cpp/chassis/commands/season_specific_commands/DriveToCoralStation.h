@@ -33,7 +33,7 @@ public:
      */
     ~DriveToCoralStation() = default;
 
-    void Initialize() override;
+    frc::Pose2d GetEndPose() override;
 
 private:
     void NotifyStateUpdate(RobotStateChanges::StateChange change, int value) override;

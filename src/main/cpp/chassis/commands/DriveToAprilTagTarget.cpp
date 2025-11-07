@@ -35,6 +35,8 @@ void DriveToAprilTagTarget::Initialize()
     m_chassis->ResetSamePose();
     auto speeds = m_chassis->GetState().Speeds;
 
+    m_endPose = GetEndPose();
+
     m_translationPIDX.Reset(m_currentPose.X(), speeds.vx);
     m_translationPIDY.Reset(m_currentPose.Y(), speeds.vy);
 

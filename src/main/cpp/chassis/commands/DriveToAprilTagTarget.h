@@ -38,7 +38,7 @@ public:
     void End(bool interrupted) override;
 
 protected:
-    frc::Pose2d m_endPose;
+    virtual frc::Pose2d GetEndPose() { return frc::Pose2d(); };
 
 private:
     void CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds);
@@ -50,6 +50,8 @@ private:
     bool m_isSamePose = false;
     frc::Pose2d m_prevPose;
     frc::Pose2d m_currentPose;
+    frc::Pose2d m_endPose;
+
     const units::length::inch_t m_distanceThreshold{0.25};
     const units::length::inch_t m_regenerationDistanceThreshold{2.0};
     const units::length::meter_t m_ffMinRadius{0.0};

@@ -37,19 +37,6 @@ public:
     frc2::Command *GetDriveToBargeCommand() { return m_driveToBarge.get(); }
     TrajectoryDrive *GetTrajectoryDriveCommand() { return m_trajectoryDrive.get(); }
 
-    enum class CageLocation
-    {
-        LEFT,
-        CENTER,
-        RIGHT
-    };
-
-    enum class BranchLocation
-    {
-        LEFT_BRANCH,
-        RIGHT_BRANCH
-    };
-
 private:
     SwerveContainer();
     virtual ~SwerveContainer() = default;

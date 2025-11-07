@@ -20,16 +20,15 @@ DriveToBarge::DriveToBarge(subsystems::CommandSwerveDrivetrain *chassis)
 {
 }
 
-void DriveToBarge::Initialize()
+frc::Pose2d DriveToBarge::GetEndPose()
 {
-
+    frc::Pose2d endPose;
     auto bargeHelper = BargeHelper::GetInstance();
     if (bargeHelper != nullptr)
     {
-        m_endPose = bargeHelper->CalcBargePose();
+        endPose = bargeHelper->CalcBargePose();
     }
-
-    DriveToAprilTagTarget::Initialize();
+    return endPose;
 }
 
 void DriveToBarge::Execute()

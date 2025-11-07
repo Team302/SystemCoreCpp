@@ -17,6 +17,7 @@
 #include "chassis/commands/DriveToAprilTagTarget.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "chassis/SwerveContainer.h"
+#include "fielddata/FieldConstants.h"
 
 class DriveToBranch : public DriveToAprilTagTarget
 {
@@ -26,16 +27,16 @@ public:
      *
      * @param chassis A pointer to the swerve drive subsystem.
      */
-    DriveToBranch(subsystems::CommandSwerveDrivetrain *chassis, SwerveContainer::BranchLocation location);
+    DriveToBranch(subsystems::CommandSwerveDrivetrain *chassis, FieldConstants::FIELD_ELEMENT_OFFSETS location);
 
     /**
      * @brief Default destructor.
      */
     ~DriveToBranch() = default;
 
-    void Initialize() override;
+    frc::Pose2d GetEndPose() override;
     void Execute() override;
 
 private:
-    SwerveContainer::BranchLocation m_location;
+    FieldConstants::FIELD_ELEMENT_OFFSETS m_location;
 };

@@ -19,12 +19,11 @@
 #include "frc2/command/Command.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "teleopcontrol/TeleopControl.h"
-#include "fielddata/DragonTargetFinder.h"
 #include <units/velocity.h>
 #include <units/angular_velocity.h>
 #include "state/IRobotStateChangeSubscriber.h"
 
-class TeleopFieldDrive : public frc2::CommandHelper<frc2::Command, TeleopFieldDrive>, public IRobotStateChangeSubscriber
+class TeleopFieldDrive : public frc2::CommandHelper<frc2::Command, TeleopFieldDrive>
 {
 public:
     TeleopFieldDrive(subsystems::CommandSwerveDrivetrain *chassis,
@@ -36,32 +35,16 @@ public:
     void Execute() override;
     bool IsFinished() override;
     void End(bool interrupted) override;
-    void NotifyStateUpdate(RobotStateChanges::StateChange change, int value) override;
 
 private:
     subsystems::CommandSwerveDrivetrain *m_chassis;
     TeleopControl *m_controller;
     units::velocity::meters_per_second_t m_maxSpeed;
     units::angular_velocity::degrees_per_second_t m_maxAngularRate;
-    DragonTargetFinder *m_targetFinder;
-    units::angle::degree_t m_targetHeading{0_deg};
-    static constexpr double m_heading_kP{10.0};
-    static constexpr double m_heading_kI{1.0};
-    static constexpr double m_heading_kD{0.0};
-
-    RobotStateChanges::ClimbMode m_climbMode = RobotStateChanges::ClimbMode::ClimbModeOff;
 
     swerve::requests::FieldCentric m_fieldDriveRequest = swerve::requests::FieldCentric{}
                                                              .WithDeadband(m_maxSpeed * 0.1)                                  // TODO: Investigate this deadband vs controller deadband
                                                              .WithRotationalDeadband(m_maxAngularRate * 0.1)                  // TODO: Investigate this deadband vs controller deadband
                                                              .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage) // Use open-loop voltage for drive
                                                              .WithDesaturateWheelSpeeds(true);
-
-    swerve::requests::FieldCentricFacingAngle m_fieldHeadingDriveRequest = swerve::requests::FieldCentricFacingAngle{}
-                                                                               .WithDeadband(m_maxSpeed * 0.1)                                  // TODO: Investigate this deadband vs controller deadband
-                                                                               .WithDriveRequestType(swerve::DriveRequestType::OpenLoopVoltage) // Use open-loop voltage for drive
-                                                                               .WithDesaturateWheelSpeeds(true);
-
-    void FaceReef();
-    void FaceBarge();
 };

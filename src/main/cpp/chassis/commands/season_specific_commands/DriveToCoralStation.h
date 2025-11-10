@@ -14,38 +14,29 @@
 //====================================================================================================================================================
 #pragma once
 
-#include "auton/drivePrimitives/IPrimitive.h"
-#include "frc/Timer.h"
-#include "frc2/command/Command.h"
-#include <frc2/command/CommandScheduler.h>
-#include "auton/ZoneParams.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
-#include "mechanisms/DragonTale/DragonTale.h"
-#include "auton/PrimitiveEnums.h"
+#include "chassis/commands/DriveToAprilTagTarget.h"
+#include "state/IRobotStateChangeSubscriber.h"
 
-class AutonDrivePrimitive : public IPrimitive
+class DriveToCoralStation : public DriveToAprilTagTarget, IRobotStateChangeSubscriber
 {
 public:
-    AutonDrivePrimitive();
-    ~AutonDrivePrimitive() = default;
+    /**
+     * @brief Creates a command to drive to the Barge AprilTag.
+     *
+     * @param chassis A pointer to the swerve drive subsystem.
+     */
+    DriveToCoralStation(subsystems::CommandSwerveDrivetrain *chassis);
 
-    void Init(PrimitiveParams *params) override;
-    void Run() override;
-    bool IsDone() override;
+    /**
+     * @brief Default destructor.
+     */
+    ~DriveToCoralStation() = default;
+
+    frc::Pose2d GetEndPose() override;
 
 private:
-    frc2::CommandPtr CreateDriveToAprilTagTargetCommand(ChassisOptionEnums::DriveStateType driveToType);
-    bool IsInZone();
-    int FindDriveToZoneIndex(ZoneParamsVector zones);
+    void NotifyStateUpdate(RobotStateChanges::StateChange change, int value) override;
 
-    subsystems::CommandSwerveDrivetrain *m_chassis;
-    std::unique_ptr<frc::Timer> m_timer;
-    frc2::CommandPtr m_managedCommand;
-
-    PRIMITIVE_IDENTIFIER m_activeId;
-    units::time::second_t m_maxTime;
-    bool m_visionTransition;
-    bool m_checkForDriveToUpdate;
-    ZoneParams *m_zone;
-    DragonTale *m_dragonTaleMgr;
+    RobotStateChanges::DesiredCoralSide m_desiredCoralSide = RobotStateChanges::DesiredCoralSide::Sidewall;
 };

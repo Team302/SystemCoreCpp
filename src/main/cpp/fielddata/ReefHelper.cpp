@@ -268,3 +268,20 @@ void ReefHelper::IsInZone()
         RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::IsInReefZone_Bool, intheZone);
     }
 }
+
+std::optional<frc::Pose2d> ReefHelper::GetClosestReefTagPose()
+{
+    auto fieldconst = FieldConstants::GetInstance();
+    auto taginfo = GetNearestReefTag();
+    if (taginfo.has_value())
+    {
+        auto tag = taginfo.value();
+        auto tagpose{fieldconst->GetAprilTagPose2d(tag)};
+
+        return tagpose;
+    }
+    else
+    {
+        return std::nullopt;
+    }
+}

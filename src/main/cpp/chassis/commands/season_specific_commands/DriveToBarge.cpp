@@ -12,40 +12,29 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#pragma once
+#include "chassis/commands/season_specific_commands/DriveToBarge.h"
+#include "fielddata/BargeHelper.h"
 
-#include "auton/drivePrimitives/IPrimitive.h"
-#include "frc/Timer.h"
-#include "frc2/command/Command.h"
-#include <frc2/command/CommandScheduler.h>
-#include "auton/ZoneParams.h"
-#include "chassis/generated/CommandSwerveDrivetrain.h"
-#include "mechanisms/DragonTale/DragonTale.h"
-#include "auton/PrimitiveEnums.h"
-
-class AutonDrivePrimitive : public IPrimitive
+DriveToBarge::DriveToBarge(subsystems::CommandSwerveDrivetrain *chassis)
+    : DriveToAprilTagTarget(chassis)
 {
-public:
-    AutonDrivePrimitive();
-    ~AutonDrivePrimitive() = default;
+}
 
-    void Init(PrimitiveParams *params) override;
-    void Run() override;
-    bool IsDone() override;
+frc::Pose2d DriveToBarge::GetEndPose()
+{
+    frc::Pose2d endPose;
+    auto bargeHelper = BargeHelper::GetInstance();
+    if (bargeHelper != nullptr)
+    {
+        endPose = bargeHelper->CalcBargePose();
+    }
+    return endPose;
+}
 
-private:
-    frc2::CommandPtr CreateDriveToAprilTagTargetCommand(ChassisOptionEnums::DriveStateType driveToType);
-    bool IsInZone();
-    int FindDriveToZoneIndex(ZoneParamsVector zones);
+void DriveToBarge::Execute()
+{
+    DriveToAprilTagTarget::Execute();
 
-    subsystems::CommandSwerveDrivetrain *m_chassis;
-    std::unique_ptr<frc::Timer> m_timer;
-    frc2::CommandPtr m_managedCommand;
-
-    PRIMITIVE_IDENTIFIER m_activeId;
-    units::time::second_t m_maxTime;
-    bool m_visionTransition;
-    bool m_checkForDriveToUpdate;
-    ZoneParams *m_zone;
-    DragonTale *m_dragonTaleMgr;
-};
+    auto bargeHelper = BargeHelper::GetInstance();
+    bargeHelper->IsInZone();
+}

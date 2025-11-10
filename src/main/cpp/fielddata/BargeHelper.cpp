@@ -137,18 +137,3 @@ frc::Pose2d BargeHelper::CalcBargePose()
     }
     return pose2d;
 }
-
-frc::Pose2d BargeHelper::GetCagePose(DragonTargetFinderTarget target)
-{
-    auto allianceColor = FMSData::GetAllianceColor();
-    auto fieldElement = allianceColor == frc::DriverStation::kRed ? FieldConstants::FIELD_ELEMENT::RED_BARGE_FRONT_CALCULATED : FieldConstants::FIELD_ELEMENT::BLUE_BARGE_FRONT_CALCULATED; // defualt value in front of barge
-
-    if (target == DragonTargetFinderTarget::LEFT_CAGE)
-        fieldElement = allianceColor == frc::DriverStation::kRed ? FieldConstants::FIELD_ELEMENT::RED_LEFT_CAGE : FieldConstants::FIELD_ELEMENT::BLUE_LEFT_CAGE;
-    else if (target == DragonTargetFinderTarget::RIGHT_CAGE)
-        fieldElement = allianceColor == frc::DriverStation::kRed ? FieldConstants::FIELD_ELEMENT::RED_RIGHT_CAGE : FieldConstants::FIELD_ELEMENT::BLUE_RIGHT_CAGE;
-    else if (target == DragonTargetFinderTarget::CENTER_CAGE)
-        fieldElement = allianceColor == frc::DriverStation::kRed ? FieldConstants::FIELD_ELEMENT::RED_CENTER_CAGE : FieldConstants::FIELD_ELEMENT::BLUE_CENTER_CAGE;
-
-    return m_fieldConstants->GetFieldElementPose2d(fieldElement);
-}

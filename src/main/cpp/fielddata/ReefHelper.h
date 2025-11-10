@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2025 Lake Orion Robotics FIRST Team 302
 //
@@ -36,6 +35,7 @@ public:
     std::optional<FieldAprilTagIDs> GetNearestReefTag();
     std::optional<FieldConstants::FIELD_ELEMENT> GetNearestLeftReefBranch(FieldAprilTagIDs tag);
     std::optional<FieldConstants::FIELD_ELEMENT> GetNearestRightReefBranch(FieldAprilTagIDs tag);
+    std::optional<frc::Pose2d> GetClosestReefTagPose();
 
 private:
     ReefHelper();

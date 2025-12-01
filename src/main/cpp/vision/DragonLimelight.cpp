@@ -33,7 +33,6 @@
 
 // Team 302 includes
 #include "chassis/ChassisConfigMgr.h"
-#include "chassis/pose/DragonSwervePoseEstimator.h"
 #include "utils/logging/debug/Logger.h"
 #include "vision/DragonLimelight.h"
 #include "vision/DragonVision.h"

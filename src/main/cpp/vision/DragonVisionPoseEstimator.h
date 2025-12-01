@@ -22,12 +22,12 @@
 #include "vision/DragonVision.h"
 #include <vector>
 
-class DragonSwervePoseEstimator : public frc2::CommandHelper<frc2::Command, DragonSwervePoseEstimator>
+class DragonVisionPoseEstimator : public frc2::CommandHelper<frc2::Command, DragonVisionPoseEstimator>
 {
 public:
-    static DragonSwervePoseEstimator *GetInstance();
-    DragonSwervePoseEstimator();
-    ~DragonSwervePoseEstimator() = default;
+    static DragonVisionPoseEstimator *GetInstance();
+    DragonVisionPoseEstimator();
+    ~DragonVisionPoseEstimator() = default;
 
     // FRC Command Lifecycle methods
     void Initialize() override;
@@ -40,7 +40,7 @@ public:
     frc::Pose2d GetPose() const;
 
 private:
-    static DragonSwervePoseEstimator *m_instance;
+    static DragonVisionPoseEstimator *m_instance;
 
     subsystems::CommandSwerveDrivetrain *m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
     DragonVision *m_vision = DragonVision::GetDragonVision();

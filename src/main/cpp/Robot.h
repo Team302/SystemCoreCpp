@@ -22,8 +22,8 @@
 
 #include <optional>
 
-#include <frc/TimedRobot.h>
 #include "frc2/command/CommandPtr.h"
+#include <frc/TimedRobot.h>
 
 class CyclePrimitives;
 class TeleopControl;
@@ -34,7 +34,7 @@ class AutonPreviewer;
 class RobotState;
 class SomeMech;
 class DragonDataLoggerMgr;
-class DragonSwervePoseEstimator;
+class DragonVisionPoseEstimator;
 class DragonQuest;
 
 class Robot : public frc::TimedRobot
@@ -63,6 +63,6 @@ private:
     RobotState *m_robotState;
     DragonDataLoggerMgr *m_datalogger;
     bool isFMSAttached = false;
-    DragonSwervePoseEstimator *m_dragonswerveposeestimator;
+    DragonVisionPoseEstimator *m_DragonVisionPoseEstimator;
     DragonQuest *m_quest;
 };

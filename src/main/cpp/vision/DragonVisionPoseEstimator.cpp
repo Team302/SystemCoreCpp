@@ -12,7 +12,7 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#include "chassis/pose/DragonSwervePoseEstimator.h"
+#include "vision/DragonVisionPoseEstimator.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "state/RobotState.h"
 #include "state/RobotStateChanges.h"
@@ -20,24 +20,24 @@
 #include <optional>
 #include <vision/VisionPose.h>
 
-DragonSwervePoseEstimator *DragonSwervePoseEstimator::m_instance = nullptr;
+DragonVisionPoseEstimator *DragonVisionPoseEstimator::m_instance = nullptr;
 
-DragonSwervePoseEstimator::DragonSwervePoseEstimator()
+DragonVisionPoseEstimator::DragonVisionPoseEstimator()
 {
     m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
 }
 
-DragonSwervePoseEstimator *DragonSwervePoseEstimator::GetInstance()
+DragonVisionPoseEstimator *DragonVisionPoseEstimator::GetInstance()
 {
-    if (DragonSwervePoseEstimator::m_instance == nullptr)
+    if (DragonVisionPoseEstimator::m_instance == nullptr)
     {
-        DragonSwervePoseEstimator::m_instance = new DragonSwervePoseEstimator();
+        DragonVisionPoseEstimator::m_instance = new DragonVisionPoseEstimator();
     }
-    return DragonSwervePoseEstimator::m_instance;
+    return DragonVisionPoseEstimator::m_instance;
 }
 
 // FRC Command Lifecycle methods
-void DragonSwervePoseEstimator::Initialize()
+void DragonVisionPoseEstimator::Initialize()
 {
     // Make sure we have a vision subsystem pointer.
     // If we don't, try to get one
@@ -54,7 +54,7 @@ void DragonSwervePoseEstimator::Initialize()
     CalculateInitialPose();
 }
 
-void DragonSwervePoseEstimator::Execute()
+void DragonVisionPoseEstimator::Execute()
 {
     // Make sure we have a vision subsystem pointer.
     // If we don't, try to get one
@@ -84,17 +84,17 @@ void DragonSwervePoseEstimator::Execute()
     // m_quest->RefreshNT();
 }
 
-bool DragonSwervePoseEstimator::IsFinished()
+bool DragonVisionPoseEstimator::IsFinished()
 {
     return false;
 }
 
-frc::Pose2d DragonSwervePoseEstimator::GetPose() const
+frc::Pose2d DragonVisionPoseEstimator::GetPose() const
 {
     return (m_chassis != nullptr) ? m_chassis->GetPose() : frc::Pose2d{};
 }
 
-void DragonSwervePoseEstimator::ResetPosition(const frc::Pose2d &pose)
+void DragonVisionPoseEstimator::ResetPosition(const frc::Pose2d &pose)
 {
     if (m_chassis != nullptr)
     {
@@ -102,7 +102,7 @@ void DragonSwervePoseEstimator::ResetPosition(const frc::Pose2d &pose)
     }
 }
 
-void DragonSwervePoseEstimator::CalculateInitialPose()
+void DragonVisionPoseEstimator::CalculateInitialPose()
 {
     if (m_vision == nullptr)
     {
@@ -125,7 +125,7 @@ void DragonSwervePoseEstimator::CalculateInitialPose()
     }
 }
 
-void DragonSwervePoseEstimator::AddVisionMeasurements()
+void DragonVisionPoseEstimator::AddVisionMeasurements()
 {
     if (m_vision == nullptr)
     {

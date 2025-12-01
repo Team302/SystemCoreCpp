@@ -12,7 +12,6 @@
 #include "auton/drivePrimitives/AutonUtils.h"
 #include "chassis/ChassisConfigMgr.h"
 #include "chassis/SwerveContainer.h"
-#include "chassis/pose/DragonSwervePoseEstimator.h"
 #include "configs/MechanismConfig.h"
 #include "configs/MechanismConfigMgr.h"
 #include "ctre/phoenix6/SignalLogger.hpp"
@@ -30,6 +29,7 @@
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
+#include "vision/DragonVisionPoseEstimator.h"
 #include "vision/definitions/CameraConfig.h"
 #include "vision/definitions/CameraConfigMgr.h"
 
@@ -80,9 +80,9 @@ void Robot::RobotPeriodic()
 
 void Robot::DisabledPeriodic()
 {
-    if (m_dragonswerveposeestimator != nullptr)
+    if (m_DragonVisionPoseEstimator != nullptr)
     {
-        m_dragonswerveposeestimator->CalculateInitialPose();
+        m_DragonVisionPoseEstimator->CalculateInitialPose();
     }
 }
 
@@ -99,9 +99,9 @@ void Robot::AutonomousInit()
 
 void Robot::AutonomousPeriodic()
 {
-    // if (m_dragonswerveposeestimator != nullptr)
+    // if (m_DragonVisionPoseEstimator != nullptr)
     // {
-    //     m_dragonswerveposeestimator->Update();
+    //     m_DragonVisionPoseEstimator->Update();
     // }
 
     if (m_cyclePrims != nullptr)
@@ -118,9 +118,9 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    // if (m_dragonswerveposeestimator != nullptr)
+    // if (m_DragonVisionPoseEstimator != nullptr)
     // {
-    //     m_dragonswerveposeestimator->Update();
+    //     m_DragonVisionPoseEstimator->Update();
     // }
     PeriodicLooper::GetInstance()->TeleopRunCurrentState();
 }
@@ -143,7 +143,7 @@ void Robot::InitializeRobot()
 
     CameraConfigMgr::GetInstance()->InitCameras(static_cast<RobotIdentifier>(teamNumber));
 
-    m_dragonswerveposeestimator = DragonSwervePoseEstimator::GetInstance();
+    m_DragonVisionPoseEstimator = DragonVisionPoseEstimator::GetInstance();
 
     // auto dragonVision = DragonVision::GetDragonVision();
     // if (dragonVision != nullptr)
@@ -151,7 +151,7 @@ void Robot::InitializeRobot()
     //     auto visionPoseEstimators = dragonVision->GetPoseEstimators();
     //     for (auto &poseEstimator : visionPoseEstimators)
     //     {
-    //         m_dragonswerveposeestimator->RegisterVisionPoseEstimator(poseEstimator);
+    //         m_DragonVisionPoseEstimator->RegisterVisionPoseEstimator(poseEstimator);
     //     }
     //     if (!visionPoseEstimators.empty())
     //     {
@@ -182,9 +182,9 @@ void Robot::UpdateDriveTeamFeedback()
     {
         m_previewer->CheckCurrentAuton();
     }
-    if (m_field != nullptr && m_dragonswerveposeestimator != nullptr)
+    if (m_field != nullptr && m_DragonVisionPoseEstimator != nullptr)
     {
-        m_field->UpdateRobotPosition(m_dragonswerveposeestimator->GetPose());
+        m_field->UpdateRobotPosition(m_DragonVisionPoseEstimator->GetPose());
     }
     auto feedback = DriverFeedback::GetInstance();
     if (feedback != nullptr)

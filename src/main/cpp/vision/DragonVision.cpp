@@ -241,10 +241,7 @@ void DragonVision::SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE usage, DRAGON_LIMEL
 	auto limelights = GetLimelights(usage);
 	for (auto limelight : limelights)
 	{
-		// if (limelight->GetPipeline() != pipeline)
-		// {
 		limelight->SetPipeline(pipeline);
-		// }
 	}
 }
 

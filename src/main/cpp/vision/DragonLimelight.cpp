@@ -45,6 +45,7 @@ namespace
 {
     bool IsValidAprilTag(const std::vector<FieldAprilTagIDs> &validTags, int tagID);
     bool IsValidObjectClass(const std::vector<int> &validClasses, int classID);
+    std::optional<std::pair<double, double>> GetStandardDeviationsForMetaTag1PoseEstimation(int ntags, double targetAreaPercent);
 }
 
 ///-----------------------------------------------------------------------------------
@@ -188,6 +189,88 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetObjectDetec
     return targets;
 }
 
+/**
+ * @brief Get the Pose object for the current location of the robot
+ * https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization
+ */
+std::optional<VisionPose> DragonLimelight::EstimatePoseOdometryLimelight(bool useMegatag2)
+{
+    if (frc::RobotBase::IsSimulation())
+    {
+        return std::nullopt;
+    }
+
+    auto mode = static_cast<int>(LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_ONLY); // Chief Delphi answer says perfect portrait pose doesn't work with internal IMU
+    LimelightHelpers::SetIMUMode(m_cameraName, mode);
+
+    if (useMegatag2)
+    {
+        return GetMegaTag2Pose();
+    }
+    else
+    {
+        return GetMegaTag1Pose();
+    }
+    return std::nullopt;
+}
+
+std::optional<VisionPose> DragonLimelight::GetMegaTag1Pose()
+{
+    auto limelightMeasurement = LimelightHelpers::getBotPoseEstimate_wpiBlue(m_cameraName);
+
+    if (limelightMeasurement.tagCount == 0)
+    {
+        return std::nullopt;
+    }
+    auto deviations = GetStandardDeviationsForMetaTag1PoseEstimation(limelightMeasurement.tagCount, limelightMeasurement.avgTagArea);
+    if (!deviations.has_value())
+    {
+        return std::nullopt;
+    }
+
+    auto pose3d = frc::Pose3d{limelightMeasurement.pose};
+
+    units::time::millisecond_t currentTime = frc::Timer::GetFPGATimestamp();
+    units::time::millisecond_t timestamp = currentTime - units::millisecond_t(limelightMeasurement.timestampSeconds / 1000.0);
+
+    double xyStds = deviations.value().first;
+    double degStds = deviations.value().second;
+
+    m_megatag1PosBool = true;
+    m_megatag1Pos = {pose3d, timestamp, {xyStds, xyStds, degStds}, PoseEstimationStrategy::MEGA_TAG};
+    if (!m_robotPoseSet)
+    {
+        SetRobotPose(pose3d.ToPose2d());
+    }
+    return m_megatag1Pos;
+}
+
+std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
+{
+    if (!m_robotPoseSet)
+    {
+        auto megatag1pose = GetMegaTag1Pose();
+        if (!megatag1pose.has_value())
+        {
+            return std::nullopt;
+        }
+    }
+    // Get the pose estimate
+    auto mode = frc::DriverStation::IsDisabled() ? static_cast<int>(LIMELIGHT_IMU_MODE::USE_EXTERNAL_IMU_AND_FUSE_WITH_INTERNAL_IMU) : static_cast<int>(LIMELIGHT_IMU_MODE::USE_INTERNAL_IMU);
+    LimelightHelpers::SetIMUMode(m_cameraName, mode);
+    auto poseEstimate = LimelightHelpers::getBotPoseEstimate_wpiBlue_MegaTag2(m_cameraName);
+
+    double xyStds = .7;
+    double degStds = 9999999;
+    m_megatag2PosBool = true;
+    m_megatag2Pos = {frc::Pose3d{poseEstimate.pose},
+                     poseEstimate.timestampSeconds,
+                     {xyStds, xyStds, degStds},
+                     PoseEstimationStrategy::MEGA_TAG_2};
+
+    return m_megatag2Pos;
+}
+
 void DragonLimelight::SetLEDMode(DRAGON_LIMELIGHT_LED_MODE mode)
 {
     switch (mode)
@@ -265,4 +348,60 @@ namespace
 
         return it != validClasses.end();
     }
+
+    std::optional<std::pair<double, double>> GetStandardDeviationsForMetaTag1PoseEstimation(int ntags, double targetAreaPercent)
+    {
+
+        if (ntags == 0)
+        {
+            return std::nullopt;
+        }
+
+        double xyStds = 0.5; // assume we see 2 or more tags
+        double degStds = 6;  // assume we see 2 or more tags
+        LimelightHelpers::PoseEstimate limelightMeasurement = LimelightHelpers::getBotPoseEstimate_wpiBlue("");
+
+        if (limelightMeasurement.tagCount == 1)
+        {
+            if (limelightMeasurement.avgTagArea > 0.8)
+            {
+                xyStds = 1.0;
+                degStds = 12;
+            }
+            else if (limelightMeasurement.avgTagArea > 0.1)
+            {
+                xyStds = 2.0;
+                degStds = 30;
+            }
+            else
+            {
+                return std::nullopt;
+            }
+        }
+        return std::make_pair(xyStds, degStds);
+    }
+}
+
+void DragonLimelight::SetRobotPose(const frc::Pose2d &pose)
+{
+    auto yawrate = 0.0;
+    auto pitch = 0.0;
+    auto pitchrate = 0.0;
+    auto roll = 0.0;
+    auto rollrate = 0.0;
+    if (m_chassis != nullptr)
+    {
+        yawrate = ChassisConfigMgr::GetInstance()->GetRotationRateDegreesPerSecond();
+        pitch = m_cameraPose.Rotation().Y().value();
+        roll = m_cameraPose.Rotation().X().value();
+    }
+
+    LimelightHelpers::SetRobotOrientation(m_cameraName,
+                                          pose.Rotation().Degrees().value(),
+                                          yawrate,
+                                          pitch,
+                                          pitchrate,
+                                          roll,
+                                          rollrate);
+    m_robotPoseSet = true;
 }

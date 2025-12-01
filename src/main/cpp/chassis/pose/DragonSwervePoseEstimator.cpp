@@ -17,6 +17,8 @@
 #include "state/RobotState.h"
 #include "state/RobotStateChanges.h"
 #include "vision/DragonVision.h"
+#include <optional>
+#include <vision/VisionPose.h>
 
 DragonSwervePoseEstimator *DragonSwervePoseEstimator::m_instance = nullptr;
 
@@ -34,31 +36,57 @@ DragonSwervePoseEstimator *DragonSwervePoseEstimator::GetInstance()
     return DragonSwervePoseEstimator::m_instance;
 }
 
-// This is the new main loop method
-void DragonSwervePoseEstimator::Update()
+// FRC Command Lifecycle methods
+void DragonSwervePoseEstimator::Initialize()
 {
-    if (m_chassis != nullptr)
+    // Make sure we have a vision subsystem pointer.
+    // If we don't, try to get one
+    // If we still don't have one exit
+    if (m_vision == nullptr)
     {
-        AddVisionMeasurements();
+        m_vision = DragonVision::GetDragonVision();
     }
+    if (m_vision == nullptr)
+    {
+        return;
+    }
+
+    CalculateInitialPose();
 }
 
-void DragonSwervePoseEstimator::AddVisionMeasurements()
+void DragonSwervePoseEstimator::Execute()
 {
-    // This logic is mostly the same, but it calls the chassis method.
-    // TODO Come back to this
-    // for (auto estimator : m_visionPoseEstimators)
-    // {
-    //     // "Pull" the data from the vision system
-    //     auto poseInfo = estimator->GetPoseEstimate();
-    //     if (poseInfo.m_confidenceLevel != DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE)
-    //     {
-    //         // "Push" the data to the chassis's internal estimator
-    //         m_chassis->AddVisionMeasurement(poseInfo.m_visionPose,
-    //                                         poseInfo.m_timeStamp,
-    //                                         poseInfo.m_stds);
-    //     }
-    // }
+    // Make sure we have a vision subsystem pointer.
+    // If we don't, try to get one
+    // If we still don't have one exit
+    if (m_vision == nullptr)
+    {
+        m_vision = DragonVision::GetDragonVision();
+    }
+    if (m_vision == nullptr)
+    {
+        return;
+    }
+
+    if (!m_initialPoseSet)
+    {
+        CalculateInitialPose();
+    }
+
+    //
+    if (m_initialPoseSet == false)
+    {
+        return;
+    }
+    AddVisionMeasurements();
+
+    // m_quest->HandleHeartBeat();
+    // m_quest->RefreshNT();
+}
+
+bool DragonSwervePoseEstimator::IsFinished()
+{
+    return false;
 }
 
 frc::Pose2d DragonSwervePoseEstimator::GetPose() const
@@ -76,33 +104,48 @@ void DragonSwervePoseEstimator::ResetPosition(const frc::Pose2d &pose)
 
 void DragonSwervePoseEstimator::CalculateInitialPose()
 {
-    // TODO:  come back to this
-    // auto vision = DragonVision::GetDragonVision();
-    // if (vision != nullptr)
+    if (m_vision == nullptr)
+    {
+        return;
+    }
+
+    m_vision = DragonVision::GetDragonVision();
+    // try making sure MegaTag1 has a good position before resetting pose to avoid screwing up MegaTag2 && Quest
+    auto megaTag1Position = m_vision->GetRobotPositionMegaTag1();
+    if (megaTag1Position.has_value())
+    {
+        ResetPosition(megaTag1Position.value().estimatedPose.ToPose2d());
+
+        auto megaTag2Position = m_vision->GetRobotPositionMegaTag2();
+        if (megaTag2Position.has_value())
+        {
+            ResetPosition(megaTag2Position.value().estimatedPose.ToPose2d());
+            m_initialPoseSet = true;
+        }
+    }
+}
+
+void DragonSwervePoseEstimator::AddVisionMeasurements()
+{
+    if (m_vision == nullptr)
+    {
+        return;
+    }
+    // This logic is mostly the same, but it calls the chassis method.
+    // TODO Come back to this
+    // for (auto estimator : m_visionPoseEstimators)
     // {
-    //     // try making sure MegaTag1 has a good position before resetting pose to avoid screwing up MegaTag2 && Quest
-    //     auto megaTag1Position = vision->GetRobotPosition(); // Megatag1
-    //     if (megaTag1Position.has_value())
+    //     // "Pull" the data from the vision system
+    //     auto poseInfo = estimator->GetPoseEstimate();
+    //     if (poseInfo.m_confidenceLevel != DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE)
     //     {
-    //         auto visionpose = vision->CalcVisionPose();
-    //         if (visionpose != std::nullopt) // may want to use reset Position instead of reset pose here?
-    //         {
-    //             ResetPosition(visionpose.value());
-    //         }
+    //         // "Push" the data to the chassis's internal estimator
+    //         m_chassis->AddVisionMeasurement(poseInfo.m_visionPose,
+    //                                         poseInfo.m_timeStamp,
+    //                                         poseInfo.m_stds);
     //     }
     // }
-}
 
-// FRC Command Lifecycle methods
-void DragonSwervePoseEstimator::Initialize()
-{
-}
-
-void DragonSwervePoseEstimator::Execute()
-{
-}
-
-bool DragonSwervePoseEstimator::IsFinished()
-{
-    return false;
+    // m_chassis->AddVisionMeasurements
+    // void AddVisionMeasurement(frc::Pose2d visionRobotPose, units::second_t timestamp) override
 }

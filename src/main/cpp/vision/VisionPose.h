@@ -1,3 +1,4 @@
+
 //====================================================================================================================================================
 // Copyright 2025 Lake Orion Robotics FIRST Team 302
 //
@@ -14,86 +15,15 @@
 //====================================================================================================================================================#pragma once
 #pragma once
 
-enum class VisionTargetOption
-{
-    CLOSEST_VALID_TARGET,
-    FUSED_TARGET_INFO,
-    ALL_VALID_TARGETS
-};
+#include "frc/geometry/Pose3d.h"
+#include "units/time.h"
+#include "vision/DragonVisionEnums.h"
+#include "wpi/array.h"
 
-enum class DragonTargetType
+struct VisionPose
 {
-    UNKNOWN,
-    APRIL_TAG,
-    OBJECT_DETECTION
-};
-
-enum class DRAGON_LIMELIGHT_CAMERA_TYPE
-{
-    LIMELIGHT4,
-    LIMELIGHT4_W_HAILO8,
-    LIMELIGHT3G,
-    LIMELIGHT3,
-    LIMELIGHT3_W_CORAL
-};
-
-enum class DRAGON_LIMELIGHT_CAMERA_IDENTIFIER
-{
-    BACK_CAMERA,
-    FRONT_CAMERA
-};
-
-enum class DRAGON_LIMELIGHT_CAMERA_USAGE
-{
-    APRIL_TAGS,
-    OBJECT_DETECTION_ALGAE,
-    ALGAE_AND_APRIL_TAGS
-};
-
-enum class DRAGON_LIMELIGHT_LED_MODE
-{
-    LED_UNKNOWN = -1,
-    LED_PIPELINE_CONTROL,
-    LED_OFF,
-    LED_BLINK,
-    LED_ON
-};
-
-enum class DRAGON_LIMELIGHT_CAM_MODE
-{
-    CAM_UNKNOWN = -1,
-    CAM_VISION,
-    CAM_DRIVER
-};
-
-enum class DRAGON_LIMELIGHT_STREAM_MODE
-{
-    STREAM_UNKNOWN = -1,
-    STREAM_STANDARD,     // side by side if two cams
-    STREAM_PIP_MAIN,     // Second Cam bottom right of Main Cam
-    STREAM_PIP_SECONDARY // Main Cam bottom right of Second Cam
-};
-
-enum class DRAGON_LIMELIGHT_SNAPSHOT_MODE
-{
-    SNAPSHOT_MODE_UNKNOWN = -1,
-    SNAP_OFF,
-    SNAP_ON
-};
-
-enum class DRAGON_LIMELIGHT_PIPELINE
-{
-    UNKNOWN = -1,
-    APRIL_TAG = 0,
-    MACHINE_LEARNING_PL = 1,
-    COLOR_THRESHOLD
-};
-
-enum class PoseEstimationStrategy
-{
-    MULTI_TAG,
-    SINGLE_TAG,
-    MEGA_TAG,
-    MEGA_TAG_2,
-    NONE
+    frc::Pose3d estimatedPose = frc::Pose3d{};                                     // empty pose3d if we don't give one out
+    units::time::millisecond_t timeStamp = units::time::millisecond_t(-1.0);       // negative timestamp for no timestamp
+    wpi::array<double, 3> visionMeasurementStdDevs = {0.1, 0.1, 0.1};              // default std devs from WPI docs
+    PoseEstimationStrategy estimationStrategy = PoseEstimationStrategy::MULTI_TAG; // default estimation strategy, what should be used
 };

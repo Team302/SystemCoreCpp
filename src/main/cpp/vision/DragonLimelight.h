@@ -36,6 +36,7 @@
 #include "fielddata/FieldAprilTagIDs.h"
 #include "vision/DragonVisionEnums.h"
 #include "vision/DragonVisionStruct.h"
+#include "vision/VisionPose.h"
 
 // Third Party Includes
 
@@ -78,8 +79,15 @@ public:
     void SetPipeline(DRAGON_LIMELIGHT_PIPELINE pipeline);
 
     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER GetCameraIdentifier() { return m_identifier; }
+    std::optional<VisionPose> EstimatePoseOdometryLimelight(bool useMegatag2);
+    std::optional<VisionPose> GetMegaTag1Pose();
+    std::optional<VisionPose> GetMegaTag2Pose();
 
-protected:
+    void SetRobotPose(const frc::Pose2d &pose);
+
+    std::string GetCameraName() const { return m_cameraName; }
+
+private:
     void SetPriorityTagID(int id);
     void SetCameraPose_RobotSpace(double forward, double left, double up, double roll, double pitch, double yaw);
 
@@ -92,7 +100,6 @@ protected:
         USE_INTERNAL_IMU_WITH_EXTERNAL_IMU_ASSISTED_CONVERGENCE
     };
 
-private:
     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER m_identifier;
     std::shared_ptr<nt::NetworkTable> m_limelightNT;
 
@@ -114,4 +121,9 @@ private:
     const double m_roll = 0.0;
     const double m_rollRate = 0.0;
     int m_numberOfTags;
+    bool m_megatag1PosBool = false;
+    VisionPose m_megatag1Pos;
+    bool m_megatag2PosBool = false;
+    VisionPose m_megatag2Pos;
+    bool m_robotPoseSet = false;
 };

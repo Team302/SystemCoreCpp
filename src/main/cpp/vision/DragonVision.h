@@ -18,6 +18,7 @@
 #include <map>
 #include <string>
 
+#include "frc/geometry/Pose2d.h"
 #include "frc/geometry/Pose3d.h"
 #include "units/angular_velocity.h"
 
@@ -27,6 +28,7 @@
 
 // Team 302 Includes
 #include "vision/DragonLimelight.h"
+#include "vision/VisionPose.h"
 
 #include "configs/RobotElementNames.h"
 #include "fielddata/FieldConstants.h"
@@ -72,13 +74,24 @@ public:
 
     void Periodic() override;
 
+    /// @brief gets the field position of the robot (right blue driverstation origin)
+    /// @return std::optional<frc::Pose3d> - the estimated position, timestamp of estimation, and confidence as array of std devs
+    std::optional<VisionPose> GetRobotPositionMegaTag1();
+
+    /// @brief gets the field position of the robot (Limelight only) (right blue driverstation origin)
+    /// @return std::optional<VisionPose> - the estimated position, timestamp of estimation, and confidence as array of std devs
+    std::optional<VisionPose> GetRobotPositionMegaTag2();
+
 private:
     DragonVision();
     ~DragonVision() = default;
 
-    std::vector<DragonLimelight *> GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE usage) const;
-    DragonLimelight *GetCameras(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier) const;
+    void SetRobotPose(const frc::Pose2d &pose);
+
+    std::vector<DragonLimelight *> GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE usage) const;
+    DragonLimelight *GetLimelightFromIdentifier(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier) const;
 
     static DragonVision *m_dragonVision;
     std::multimap<DRAGON_LIMELIGHT_CAMERA_USAGE, DragonLimelight *> m_dragonLimelightMap;
+    bool m_initialPoseSet = false;
 };

@@ -99,10 +99,10 @@ void Robot::AutonomousInit()
 
 void Robot::AutonomousPeriodic()
 {
-    if (m_dragonswerveposeestimator != nullptr)
-    {
-        m_dragonswerveposeestimator->Update();
-    }
+    // if (m_dragonswerveposeestimator != nullptr)
+    // {
+    //     m_dragonswerveposeestimator->Update();
+    // }
 
     if (m_cyclePrims != nullptr)
     {
@@ -118,10 +118,10 @@ void Robot::TeleopInit()
 
 void Robot::TeleopPeriodic()
 {
-    if (m_dragonswerveposeestimator != nullptr)
-    {
-        m_dragonswerveposeestimator->Update();
-    }
+    // if (m_dragonswerveposeestimator != nullptr)
+    // {
+    //     m_dragonswerveposeestimator->Update();
+    // }
     PeriodicLooper::GetInstance()->TeleopRunCurrentState();
 }
 

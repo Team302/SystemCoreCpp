@@ -28,10 +28,15 @@
 #include "utils/logging/debug/Logger.h"
 #include "vision/DragonLimelight.h"
 #include "vision/DragonVision.h"
+#include "vision/VisionPose.h"
 
 // Third Party Includes
 #include "Limelight/LimelightHelpers.h"
 
+namespace
+{
+	std::optional<VisionPose> GetBestPose(const std::vector<VisionPose> &poses);
+}
 // namespace
 // {
 // 	std::vector<std::unique_ptr<DragonVisionStruct>> ProcessOutputOption(
@@ -52,10 +57,10 @@ DragonVision *DragonVision::GetDragonVision()
 bool DragonVision::HealthCheck(DRAGON_LIMELIGHT_CAMERA_USAGE usage)
 {
 	bool isHealthy = false;
-	auto cameras = GetCameras(usage);
-	for (auto cam : cameras)
+	auto limelights = GetLimelights(usage);
+	for (auto limelight : limelights)
 	{
-		isHealthy = cam->IsLimelightRunning();
+		isHealthy = limelight->IsLimelightRunning();
 		if (!isHealthy)
 		{
 			return isHealthy;
@@ -66,7 +71,7 @@ bool DragonVision::HealthCheck(DRAGON_LIMELIGHT_CAMERA_USAGE usage)
 
 bool DragonVision::HealthCheck(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier)
 {
-	auto camera = GetCameras(identifier);
+	auto camera = GetLimelightFromIdentifier(identifier);
 	if (camera != nullptr)
 	{
 		return camera->IsLimelightRunning();
@@ -98,14 +103,14 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonVision::GetAprilTagVision
 {
 
 	std::vector<std::unique_ptr<DragonVisionStruct>> targets;
-	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
-	if (!cameras.empty())
+	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
+	if (!limelights.empty())
 	{
-		return cameras[0]->GetAprilTagVisionTargetInfo(validAprilTagIDs);
+		return limelights[0]->GetAprilTagVisionTargetInfo(validAprilTagIDs);
 	}
-	// for (auto cam : cameras)
+	// for (auto limelight : limelights)
 	// {
-	// 	auto camTargets = cam->GetAprilTagVisionTargetInfo(validAprilTagIDs);
+	// 	auto camTargets = limelight->GetAprilTagVisionTargetInfo(validAprilTagIDs);
 	// 	targets.insert((targets.end(), std::make_move_iterator(camTargets.begin()), std::make_move_iterator(camTargets.end())));
 	// }
 
@@ -117,32 +122,71 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonVision::GetObjectDetectio
 																							const std::vector<int> &validClasses) const
 {
 	std::vector<std::unique_ptr<DragonVisionStruct>> targets;
-	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE);
-	if (!cameras.empty())
+	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::OBJECT_DETECTION_ALGAE);
+	if (!limelights.empty())
 	{
-		return cameras[0]->GetObjectDetectionTargetInfo(validClasses);
+		return limelights[0]->GetObjectDetectionTargetInfo(validClasses);
 	}
-	// for (auto cam : cameras)
+	// for (auto limelight : limelights)
 	// {
-	// 	auto camTargets = cam->GetObjectDetectionTargetInfo(validClasses);
+	// 	auto camTargets = limelight->GetObjectDetectionTargetInfo(validClasses);
 	// 	targets.insert((targets.end(), std::make_move_iterator(camTargets.begin()), std::make_move_iterator(camTargets.end())));
 	// }
 	// return ProcessOutputOption(option, targets);
 	return {};
 }
 
-std::vector<DragonLimelight *> DragonVision::GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE usage) const
+std::optional<VisionPose> DragonVision::GetRobotPositionMegaTag1()
 {
-	std::vector<DragonLimelight *> validCameras;
+	std::vector<VisionPose> poses;
+	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
+	for (auto limelight : limelights)
+	{
+		auto pose = limelight->GetMegaTag1Pose();
+		if (pose.has_value())
+		{
+			poses.emplace_back(pose.value());
+		}
+	}
+	return GetBestPose(poses);
+}
+
+std::optional<VisionPose> DragonVision::GetRobotPositionMegaTag2()
+{
+	std::vector<VisionPose> poses;
+	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
+	for (auto limelight : limelights)
+	{
+		auto pose = limelight->GetMegaTag2Pose();
+		if (pose.has_value())
+		{
+			poses.emplace_back(pose.value());
+		}
+	}
+	return GetBestPose(poses);
+}
+
+void DragonVision::SetRobotPose(const frc::Pose2d &pose)
+{
+	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS);
+	for (auto limelight : limelights)
+	{
+		limelight->SetRobotPose(pose);
+	}
+}
+
+std::vector<DragonLimelight *> DragonVision::GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE usage) const
+{
+	std::vector<DragonLimelight *> validLimelights;
 	for (auto it = m_dragonLimelightMap.begin(); it != m_dragonLimelightMap.end(); ++it)
 	{
 		bool addCam = false;
-		auto cam = (*it).second;
+		auto limelight = (*it).second;
 		if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS)
 		{
-			if (cam->IsLimelightRunning())
+			if (limelight->IsLimelightRunning())
 			{
-				validCameras.emplace_back(cam);
+				validLimelights.emplace_back(limelight);
 			}
 		}
 		else
@@ -153,7 +197,7 @@ std::vector<DragonLimelight *> DragonVision::GetCameras(DRAGON_LIMELIGHT_CAMERA_
 			{
 				if ((*it).first == DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS)
 				{
-					// auto pipe = cam->GetPipeline();  TODO update when using visionstruct
+					// auto pipe = limelight->GetPipeline();  TODO update when using visionstruct
 					auto pipe = DRAGON_LIMELIGHT_PIPELINE::APRIL_TAG;
 					if (usage == DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS)
 					{
@@ -169,37 +213,37 @@ std::vector<DragonLimelight *> DragonVision::GetCameras(DRAGON_LIMELIGHT_CAMERA_
 
 		if (addCam)
 		{
-			if (cam->IsLimelightRunning())
+			if (limelight->IsLimelightRunning())
 			{
-				validCameras.emplace_back(cam);
+				validLimelights.emplace_back(limelight);
 			}
 		}
 	}
-	return validCameras;
+	return validLimelights;
 }
 
-DragonLimelight *DragonVision::GetCameras(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier) const
+DragonLimelight *DragonVision::GetLimelightFromIdentifier(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier) const
 {
-	auto cameras = GetCameras(DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS);
-	for (auto cam : cameras)
+	auto limelights = GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE::ALGAE_AND_APRIL_TAGS);
+	for (auto limelight : limelights)
 	{
-		if (cam->GetCameraIdentifier() == identifier)
+		if (limelight->GetCameraIdentifier() == identifier)
 		{
-			return cam;
+			return limelight;
 		}
 		return nullptr;
 	}
 	return nullptr;
 }
 
-void DragonVision::SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE position, DRAGON_LIMELIGHT_PIPELINE pipeline)
+void DragonVision::SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE usage, DRAGON_LIMELIGHT_PIPELINE pipeline)
 {
-	auto cameras = GetCameras(position);
-	for (auto cam : cameras)
+	auto limelights = GetLimelights(usage);
+	for (auto limelight : limelights)
 	{
-		// if (cam->GetPipeline() != pipeline)
+		// if (limelight->GetPipeline() != pipeline)
 		// {
-		cam->SetPipeline(pipeline);
+		limelight->SetPipeline(pipeline);
 		// }
 	}
 }
@@ -246,3 +290,41 @@ void DragonVision::Periodic()
 // 		return targets;
 // 	}
 // } // namespace
+
+namespace
+{
+	std::optional<VisionPose> GetBestPose(const std::vector<VisionPose> &poses)
+	{
+		if (poses.empty())
+		{
+			return std::nullopt;
+		}
+
+		if (poses.size() == 1)
+		{
+			return poses[0];
+		}
+
+		auto bestfit = 0;
+		auto stddevX = poses[0].visionMeasurementStdDevs[0];
+		auto stddevY = poses[0].visionMeasurementStdDevs[1];
+		auto stddevRot = poses[0].visionMeasurementStdDevs[2];
+
+		auto slot = 0;
+		for (auto thispose : poses)
+		{
+			auto thisStddevX = thispose.visionMeasurementStdDevs[0];
+			auto thisStddevY = thispose.visionMeasurementStdDevs[1];
+			auto thisStddevRot = thispose.visionMeasurementStdDevs[2];
+			if (thisStddevX < stddevX && thisStddevY < stddevY && thisStddevRot < stddevRot)
+			{
+				bestfit = slot;
+				stddevX = thisStddevX;
+				stddevY = thisStddevY;
+				stddevRot = thisStddevRot;
+			}
+			slot++;
+		}
+		return poses[bestfit];
+	}
+}

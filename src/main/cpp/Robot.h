@@ -34,7 +34,7 @@ class AutonPreviewer;
 class RobotState;
 class SomeMech;
 class DragonDataLoggerMgr;
-class DragonVisionPoseEstimator;
+class DragonVisionPoseEstimatorContainer;
 class DragonQuest;
 
 class Robot : public frc::TimedRobot
@@ -55,7 +55,8 @@ private:
     void InitializeDriveteamFeedback();
     void UpdateDriveTeamFeedback();
 
-    SwerveContainer *m_container;
+    SwerveContainer *m_swervecontainer;
+    DragonVisionPoseEstimatorContainer *m_visionPoseEstimatorContainer;
     CyclePrimitives *m_cyclePrims;
 
     DragonField *m_field;
@@ -63,6 +64,6 @@ private:
     RobotState *m_robotState;
     DragonDataLoggerMgr *m_datalogger;
     bool isFMSAttached = false;
-    DragonVisionPoseEstimator *m_DragonVisionPoseEstimator;
+    DragonVisionPoseEstimatorContainer *m_dragonVisionPoseEstimator;
     DragonQuest *m_quest;
 };

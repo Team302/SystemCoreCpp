@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2025 Lake Orion Robotics FIRST Team 302
 //
@@ -14,54 +13,18 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 #pragma once
 
-#include <optional>
-
-#include "frc2/command/CommandPtr.h"
-#include <frc/TimedRobot.h>
-
-class CyclePrimitives;
-class TeleopControl;
 class SwerveContainer;
-class FMSData;
-class DragonField;
-class AutonPreviewer;
-class RobotState;
-class SomeMech;
-class DragonDataLoggerMgr;
 class DragonVisionPoseEstimatorContainer;
-class DragonQuest;
 
-class Robot : public frc::TimedRobot
+class RobotContainer
 {
 public:
-    Robot();
-    void RobotPeriodic() override;
-    void DisabledPeriodic() override;
-    void AutonomousInit() override;
-    void AutonomousPeriodic() override;
-    void TeleopInit() override;
-    void TeleopPeriodic() override;
-    void TestInit() override;
+    RobotContainer();
+    ~RobotContainer() = default;
 
 private:
-    void InitializeRobot();
-    void InitializeAutonOptions();
-    void InitializeDriveteamFeedback();
-    void UpdateDriveTeamFeedback();
-
-    CyclePrimitives *m_cyclePrims;
-
-    DragonField *m_field;
-    AutonPreviewer *m_previewer;
-    RobotState *m_robotState;
-    DragonDataLoggerMgr *m_datalogger;
-    bool isFMSAttached = false;
-    DragonVisionPoseEstimatorContainer *m_dragonVisionPoseEstimator;
-    DragonQuest *m_quest;
+    SwerveContainer *m_swervecontainer;
+    DragonVisionPoseEstimatorContainer *m_visionPoseEstimatorContainer;
 };

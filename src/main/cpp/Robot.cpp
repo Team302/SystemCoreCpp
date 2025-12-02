@@ -6,12 +6,12 @@
 
 #include <frc2/command/CommandScheduler.h>
 
+#include "RobotContainer.h"
 #include "RobotIdentifier.h"
 #include "auton/AutonPreviewer.h"
 #include "auton/CyclePrimitives.h"
 #include "auton/drivePrimitives/AutonUtils.h"
 #include "chassis/ChassisConfigMgr.h"
-#include "chassis/SwerveContainer.h"
 #include "configs/MechanismConfig.h"
 #include "configs/MechanismConfigMgr.h"
 #include "ctre/phoenix6/SignalLogger.hpp"
@@ -29,8 +29,6 @@
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
-#include "vision/DragonVisionPoseEstimator.h"
-#include "vision/DragonVisionPoseEstimatorContainer.h"
 #include "vision/definitions/CameraConfig.h"
 #include "vision/definitions/CameraConfigMgr.h"
 
@@ -81,10 +79,6 @@ void Robot::RobotPeriodic()
 
 void Robot::DisabledPeriodic()
 {
-    // if (m_dragonVisionPoseEstimator != nullptr)
-    // {
-    //     m_dragonVisionPoseEstimator->CalculateInitialPose();
-    // }
 }
 
 void Robot::AutonomousInit()
@@ -129,8 +123,8 @@ void Robot::InitializeRobot()
     RoboRio::GetInstance();
     auto chassisConfig = ChassisConfigMgr::GetInstance();
     chassisConfig->CreateDrivetrain();
-    m_swervecontainer = SwerveContainer::GetInstance();
-    m_visionPoseEstimatorContainer = new DragonVisionPoseEstimatorContainer();
+
+    new RobotContainer(); // instantiate RobotContainer to setup commands and subsystems
 
     MechanismConfigMgr::GetInstance()->InitRobot((RobotIdentifier)teamNumber);
 

@@ -23,12 +23,14 @@
 
 // Team 302 includes
 #include "chassis/ChassisConfigMgr.h"
+#include "frc/RobotController.h"
 #include "utils/DragonField.h"
 #include "utils/FMSData.h"
 #include "utils/logging/debug/Logger.h"
 #include "vision/DragonLimelight.h"
 #include "vision/DragonVision.h"
 #include "vision/VisionPose.h"
+#include "vision/definitions/CameraConfigMgr.h"
 
 // Third Party Includes
 #include "Limelight/LimelightHelpers.h"
@@ -91,6 +93,8 @@ frc::AprilTagFieldLayout DragonVision::GetAprilTagLayout()
 
 DragonVision::DragonVision()
 {
+	int32_t teamNumber = frc::RobotController::GetTeamNumber();
+	CameraConfigMgr::GetInstance()->InitCameras(static_cast<RobotIdentifier>(teamNumber));
 }
 
 void DragonVision::AddLimelight(DragonLimelight *camera, DRAGON_LIMELIGHT_CAMERA_USAGE usage)

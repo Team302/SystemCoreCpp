@@ -141,9 +141,9 @@ void Robot::InitializeRobot()
 
     MechanismConfigMgr::GetInstance()->InitRobot((RobotIdentifier)teamNumber);
 
-    CameraConfigMgr::GetInstance()->InitCameras(static_cast<RobotIdentifier>(teamNumber));
+    // CameraConfigMgr::GetInstance()->InitCameras(static_cast<RobotIdentifier>(teamNumber));
 
-    m_DragonVisionPoseEstimator = DragonVisionPoseEstimator::GetInstance();
+    // m_DragonVisionPoseEstimator = DragonVisionPoseEstimator::GetInstance();
 
     // auto dragonVision = DragonVision::GetDragonVision();
     // if (dragonVision != nullptr)

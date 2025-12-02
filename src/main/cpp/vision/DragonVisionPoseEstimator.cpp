@@ -20,20 +20,9 @@
 #include <optional>
 #include <vision/VisionPose.h>
 
-DragonVisionPoseEstimator *DragonVisionPoseEstimator::m_instance = nullptr;
-
 DragonVisionPoseEstimator::DragonVisionPoseEstimator()
 {
     m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
-}
-
-DragonVisionPoseEstimator *DragonVisionPoseEstimator::GetInstance()
-{
-    if (DragonVisionPoseEstimator::m_instance == nullptr)
-    {
-        DragonVisionPoseEstimator::m_instance = new DragonVisionPoseEstimator();
-    }
-    return DragonVisionPoseEstimator::m_instance;
 }
 
 // FRC Command Lifecycle methods

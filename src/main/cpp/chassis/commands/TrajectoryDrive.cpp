@@ -32,7 +32,7 @@
 TrajectoryDrive::TrajectoryDrive(
     subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis),
                                                     m_pathName(""),
-                                                    //m_trajectoryStates(),
+                                                    // m_trajectoryStates(),
                                                     m_prevPose(),
                                                     m_wasMoving(false),
                                                     m_timer(std::make_unique<frc::Timer>()),
@@ -48,7 +48,14 @@ TrajectoryDrive::TrajectoryDrive(
 void TrajectoryDrive::Initialize()
 {
     m_trajectory = AutonUtils::GetTrajectoryFromPathFile(m_pathName);
-    m_trajectoryStates = m_trajectory.value().samples;
+    if (m_trajectory.has_value())
+    {
+        m_trajectoryStates = m_trajectory.value().samples;
+    }
+    else
+    {
+        m_totalTrajectoryTime = 0_s;
+    }
 
     // Reset and start the timer when the command begins
     m_timer.get()->Reset();

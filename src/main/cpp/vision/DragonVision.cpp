@@ -38,14 +38,12 @@
 
 namespace
 {
+	// std::vector<std::unique_ptr<DragonVisionStruct>> ProcessOutputOption(
+	// 	VisionTargetOption option,
+	// 	std::vector<std::unique_ptr<DragonVisionStruct>> &targets);
+
 	std::optional<VisionPose> GetBestPose(const std::vector<VisionPose> &poses);
-}
-// namespace
-// {
-// 	std::vector<std::unique_ptr<DragonVisionStruct>> ProcessOutputOption(
-// 		VisionTargetOption option,
-// 		std::vector<std::unique_ptr<DragonVisionStruct>> &targets);
-// } // namespace
+} // namespace
 
 DragonVision *DragonVision::m_dragonVision = nullptr;
 DragonVision *DragonVision::GetDragonVision()
@@ -183,6 +181,12 @@ void DragonVision::SetRobotPose(const frc::Pose2d &pose)
 	{
 		limelight->SetRobotPose(pose);
 	}
+
+	auto quest = GetQuest();
+	if (quest != nullptr)
+	{
+		quest->SetRobotPose(pose);
+	}
 }
 
 std::vector<DragonLimelight *> DragonVision::GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE usage) const
@@ -255,51 +259,42 @@ void DragonVision::SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE usage, DRAGON_LIMEL
 	}
 }
 
-void DragonVision::Periodic()
-{
-	// Get the Estimated Robot Pose for each camera
-}
-
-// namespace
-// {
-// 	std::vector<std::unique_ptr<DragonVisionStruct>> ProcessOutputOption(
-// 		VisionTargetOption option,
-// 		std::vector<std::unique_ptr<DragonVisionStruct>> &targets)
-// 	{
-
-// 		switch (option)
-// 		{
-// 		case VisionTargetOption::CLOSEST_VALID_TARGET:
-// 		{
-// 			if (!targets.empty())
-// 			{
-// 				auto closestTargetIt = std::min_element(
-// 					targets.begin(),
-// 					targets.end(),
-// 					[](const std::unique_ptr<DragonVisionStruct> &a, const std::unique_ptr<DragonVisionStruct> &b)
-// 					{
-// 						return a->targetAreaPercent > b->targetAreaPercent;
-// 					});
-// 				std::vector<std::unique_ptr<DragonVisionStruct>> closestTarget;
-// 				closestTarget.emplace_back(std::move(*closestTargetIt));
-// 				return closestTarget;
-// 			}
-// 			break;
-// 		}
-// 		case VisionTargetOption::FUSED_TARGET_INFO:
-// 		{
-// 			// TODO Fusion logic
-// 			break;
-// 		}
-// 		default:
-// 			break;
-// 		}
-// 		return targets;
-// 	}
-// } // namespace
-
 namespace
 {
+	// std::vector<std::unique_ptr<DragonVisionStruct>> ProcessOutputOption(
+	// 	VisionTargetOption option,
+	// 	std::vector<std::unique_ptr<DragonVisionStruct>> &targets)
+	// {
+
+	// 	switch (option)
+	// 	{
+	// 	case VisionTargetOption::CLOSEST_VALID_TARGET:
+	// 	{
+	// 		if (!targets.empty())
+	// 		{
+	// 			auto closestTargetIt = std::min_element(
+	// 				targets.begin(),
+	// 				targets.end(),
+	// 				[](const std::unique_ptr<DragonVisionStruct> &a, const std::unique_ptr<DragonVisionStruct> &b)
+	// 				{
+	// 					return a->targetAreaPercent > b->targetAreaPercent;
+	// 				});
+	// 			std::vector<std::unique_ptr<DragonVisionStruct>> closestTarget;
+	// 			closestTarget.emplace_back(std::move(*closestTargetIt));
+	// 			return closestTarget;
+	// 		}
+	// 		break;
+	// 	}
+	// 	case VisionTargetOption::FUSED_TARGET_INFO:
+	// 	{
+	// 		// TODO Fusion logic
+	// 		break;
+	// 	}
+	// 	default:
+	// 		break;
+	// 	}
+	// 	return targets;
+	// }
 	std::optional<VisionPose> GetBestPose(const std::vector<VisionPose> &poses)
 	{
 		if (poses.empty())

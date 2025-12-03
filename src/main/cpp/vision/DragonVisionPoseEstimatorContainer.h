@@ -16,7 +16,6 @@
 #pragma once
 
 #include "vision/DragonVision.h"
-#include "vision/DragonVisionPoseEstimator.h"
 #include <frc2/command/CommandPtr.h>
 
 /**

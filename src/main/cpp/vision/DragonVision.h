@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2022 Lake Orion Robotics FIRST Team 302
 //
@@ -16,26 +15,57 @@
 
 #pragma once
 #include <map>
-#include <string>
+#include <memory>
+#include <optional>
+#include <vector>
 
 #include "frc/geometry/Pose2d.h"
-#include "frc/geometry/Pose3d.h"
-#include "units/angular_velocity.h"
 
 // FRC Includes
 #include "frc/apriltag/AprilTagFieldLayout.h"
-#include "frc/apriltag/AprilTagFields.h"
 
 // Team 302 Includes
 #include "vision/DragonLimelight.h"
 #include "vision/VisionPose.h"
 
-#include "configs/RobotElementNames.h"
 #include "fielddata/FieldConstants.h"
 
-#include "units/angular_velocity.h"
-
 #include <frc2/command/SubsystemBase.h>
+
+// Developer documentation:
+// @file DragonVision.h
+// @brief High-level vision subsystem interface.
+//
+// Purpose:
+//   DragonVision centralizes camera and vision processing integration for the robot.
+//   It manages multiple camera sources (Limelight, Quest), provides health checks,
+//   selects/sets pipelines, and exposes fused or per-camera pose estimates to the
+//   rest of the robot code.
+//
+// Responsibilities:
+//   - Maintain a map of camera instances and a single Quest instance.
+//   - Provide methods to query vision targets (AprilTags, object detection) and
+//     to obtain fused or camera-specific robot poses.
+//   - Offer health checks and pipeline control for cameras.
+//   - Periodically update/refresh NetworkTables and any internal state.
+//
+// Usage notes:
+//   - AddLimelight/AddQuest should be called during robot initialization to register
+//     cameras with this subsystem.
+//   - GetRobotPositionMegaTag* returns an optional VisionPose; callers should check
+//     for validity before use.
+//   - Keep enum and NT key mappings synchronized with camera wrappers and network
+//     table consumers to avoid mismatches.
+//
+// Class summary:
+//   DragonVision : frc2::SubsystemBase
+//     - Public API: AddLimelight, AddQuest, GetRobotPositionMegaTag*, HealthCheck, SetPipeline
+//     - Threading: callers should assume single-threaded access from the robot loop.
+//
+// Notes:
+//   - Prefer using VisionTargetOption and DRAGON_LIMELIGHT_* enums for camera/pipeline
+//     selection to improve readability and reduce magic constants.
+//   - Avoid reordering enum values if they are persisted or communicated via NT.
 
 class DragonQuest;
 
@@ -75,14 +105,12 @@ public:
 
     void SetPipeline(DRAGON_LIMELIGHT_CAMERA_USAGE position, DRAGON_LIMELIGHT_PIPELINE pipeline);
 
-    void Periodic() override;
-
     /// @brief gets the field position of the robot (right blue driverstation origin)
     /// @return std::optional<frc::Pose3d> - the estimated position, timestamp of estimation, and confidence as array of std devs
     std::optional<VisionPose> GetRobotPositionMegaTag1();
 
     /// @brief gets the field position of the robot (Limelight only) (right blue driverstation origin)
-    /// @return std::optional<VisionPose> - the estimated position, timestamp of estimation, and confidence as array of std devs
+    /// @return std::optional<frc::Pose3d> - the estimated position, timestamp of estimation, and confidence as array of std devs
     std::optional<VisionPose> GetRobotPositionMegaTag2();
 
 private:
@@ -93,11 +121,11 @@ private:
 
     std::vector<DragonLimelight *> GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE usage) const;
     DragonLimelight *GetLimelightFromIdentifier(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier) const;
-    DragonQuest *GetQuest() const;
+    DragonQuest *GetQuest() const { return m_dragonQuest; };
 
     static DragonVision *m_dragonVision;
     std::multimap<DRAGON_LIMELIGHT_CAMERA_USAGE, DragonLimelight *> m_dragonLimelightMap;
-    DragonQuest *m_dragonQuest;
+    DragonQuest *m_dragonQuest = nullptr;
 
     bool m_initialPoseSet = false;
 };

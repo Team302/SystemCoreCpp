@@ -20,25 +20,72 @@
 #include "units/time.h"
 #include "wpi/array.h"
 
-// struct DragonVisionPoseEstimatorStruct
-// {
-// public:
-//     DragonVisionPoseEstimatorStruct() : m_confidenceLevel(ConfidenceLevel::NONE),
-//                                         m_visionPose(frc::Pose2d{}),
-//                                         m_timeStamp(units::time::second_t(0.0)),
-//                                         m_stds(wpi::array(0.9, 0.9, 0.9)) {};
-//     ~DragonVisionPoseEstimatorStruct() = default;
+// Developer documentation:
+// DragonVisionPoseEstimatorStruct
+// -------------------------------
+// Purpose:
+//   Simple POD used to transfer a vision-based pose estimate from the vision
+//   processing subsystem to the robot pose estimator. Contains the estimated
+//   pose, a timestamp for when the measurement was taken, an enum-coded
+//   confidence level for the measurement, and a small array of standard
+//   deviations (uncertainties) for the x, y and heading components.
+//
+// Usage:
+//   - Produced by vision code when a target is observed.
+//   - Consumed by the pose estimator to fuse vision updates with other sensors.
+//   - ConfidenceLevel should be used to gate or weight the measurement.
+//   - m_stds: expected to be {std_x, std_y, std_theta} in meters/meters/radians
+//     or consistent units with the rest of the estimator.
+//
+// Notes:
+//   - Default constructor initializes to NONE confidence, zero pose and timestamp,
+//     and a conservative default std array.
+//
+// Example:
+//   DragonVisionPoseEstimatorStruct meas;
+//   meas.m_confidenceLevel = DragonVisionPoseEstimatorStruct::HIGH;
+//   meas.m_visionPose = somePose;
+//   meas.m_timeStamp = units::time::second_t{frc::Timer::GetFPGATimestamp()};
+//   passToEstimator(meas);
+struct DragonVisionPoseEstimatorStruct
+{
+public:
+    // Construct an empty/default measurement.
+    // Defaults:
+    //   m_confidenceLevel = NONE
+    //   m_visionPose = identity / zero pose
+    //   m_timeStamp = 0 seconds
+    //   m_stds = {0.9, 0.9, 0.9} (conservative defaults)
+    DragonVisionPoseEstimatorStruct() : m_confidenceLevel(ConfidenceLevel::NONE),
+                                        m_visionPose(frc::Pose2d{}),
+                                        m_timeStamp(units::time::second_t(0.0)),
+                                        m_stds(wpi::array(0.9, 0.9, 0.9)) {};
+    ~DragonVisionPoseEstimatorStruct() = default;
 
-//     enum ConfidenceLevel
-//     {
-//         NONE,
-//         LOW,
-//         MEDIUM,
-//         HIGH
-//     };
+    // Confidence levels used by vision to indicate measurement quality.
+    // - NONE:    No valid measurement available.
+    // - LOW:     Measurement is available but low confidence (use cautiously).
+    // - MEDIUM:  Typical measurement quality.
+    // - HIGH:    High-quality measurement (preferable for fusion).
+    enum ConfidenceLevel
+    {
+        NONE,
+        LOW,
+        MEDIUM,
+        HIGH
+    };
 
-//     ConfidenceLevel m_confidenceLevel;
-//     frc::Pose2d m_visionPose;
-//     units::time::second_t m_timeStamp;
-//     wpi::array<double, 3> m_stds;
-// };
+    // The confidence level for this measurement.
+    ConfidenceLevel m_confidenceLevel;
+
+    // Estimated robot pose (from vision) in field coordinates.
+    frc::Pose2d m_visionPose;
+
+    // Timestamp (seconds) indicating when the vision measurement was valid.
+    // Use consistent timebase with other sensors when fusing.
+    units::time::second_t m_timeStamp;
+
+    // Standard deviations for the measurement: [std_x, std_y, std_theta].
+    // Values should be in the same units as m_visionPose (meters/radians).
+    wpi::array<double, 3> m_stds;
+};

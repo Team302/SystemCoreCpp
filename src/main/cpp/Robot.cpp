@@ -132,12 +132,6 @@ void Robot::RobotPeriodic()
         m_robotState->Run();
     }
 
-    // if (m_quest != nullptr)
-    // {
-    //     m_quest->HandleHeartBeat();
-    //     m_quest->RefreshNT();
-    // }
-
     UpdateDriveTeamFeedback();
 }
 

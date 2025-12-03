@@ -16,16 +16,19 @@
 #include <string>
 #include <vector>
 
+#include "frc/smartdashboard/SendableChooser.h"
+#include "frc/smartdashboard/SmartDashboard.h"
+
 #include "networktables/DoubleArrayTopic.h"
+#include "networktables/DoubleTopic.h"
 #include "networktables/IntegerTopic.h"
+#include "networktables/NetworkTable.h"
+#include "networktables/NetworkTableEntry.h"
+#include "networktables/NetworkTableInstance.h"
+
+#include "state/IRobotStateChangeSubscriber.h"
 #include "utils/logging/signals/DragonDataLogger.h"
-#include <frc/smartdashboard/SendableChooser.h>
-#include <frc/smartdashboard/SmartDashboard.h>
-#include <networktables/DoubleTopic.h>
-#include <networktables/NetworkTable.h>
-#include <networktables/NetworkTableEntry.h>
-#include <networktables/NetworkTableInstance.h>
-#include <state/IRobotStateChangeSubscriber.h>
+#include "vision/DragonVisionPoseEstimatorStruct.h"
 
 using namespace std;
 
@@ -46,7 +49,8 @@ public:
     bool HealthCheck() { return m_isConnected; };
     void SetIsConnected();
 
-    // void SetRobotPose(const frc::Pose2d &pose) override;
+    void SetRobotPose(const frc::Pose2d &pose);
+    DragonVisionPoseEstimatorStruct GetPoseEstimate();
 
     void RefreshNT();
     void HandleHeartBeat();

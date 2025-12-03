@@ -14,6 +14,7 @@
 //====================================================================================================================================================
 
 #include "vision/DragonVisionPoseEstimatorContainer.h"
+#include "vision/DragonVisionPoseEstimator.h"
 
 DragonVisionPoseEstimatorContainer::DragonVisionPoseEstimatorContainer() : m_updateVisionPoseEstimatorCommand(std::make_unique<DragonVisionPoseEstimator>())
 

@@ -16,10 +16,10 @@
 #include <string>
 
 #include "utils/logging/debug/Logger.h"
-#include "vision/definitions/CameraConfig_302.h"
 #include "vision/DragonLimelight.h"
-#include "vision/DragonVision.h"
 #include "vision/DragonQuest.h"
+#include "vision/DragonVision.h"
+#include "vision/definitions/CameraConfig_302.h"
 
 void CameraConfig_302::BuildCameraConfig()
 {
@@ -58,11 +58,12 @@ void CameraConfig_302::BuildCameraConfig()
     ); // additional parameter
     DragonVision::GetDragonVision()->AddLimelight(back, DRAGON_LIMELIGHT_CAMERA_USAGE::APRIL_TAGS);
 
-    new DragonQuest(units::length::inch_t(m_questMountingXOffset), // <I> x offset of Quest from robot center (forward relative to robot)
-                    units::length::inch_t(m_questMountingYOffset), // <I> y offset of Quest from robot center (left relative to robot)
-                    units::length::inch_t(m_questMountingZOffset), // <I> z offset of Quest from robot center (up relative to robot)
-                    units::angle::degree_t(m_questPitch),          // <I> - Pitch of Quest
-                    units::angle::degree_t(m_questYaw),            // <I> - Yaw of Quest
-                    units::angle::degree_t(m_questRoll)            // <I> - Roll of Quest
+    auto quest = new DragonQuest(units::length::inch_t(m_questMountingXOffset), // <I> x offset of Quest from robot center (forward relative to robot)
+                                 units::length::inch_t(m_questMountingYOffset), // <I> y offset of Quest from robot center (left relative to robot)
+                                 units::length::inch_t(m_questMountingZOffset), // <I> z offset of Quest from robot center (up relative to robot)
+                                 units::angle::degree_t(m_questPitch),          // <I> - Pitch of Quest
+                                 units::angle::degree_t(m_questYaw),            // <I> - Yaw of Quest
+                                 units::angle::degree_t(m_questRoll)            // <I> - Roll of Quest
     );
+    DragonVision::GetDragonVision()->AddQuest(quest);
 }

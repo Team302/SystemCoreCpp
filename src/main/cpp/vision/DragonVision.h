@@ -37,6 +37,8 @@
 
 #include <frc2/command/SubsystemBase.h>
 
+class DragonQuest;
+
 class DragonVision : public frc2::SubsystemBase
 {
 public:
@@ -59,6 +61,7 @@ public:
     /// @param camera pointer to the camera object that should be added
     /// @param position the physical position of the camera
     void AddLimelight(DragonLimelight *camera, DRAGON_LIMELIGHT_CAMERA_USAGE usage);
+    void AddQuest(DragonQuest *quest);
 
     static frc::AprilTagFieldLayout m_aprilTagLayout;
 
@@ -90,8 +93,11 @@ private:
 
     std::vector<DragonLimelight *> GetLimelights(DRAGON_LIMELIGHT_CAMERA_USAGE usage) const;
     DragonLimelight *GetLimelightFromIdentifier(DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier) const;
+    DragonQuest *GetQuest() const;
 
     static DragonVision *m_dragonVision;
     std::multimap<DRAGON_LIMELIGHT_CAMERA_USAGE, DragonLimelight *> m_dragonLimelightMap;
+    DragonQuest *m_dragonQuest;
+
     bool m_initialPoseSet = false;
 };

@@ -28,6 +28,7 @@
 #include "utils/FMSData.h"
 #include "utils/logging/debug/Logger.h"
 #include "vision/DragonLimelight.h"
+#include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
 #include "vision/VisionPose.h"
 #include "vision/definitions/CameraConfigMgr.h"
@@ -101,6 +102,11 @@ void DragonVision::AddLimelight(DragonLimelight *camera, DRAGON_LIMELIGHT_CAMERA
 {
 	m_dragonLimelightMap.insert(std::pair<DRAGON_LIMELIGHT_CAMERA_USAGE, DragonLimelight *>(usage, camera));
 }
+void DragonVision::AddQuest(DragonQuest *quest)
+{
+	m_dragonQuest = quest;
+}
+
 std::vector<std::unique_ptr<DragonVisionStruct>> DragonVision::GetAprilTagVisionTargetInfo(VisionTargetOption option,
 																						   const std::vector<FieldAprilTagIDs> &validAprilTagIDs) const
 

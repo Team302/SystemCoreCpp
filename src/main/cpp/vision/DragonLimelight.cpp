@@ -51,6 +51,23 @@ namespace
 /// Method:         DragonLimelight (constructor)
 /// Description:    Create the object
 ///-----------------------------------------------------------------------------------
+/// ----------------------------------------------------------------------------------
+/// @brief Construct a DragonLimelight object.
+/// @details Initializes network table handle, camera pose, chassis pointer, sets LED/camera/pipeline modes,
+///          starts a health timer and port forwarding for Limelight access.
+/// @param networkTableName NetworkTable name for the Limelight instance (sanitized internally)
+/// @param identifier enum identifying which physical limelight this represents
+/// @param cameraType limelight camera type (unused in current implementation)
+/// @param cameraUsage whether this camera is used for odometry, vision, etc. (unused here)
+/// @param mountingXOffset forward offset in inches from robot center
+/// @param mountingYOffset left offset in inches from robot center
+/// @param mountingZOffset up offset in inches from robot center
+/// @param pitch camera pitch in degrees
+/// @param yaw camera yaw in degrees
+/// @param roll camera roll in degrees
+/// @param initialPipeline starting pipeline to select on the Limelight
+/// @param ledMode initial LED mode to set
+/// @param camMode initial camera mode to set
 DragonLimelight::DragonLimelight(
     std::string networkTableName, /// <I> networkTableName
     DRAGON_LIMELIGHT_CAMERA_IDENTIFIER identifier,
@@ -81,6 +98,12 @@ DragonLimelight::DragonLimelight(
     }
 }
 
+/// ----------------------------------------------------------------------------------
+/// @brief Check whether the Limelight is running/responding.
+/// @details Uses heartbeat value exposed by Limelight network table and a short local timer.
+///          In simulation always returns true.
+/// @return true if Limelight is considered healthy and updating; false otherwise.
+/// ----------------------------------------------------------------------------------
 bool DragonLimelight::IsLimelightRunning()
 {
     if (frc::RobotBase::IsSimulation())
@@ -113,6 +136,12 @@ bool DragonLimelight::IsLimelightRunning()
     return false;
 }
 
+/// ----------------------------------------------------------------------------------
+/// @brief Retrieve detected AprilTag targets from Limelight.
+/// @param validAprilTagIDs Optional list of field april tag IDs to filter results. If empty, all tags returned.
+/// @return vector of DragonVisionStruct unique_ptr for each valid AprilTag detection. Empty if NT not available.
+/// @notes Each DragonVisionStruct contains offsets, area, latency and distances computed by Limelight helpers.
+/// ----------------------------------------------------------------------------------
 std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetAprilTagVisionTargetInfo(const std::vector<FieldAprilTagIDs> &validAprilTagIDs) const
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
@@ -148,6 +177,12 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetAprilTagVis
     return targets;
 }
 
+/// ----------------------------------------------------------------------------------
+/// @brief Retrieve object detection results from Limelight (e.g., neural detector).
+/// @param validClasses Optional filter of class ids to keep; if empty, all detections returned.
+/// @return vector of DragonVisionStruct unique_ptr for each valid object detection. Empty if NT not available.
+/// @notes Corners and class id are populated in the returned structs.
+/// ----------------------------------------------------------------------------------
 std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetObjectDetectionTargetInfo(const std::vector<int> &validClasses) const
 {
     std::vector<std::unique_ptr<DragonVisionStruct>> targets;
@@ -192,6 +227,12 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetObjectDetec
  * @brief Get the Pose object for the current location of the robot
  * https://docs.limelightvision.io/docs/docs-limelight/pipeline-apriltag/apriltag-robot-localization
  */
+/// ----------------------------------------------------------------------------------
+/// @brief High-level entry to request a pose estimate from Limelight for odometry.
+/// @param useMegatag2 if true, request MegaTag2 pose estimation path; otherwise use MegaTag1 path.
+/// @return optional VisionPose when Limelight has a valid pose estimate; std::nullopt otherwise.
+/// @notes Adjusts Limelight IMU mode for best results depending on which MegaTag method is used.
+/// ----------------------------------------------------------------------------------
 std::optional<VisionPose> DragonLimelight::EstimatePoseOdometryLimelight(bool useMegatag2)
 {
     if (frc::RobotBase::IsSimulation())
@@ -213,6 +254,11 @@ std::optional<VisionPose> DragonLimelight::EstimatePoseOdometryLimelight(bool us
     return std::nullopt;
 }
 
+/// ----------------------------------------------------------------------------------
+/// @brief Get pose estimate using the MegaTag1/standard Limelight pose estimate API.
+/// @return optional VisionPose populated from Limelight pose if tagCount > 0 and valid deviations are computable.
+/// @sideeffects If robot pose has not been set, SetRobotPose will be invoked using the estimate's 2D pose.
+/// ----------------------------------------------------------------------------------
 std::optional<VisionPose> DragonLimelight::GetMegaTag1Pose()
 {
     auto limelightMeasurement = LimelightHelpers::getBotPoseEstimate_wpiBlue(m_cameraName);
@@ -244,6 +290,11 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag1Pose()
     return m_megatag1Pos;
 }
 
+/// ----------------------------------------------------------------------------------
+/// @brief Get pose estimate using the MegaTag2 specialized API.
+/// @details Requires an initial robot pose to be set (will attempt to get MegaTag1 pose first if needed).
+/// @return optional VisionPose populated from MegaTag2 pose estimate API; std::nullopt on failure.
+/// ----------------------------------------------------------------------------------
 std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
 {
     if (!m_robotPoseSet)
@@ -270,6 +321,11 @@ std::optional<VisionPose> DragonLimelight::GetMegaTag2Pose()
     return m_megatag2Pos;
 }
 
+/// ----------------------------------------------------------------------------------
+/// @brief Set Limelight LED mode.
+/// @param mode enumeration controlling LED behavior (pipeline, blink, on, off)
+/// @notes Uses LimelightHelpers wrappers to send commands to the camera.
+/// ----------------------------------------------------------------------------------
 void DragonLimelight::SetLEDMode(DRAGON_LIMELIGHT_LED_MODE mode)
 {
     switch (mode)
@@ -290,6 +346,10 @@ void DragonLimelight::SetLEDMode(DRAGON_LIMELIGHT_LED_MODE mode)
     }
 }
 
+/// ----------------------------------------------------------------------------------
+/// @brief Set Limelight camera mode (e.g., vision vs driver camera).
+/// @param mode enum value to put into the camera's camMode NT entry.
+/// ----------------------------------------------------------------------------------
 void DragonLimelight::SetCamMode(DRAGON_LIMELIGHT_CAM_MODE mode)
 {
     auto nt = m_limelightNT.get();
@@ -302,17 +362,35 @@ void DragonLimelight::SetCamMode(DRAGON_LIMELIGHT_CAM_MODE mode)
 /**
  * @brief Update the pipeline index, this assumes that all of your limelights have the same pipeline at each index
  */
+/// ----------------------------------------------------------------------------------
+/// @brief Set the Limelight pipeline index.
+/// @param pipeline enum index for the selected pipeline
+/// ----------------------------------------------------------------------------------
 void DragonLimelight::SetPipeline(DRAGON_LIMELIGHT_PIPELINE pipeline)
 {
     m_pipeline = pipeline;
     LimelightHelpers::setPipelineIndex(m_cameraName, static_cast<int>(pipeline));
 }
 
+/// ----------------------------------------------------------------------------------
+/// @brief Set the Limelight priority tag id used for pose selection (Limelight helper wrapper).
+/// @param id Field AprilTag id to give priority to.
+/// ----------------------------------------------------------------------------------
 void DragonLimelight::SetPriorityTagID(int id)
 {
     LimelightHelpers::setPriorityTagID(m_cameraName, id);
 }
 
+/// ----------------------------------------------------------------------------------
+/// @brief Publish the camera transform relative to the robot to the Limelight.
+/// @param forward forward offset (inches)
+/// @param left left offset (inches)
+/// @param up up offset (inches)
+/// @param roll roll (degrees)
+/// @param pitch pitch (degrees)
+/// @param yaw yaw (degrees)
+/// @notes Calls LimelightHelpers::setCameraPose_RobotSpace.
+/// ----------------------------------------------------------------------------------
 void DragonLimelight::SetCameraPose_RobotSpace(double forward, double left, double up, double roll, double pitch, double yaw)
 {
     LimelightHelpers::setCameraPose_RobotSpace(m_cameraName, forward, left, up, roll, pitch, yaw);
@@ -320,6 +398,12 @@ void DragonLimelight::SetCameraPose_RobotSpace(double forward, double left, doub
 
 namespace
 {
+    /// ----------------------------------------------------------------------------------
+    /// @brief Determine if an AprilTag id is in the allowed list.
+    /// @param validTags allowed FieldAprilTagIDs list; empty means accept all.
+    /// @param tagID numeric id to test
+    /// @return true if tagID is accepted, false otherwise.
+    /// ----------------------------------------------------------------------------------
     bool IsValidAprilTag(const std::vector<FieldAprilTagIDs> &validTags, int tagID)
     {
         if (validTags.empty())
@@ -334,6 +418,12 @@ namespace
         return it != validTags.end();
     }
 
+    /// ----------------------------------------------------------------------------------
+    /// @brief Determine if an object detection class id is in the allowed list.
+    /// @param validClasses allowed class ids; empty means accept all.
+    /// @param classID numeric class id to test
+    /// @return true if classID is accepted, false otherwise.
+    /// ----------------------------------------------------------------------------------
     bool IsValidObjectClass(const std::vector<int> &validClasses, int classID)
     {
         if (validClasses.empty())
@@ -348,6 +438,13 @@ namespace
         return it != validClasses.end();
     }
 
+    /// ----------------------------------------------------------------------------------
+    /// @brief Compute conservative standard deviations for pose (x/y in meters, yaw in degrees)
+    ///        based on number of tags seen and their average area reported by Limelight.
+    /// @param ntags number of tags used in the pose estimate
+    /// @param targetAreaPercent average tag area (normalized float from Limelight)
+    /// @return pair(xyStdMeters, yawStdDegrees) if computable, std::nullopt if pose not reliable.
+    /// ----------------------------------------------------------------------------------
     std::optional<std::pair<double, double>> GetStandardDeviationsForMetaTag1PoseEstimation(int ntags, double targetAreaPercent)
     {
 
@@ -381,6 +478,11 @@ namespace
     }
 }
 
+/// ----------------------------------------------------------------------------------
+/// @brief Configure the robot orientation that the Limelight should use for pose fusion.
+/// @details Sends yaw, yaw rate and camera pitch/roll to the Limelight so it can fuse orientation.
+/// @param pose 2D robot pose used to set initial yaw/orientation for the Limelight.
+/// ----------------------------------------------------------------------------------
 void DragonLimelight::SetRobotPose(const frc::Pose2d &pose)
 {
     auto yawrate = 0.0;

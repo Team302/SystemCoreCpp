@@ -26,6 +26,7 @@
 
 // Team 302 Includes
 #include "vision/DragonLimelight.h"
+#include "vision/DragonVisionPoseEstimatorStruct.h"
 #include "vision/VisionPose.h"
 
 #include "fielddata/FieldConstants.h"
@@ -145,6 +146,10 @@ public:
     /// @brief Get robot pose estimate derived from MegaTag2 detections across cameras.
     /// @return Optional VisionPose; std::nullopt if no reliable estimation available.
     std::optional<VisionPose> GetRobotPositionMegaTag2();
+
+    /// @brief Get robot pose estimate derived from Quest detections.
+    /// @return DragonVisionPoseEstimatorStruct - confidence level indicates the usefulness of the pose.
+    DragonVisionPoseEstimatorStruct GetRobotPositionQuest();
 
 private:
     /// @brief Constructor (private for singleton).

@@ -41,18 +41,20 @@
 #include <string>
 #include <vector>
 
-// FRC Includes
+// FRC
+#include "frc/RobotController.h"
 #include "frc/Timer.h"
+#include "frc/geometry/Pose2d.h"
 
 // Team 302 includes
 #include "chassis/ChassisConfigMgr.h"
-#include "frc/RobotController.h"
 #include "utils/DragonField.h"
 #include "utils/FMSData.h"
 #include "utils/logging/debug/Logger.h"
 #include "vision/DragonLimelight.h"
 #include "vision/DragonQuest.h"
 #include "vision/DragonVision.h"
+#include "vision/DragonVisionPoseEstimatorStruct.h"
 #include "vision/VisionPose.h"
 #include "vision/definitions/CameraConfigMgr.h"
 
@@ -255,6 +257,18 @@ std::optional<VisionPose> DragonVision::GetRobotPositionMegaTag2()
 		}
 	}
 	return GetBestPose(poses);
+}
+
+/// @brief Get robot pose estimate derived from Quest detections.
+/// @return DragonVisionPoseEstimatorStruct - confidence level indicates the usefulness of the pose.
+DragonVisionPoseEstimatorStruct DragonVision::GetRobotPositionQuest()
+{
+	auto quest = DragonVision::GetDragonVision()->GetQuest();
+	if (quest != nullptr && quest->HealthCheck())
+	{
+		return quest->GetPoseEstimate();
+	}
+	return {};
 }
 
 /// @brief Set a robot pose for all vision subsystems that consume robot pose information.

@@ -41,6 +41,12 @@ struct ObjectDectcionSpecificData
     double corner2Y = 0.0;
     double corner3X = 0.0;
     double corner3Y = 0.0;
+    units::length::inch_t mountingXOffset; /// <I> x offset of cam from robot center (forward relative to robot)
+    units::length::inch_t mountingYOffset; /// <I> y offset of cam from robot center (left relative to robot)
+    units::length::inch_t mountingZOffset; /// <I> z offset of cam from robot center (up relative to robot)
+    units::angle::degree_t camPitch;       /// <I> - Pitch of camera
+    units::angle::degree_t camYaw;         /// <I> - Yaw of camera
+    units::angle::degree_t camRoll;        /// <I> - Roll of camera
 };
 
 struct DragonVisionStruct

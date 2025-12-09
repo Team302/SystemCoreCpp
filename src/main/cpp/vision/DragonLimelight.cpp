@@ -180,6 +180,12 @@ std::vector<std::unique_ptr<DragonVisionStruct>> DragonLimelight::GetObjectDetec
             objectValue.get()->objectDetectionData.corner2Y = object.corner2_Y;
             objectValue.get()->objectDetectionData.corner3X = object.corner3_X;
             objectValue.get()->objectDetectionData.corner3Y = object.corner3_Y;
+            objectValue.get()->objectDetectionData.mountingXOffset = m_cameraPose.X();
+            objectValue.get()->objectDetectionData.mountingYOffset = m_cameraPose.Y();
+            objectValue.get()->objectDetectionData.mountingZOffset = m_cameraPose.Z();
+            objectValue.get()->objectDetectionData.camPitch = m_cameraPose.Rotation().Y();
+            objectValue.get()->objectDetectionData.camYaw = m_cameraPose.Rotation().Z();
+            objectValue.get()->objectDetectionData.camRoll = m_cameraPose.Rotation().X();
 
             targets.emplace_back(std::move(objectValue));
         }

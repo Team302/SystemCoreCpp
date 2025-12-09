@@ -18,7 +18,7 @@
 #include "state/RobotState.h"
 
 DriveToCoralStation::DriveToCoralStation(subsystems::CommandSwerveDrivetrain *chassis)
-    : DriveToAprilTagTarget(chassis)
+    : DriveToPose(chassis)
 {
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::DesiredCoralSide_Int);
 }

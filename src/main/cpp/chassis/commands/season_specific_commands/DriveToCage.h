@@ -14,12 +14,12 @@
 //====================================================================================================================================================
 #pragma once
 
-#include "chassis/commands/DriveToAprilTagTarget.h"
+#include "chassis/commands/DriveToPose.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 #include "chassis/SwerveContainer.h"
 #include "fielddata/FieldConstants.h"
 
-class DriveToCage : public DriveToAprilTagTarget
+class DriveToCage : public DriveToPose
 {
 public:
     /**

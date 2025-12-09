@@ -16,7 +16,7 @@
 #include "fielddata/BargeHelper.h"
 
 DriveToBarge::DriveToBarge(subsystems::CommandSwerveDrivetrain *chassis)
-    : DriveToAprilTagTarget(chassis)
+    : DriveToPose(chassis)
 {
 }
 
@@ -33,7 +33,7 @@ frc::Pose2d DriveToBarge::GetEndPose()
 
 void DriveToBarge::Execute()
 {
-    DriveToAprilTagTarget::Execute();
+    DriveToPose::Execute();
 
     auto bargeHelper = BargeHelper::GetInstance();
     bargeHelper->IsInZone();

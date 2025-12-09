@@ -15,10 +15,10 @@
 #pragma once
 
 #include "chassis/generated/CommandSwerveDrivetrain.h"
-#include "chassis/commands/DriveToAprilTagTarget.h"
+#include "chassis/commands/DriveToPose.h"
 #include "state/IRobotStateChangeSubscriber.h"
 
-class DriveToCoralStation : public DriveToAprilTagTarget, IRobotStateChangeSubscriber
+class DriveToCoralStation : public DriveToPose, IRobotStateChangeSubscriber
 {
 public:
     /**

@@ -16,7 +16,7 @@
 #include "fielddata/ReefHelper.h"
 
 DriveToBranch::DriveToBranch(subsystems::CommandSwerveDrivetrain *chassis, FieldConstants::FIELD_ELEMENT_OFFSETS location)
-    : DriveToAprilTagTarget(chassis),
+    : DriveToPose(chassis),
       m_location(location)
 {
 }
@@ -56,7 +56,7 @@ frc::Pose2d DriveToBranch::GetEndPose()
 
 void DriveToBranch::Execute()
 {
-    DriveToAprilTagTarget::Execute();
+    DriveToPose::Execute();
 
     auto reefHelper = ReefHelper::GetInstance();
     reefHelper->IsInZone();

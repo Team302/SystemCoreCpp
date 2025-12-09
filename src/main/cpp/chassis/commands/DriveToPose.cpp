@@ -12,14 +12,14 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#include "chassis/commands/DriveToAprilTagTarget.h" // Update path if needed
+#include "chassis/commands/DriveToPose.h" // Update path if needed
 #include "frc/geometry/Rotation2d.h"
 #include "frc/geometry/Translation2d.h"
 #include "utils/AngleUtils.h"
 #include "state/RobotState.h"
 #include "utils/logging/debug/Logger.h"
 
-DriveToAprilTagTarget::DriveToAprilTagTarget(
+DriveToPose::DriveToPose(
     subsystems::CommandSwerveDrivetrain *chassis) : m_chassis(chassis)
 
 {
@@ -30,7 +30,7 @@ DriveToAprilTagTarget::DriveToAprilTagTarget(
     m_feedForwardRange = m_ffMaxRadius - m_ffMinRadius;
 }
 
-void DriveToAprilTagTarget::Initialize()
+void DriveToPose::Initialize()
 {
     m_chassis->ResetSamePose();
     auto speeds = m_chassis->GetState().Speeds;
@@ -48,7 +48,7 @@ void DriveToAprilTagTarget::Initialize()
     }
 }
 
-void DriveToAprilTagTarget::Execute()
+void DriveToPose::Execute()
 {
     frc::ChassisSpeeds chassisSpeeds{};
     if (m_chassis != nullptr)
@@ -80,7 +80,7 @@ void DriveToAprilTagTarget::Execute()
 
     RobotState::GetInstance()->PublishStateChange(RobotStateChanges::DriveToFieldElementIsDone_Bool, IsFinished());
 }
-bool DriveToAprilTagTarget::IsFinished()
+bool DriveToPose::IsFinished()
 {
     bool isDone = false;
     bool isSamePose = false;
@@ -96,12 +96,12 @@ bool DriveToAprilTagTarget::IsFinished()
     return (isDone || isSamePose);
 }
 
-void DriveToAprilTagTarget::End(bool interrupted)
+void DriveToPose::End(bool interrupted)
 {
     m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
 }
 
-void DriveToAprilTagTarget::CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds)
+void DriveToPose::CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds)
 {
     if (m_chassis != nullptr)
     {

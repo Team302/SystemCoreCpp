@@ -18,7 +18,7 @@
 #include "frc2/command/button/RobotModeTriggers.h"
 #include "chassis/commands/TeleopFieldDrive.h"
 #include "chassis/commands/TeleopRobotDrive.h"
-#include "chassis/commands/DriveToAprilTagTarget.h"
+#include "chassis/commands/DriveToPose.h"
 #include "chassis/commands/VisionDrive.h"
 #include "state/RobotState.h"
 #include "state/IRobotStateChangeSubscriber.h"
@@ -56,7 +56,7 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_driveToCenterCage(std::make_unique<DriveToCage>(m_chassis, FieldConstants::CageLocation::CENTER)),
                                      m_driveToAlgae(std::make_unique<VisionDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate)),
                                      m_trajectoryDrive(std::make_unique<TrajectoryDrive>(m_chassis))
-// TO DO: Decided how to do specified heading for telop drive(Either another child command of DriveToAprilTagTarget or potentially a child of TelopFieldDrive/RobotDrive dpending on what you need)
+// TO DO: Decided how to do specified heading for telop drive(Either another child command of DriveToPose or potentially a child of TelopFieldDrive/RobotDrive dpending on what you need)
 {
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Int);
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::DesiredCoralSide_Int);

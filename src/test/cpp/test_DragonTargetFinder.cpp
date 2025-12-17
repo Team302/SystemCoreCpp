@@ -12,7 +12,6 @@ class DragonTargetFinderTest : public ::testing::Test
 protected:
     void SetUp() override
     {
-        // Initialize necessary components
         auto chassisConfig = ChassisConfigMgr::GetInstance();
         auto chassis = chassisConfig->GetSwerveChassis();
     }

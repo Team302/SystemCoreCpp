@@ -6,13 +6,23 @@ class FieldConstantsTest : public ::testing::Test
 protected:
 };
 
-TEST_F(FieldConstantsTest, GetFieldElementTest)
+TEST_F(FieldConstantsTest, GetFieldElementTestReefCenter)
 {
     auto fieldConstants = FieldConstants::GetInstance();
 
     frc::Pose3d result = fieldConstants->GetFieldElementPose(FieldConstants::FIELD_ELEMENT::RED_REEF_CENTER);
-    EXPECT_NE(result.X().to<double>(), 5.32);
-    EXPECT_NE(result.Y().to<double>(), 4.11);
-    EXPECT_NE(result.Z().to<double>(), 1.3200000000000001);
-    EXPECT_NE(result.Z().to<double>(), 4);
+
+    EXPECT_EQ(result.X().to<double>(), 13.058901999999998);
+    EXPECT_EQ(result.Y().to<double>(), 4.0259);
+    EXPECT_EQ(result.Z().to<double>(), 0.30810199999999993);
+}
+
+TEST_F(FieldConstantsTest, GetFieldElementBlueBargeBack)
+{
+    auto fieldConstants = FieldConstants::GetInstance();
+
+    frc::Pose3d result = fieldConstants->GetFieldElementPose(FieldConstants::FIELD_ELEMENT::BLUE_BARGE_BACK_CALCULATED);
+    EXPECT_EQ(result.X().to<double>(), 10.089970674476614);
+    EXPECT_EQ(result.Y().to<double>(), 6.1376559999999998);
+    EXPECT_EQ(result.Z().to<double>(), 1.3980160000000001);
 }

@@ -85,6 +85,10 @@ std::string DragonDataLoggerMgr::GetLoggingDir()
     {
         return std::filesystem::path("/home/lvuser/logs/").string();
     }
+    else if (std::filesystem::exists("/home/systemcore/logs/"))
+    {
+        return std::filesystem::path("/home/systemcore/logs/").string();
+    }
 
     return std::string("");
 }

@@ -1,0 +1,12 @@
+<!ELEMENT swervechassis (attributes)>
+<!ATTLIST swervechassis
+  xmlns:xsi CDATA #IMPLIED
+  xmlns:xsd CDATA #IMPLIED
+>
+
+<!ELEMENT attributes EMPTY>
+<!ATTLIST attributes
+  wheelbase CDATA #REQUIRED
+  track CDATA #REQUIRED
+  wheeldiameter CDATA #REQUIRED
+>

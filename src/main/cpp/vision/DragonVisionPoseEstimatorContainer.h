@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2025 Lake Orion Robotics FIRST Team 302
 //
@@ -16,48 +15,23 @@
 
 #pragma once
 
-#include <optional>
+#include "vision/DragonVision.h"
+#include <frc2/command/CommandPtr.h>
 
-#include "frc2/command/CommandPtr.h"
-#include <frc/TimedRobot.h>
-
-class CyclePrimitives;
-class TeleopControl;
-class SwerveContainer;
-class FMSData;
-class DragonField;
-class AutonPreviewer;
-class RobotState;
-class SomeMech;
-class DragonDataLoggerMgr;
-class DragonVisionPoseEstimatorContainer;
-class DragonQuest;
-
-class Robot : public frc::TimedRobot
+/**
+ * This class is where the bulk of the robot should be declared.  Since
+ * Command-based is a "declarative" paradigm, very little robot logic should
+ * actually be handled in the {@link Robot} periodic methods (other than the
+ * scheduler calls).  Instead, the structure of the robot (including subsystems,
+ * commands, and trigger mappings) should be declared here.
+ */
+class DragonVisionPoseEstimatorContainer
 {
 public:
-    Robot();
-    void RobotPeriodic() override;
-    void DisabledPeriodic() override;
-    void AutonomousInit() override;
-    void AutonomousPeriodic() override;
-    void TeleopInit() override;
-    void TeleopPeriodic() override;
-    void TestInit() override;
+    DragonVisionPoseEstimatorContainer();
 
 private:
-    void InitializeRobot();
-    void InitializeAutonOptions();
-    void InitializeDriveteamFeedback();
-    void UpdateDriveTeamFeedback();
-
-    CyclePrimitives *m_cyclePrims;
-
-    DragonField *m_field;
-    AutonPreviewer *m_previewer;
-    RobotState *m_robotState;
-    DragonDataLoggerMgr *m_datalogger;
-    bool isFMSAttached = false;
-    DragonVisionPoseEstimatorContainer *m_dragonVisionPoseEstimator;
-    DragonQuest *m_quest;
+    // The robot's subsystems and commands are defined here...
+    DragonVision *m_vision = DragonVision::GetDragonVision();
+    frc2::CommandPtr m_updateVisionPoseEstimatorCommand;
 };

@@ -12,37 +12,13 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-#pragma once
-#include "chassis/ChassisConfigMgr.h"
-#include "chassis/generated/CommandSwerveDrivetrain.h"
-#include "frc/geometry/Pose2d.h"
-#include "frc2/command/Command.h"
-#include "frc2/command/CommandHelper.h"
-#include <vector>
 
-class DragonSwervePoseEstimator : public frc2::CommandHelper<frc2::Command, DragonSwervePoseEstimator>
+#include "vision/DragonVisionPoseEstimatorContainer.h"
+#include "vision/DragonVisionPoseEstimator.h"
+
+DragonVisionPoseEstimatorContainer::DragonVisionPoseEstimatorContainer() : m_updateVisionPoseEstimatorCommand(std::make_unique<DragonVisionPoseEstimator>())
+
 {
-public:
-    static DragonSwervePoseEstimator *GetInstance();
-    DragonSwervePoseEstimator();
-    ~DragonSwervePoseEstimator() = default;
-
-    void Update();
-
-    void CalculateInitialPose();
-
-    void ResetPosition(const frc::Pose2d &pose);
-    frc::Pose2d GetPose() const;
-
-    // FRC Command Lifecycle methods
-    void Initialize() override;
-    void Execute() override;
-    bool IsFinished() override;
-
-private:
-    static DragonSwervePoseEstimator *m_instance;
-
-    subsystems::CommandSwerveDrivetrain *m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
-
-    void AddVisionMeasurements();
-};
+    // Initialize all of your commands and subsystems here
+    m_vision->SetDefaultCommand(std::move(m_updateVisionPoseEstimatorCommand));
+}

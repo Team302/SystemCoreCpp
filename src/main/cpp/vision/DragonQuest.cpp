@@ -143,23 +143,23 @@ void DragonQuest::HandleHeartBeat()
     SetIsConnected();
 }
 
-// void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
-// {
-//     if (!m_hasReset)
-//     {
-//         frc::Pose2d questPose = pose.TransformBy(m_questToRobotTransform);
-//         m_initialPosePublisher.Set(std::array<double, 3>{questPose.X().value(), questPose.Y().value(), questPose.Rotation().Degrees().value()});
+void DragonQuest::SetRobotPose(const frc::Pose2d &pose)
+{
+    if (!m_hasReset)
+    {
+        frc::Pose2d questPose = pose.TransformBy(m_questToRobotTransform);
+        m_initialPosePublisher.Set(std::array<double, 3>{questPose.X().value(), questPose.Y().value(), questPose.Rotation().Degrees().value()});
 
-//         if (m_questMiso.Get() != 99)
-//         {
-// #ifndef _WIN32
-//             sleep(1);
-// #endif
-//             m_questMosi.Set(2);
-//         }
-//         m_hasReset = true;
-//     }
-// }
+        if (m_questMiso.Get() != 99)
+        {
+#ifndef _WIN32
+            sleep(1);
+#endif
+            m_questMosi.Set(2);
+        }
+        m_hasReset = true;
+    }
+}
 
 void DragonQuest::HandleDashboard()
 {
@@ -183,22 +183,22 @@ void DragonQuest::NotifyStateUpdate(RobotStateChanges::StateChange change, int v
     if (RobotStateChanges::StateChange::ClimbModeStatus_Int == change)
         m_climbMode = static_cast<RobotStateChanges::ClimbMode>(value);
 }
-// DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
-// {
-//     DragonVisionPoseEstimatorStruct str;
-//     HandleDashboard();
-//     if (!m_hasReset || !m_isConnected || !m_isQuestEnabled)
-//     {
-//         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
-//         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("confidence"), string("NONE"));
-//     }
-//     else
-//     {
-//         str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH;
-//         str.m_visionPose = GetEstimatedPose();
-//         str.m_stds = wpi::array{m_stdxy, m_stdxy, m_stddeg};
-//         str.m_timeStamp = units::time::second_t(m_timestamp.GetAtomic().serverTime);
-//         Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("confidence"), string("HIGH"));
-//     }
-//     return str;
-// }
+DragonVisionPoseEstimatorStruct DragonQuest::GetPoseEstimate()
+{
+    DragonVisionPoseEstimatorStruct str;
+    HandleDashboard();
+    if (!m_hasReset || !m_isConnected || !m_isQuestEnabled)
+    {
+        str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::NONE;
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("confidence"), string("NONE"));
+    }
+    else
+    {
+        str.m_confidenceLevel = DragonVisionPoseEstimatorStruct::ConfidenceLevel::HIGH;
+        str.m_visionPose = GetEstimatedPose();
+        str.m_stds = wpi::array{m_stdxy, m_stdxy, m_stddeg};
+        str.m_timeStamp = units::time::second_t(m_timestamp.GetAtomic().serverTime);
+        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, string("questnav"), string("confidence"), string("HIGH"));
+    }
+    return str;
+}

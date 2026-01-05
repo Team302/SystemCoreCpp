@@ -1,37 +1,100 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
+//====================================================================================================================================================
+// Copyright 2025 Lake Orion Robotics FIRST Team 302
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"),
+// to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense,
+// and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
+// OR OTHER DEALINGS IN THE SOFTWARE.
+//====================================================================================================================================================
+
+/*
+  Robot.cpp — Developer Notes
+
+  Overview
+  - Implements the top-level robot entry point and lifecycle handlers (init/periodic for Disabled/Auton/Teleop/Test).
+  - Wires up RobotContainer, subsystems, command scheduling, auton selection, and drive-team feedback.
+  - Lightweight: avoid adding heavy computation in periodic methods; use PeriodicLooper for mode-specific loops.
+
+  Key responsibilities
+  - Global initialization (logger, configs, chassis, RobotContainer, RobotState).
+  - Manage autorun/auton selection via CyclePrimitives and AutonPreviewer.
+  - Run CommandScheduler and per-period updates (RobotState, vision heartbeats, drive-team HUD).
+  - Provide extension points for new subsystems and auton sequences.
+
+  Lifecycle summary (where to look)
+  - Robot::Robot()          : startup wiring and warm-load resources (e.g., trajectories).
+  - Robot::RobotPeriodic()  : runs CommandScheduler, logging (guarded by FMS), RobotState, vision heartbeats, and UpdateDriveTeamFeedback().
+  - Robot::AutonomousInit() : raise thread priority, initialize cycle primitives, start auton PeriodicLooper state.
+  - Robot::AutonomousPeriodic(): run cycle primitives and auton PeriodicLooper.
+  - Robot::TeleopInit()/TeleopPeriodic(): start/run teleop PeriodicLooper state.
+  - Robot::TestInit()      : cancel commands at test startup.
+
+  Initialization order (high level)
+  1. Logger selections -> dashboard
+  2. FieldConstants, RoboRio singletons
+  3. ChassisConfigMgr -> CreateDrivetrain()
+  4. Instantiate RobotContainer (binds subsystems/commands)
+  5. MechanismConfigMgr and RobotState initialization
+  6. Create CyclePrimitives and AutonPreviewer for auton selection
+  7. Initialize drive-team feedback (DragonField, DriverFeedback)
+
+  Key collaborators / singletons
+  - RobotContainer, ChassisConfigMgr, MechanismConfigMgr
+  - RobotState, PeriodicLooper
+  - CyclePrimitives, AutonPreviewer
+  - DriverFeedback, DragonField
+  - DragonQuest / DragonVision (vision heartbeats)
+  - DragonDataLoggerMgr (optional data logger)
+
+  Extension points
+  - Add subsystems and bind them in RobotContainer.
+  - Add new CyclePrimitives for auton routines and register them with AutonPreviewer.
+  - Use PeriodicLooper for periodic publishing rather than adding heavy work to RobotPeriodic.
+
+  Debugging & testing tips
+  - Guard periodic debug logging with !frc::DriverStation::IsFMSAttached() to avoid FMS log flooding.
+  - Warm-load trajectories in Robot constructor to avoid first-run stalls.
+  - Test thread priority changes on non-competition hardware first.
+  - Use PeriodicLooper to throttle heavy publishers and avoid overruns.
+
+  TODO / Caveats
+  - Consider re-enabling DragonDataLoggerMgr->PeriodicDataLog() with rate limiting.
+  - Move DragonField initialization into a dedicated drive-team feedback manager.
+  - Add more granular RobotState transition logging for diagnostics.
+
+  Search tokens in this file
+  - InitializeRobot(), InitializeAutonOptions(), InitializeDriveteamFeedback(), UpdateDriveTeamFeedback()
+*/
 
 #include "Robot.h"
 
 #include <frc2/command/CommandScheduler.h>
 
+#include "RobotContainer.h"
 #include "RobotIdentifier.h"
 #include "auton/AutonPreviewer.h"
 #include "auton/CyclePrimitives.h"
 #include "auton/drivePrimitives/AutonUtils.h"
 #include "chassis/ChassisConfigMgr.h"
-#include "chassis/SwerveContainer.h"
-#include "chassis/pose/DragonSwervePoseEstimator.h"
-#include "configs/MechanismConfig.h"
 #include "configs/MechanismConfigMgr.h"
-#include "ctre/phoenix6/SignalLogger.hpp"
 #include "feedback/DriverFeedback.h"
 #include "fielddata/BargeHelper.h"
 #include "fielddata/ReefHelper.h"
+#include "frc/DriverStation.h"
 #include "frc/RobotController.h"
 #include "frc/Threads.h"
 #include "state/RobotState.h"
-#include "teleopcontrol/TeleopControl.h"
 #include "utils/DragonField.h"
 #include "utils/PeriodicLooper.h"
 #include "utils/RoboRio.h"
 #include "utils/logging/debug/Logger.h"
 #include "utils/logging/signals/DragonDataLoggerMgr.h"
-#include "vision/DragonQuest.h"
-#include "vision/DragonVision.h"
-#include "vision/definitions/CameraConfig.h"
-#include "vision/definitions/CameraConfigMgr.h"
 
 Robot::Robot()
 {
@@ -69,21 +132,11 @@ void Robot::RobotPeriodic()
         m_robotState->Run();
     }
 
-    if (m_quest != nullptr)
-    {
-        m_quest->HandleHeartBeat();
-        m_quest->RefreshNT();
-    }
-
     UpdateDriveTeamFeedback();
 }
 
 void Robot::DisabledPeriodic()
 {
-    if (m_dragonswerveposeestimator != nullptr)
-    {
-        m_dragonswerveposeestimator->CalculateInitialPose();
-    }
 }
 
 void Robot::AutonomousInit()
@@ -99,11 +152,6 @@ void Robot::AutonomousInit()
 
 void Robot::AutonomousPeriodic()
 {
-    if (m_dragonswerveposeestimator != nullptr)
-    {
-        m_dragonswerveposeestimator->Update();
-    }
-
     if (m_cyclePrims != nullptr)
     {
         m_cyclePrims->Run();
@@ -117,14 +165,7 @@ void Robot::TeleopInit()
     frc2::CommandScheduler::GetInstance().CancelAll();
 }
 
-void Robot::TeleopPeriodic()
-{
-    if (m_dragonswerveposeestimator != nullptr)
-    {
-        m_dragonswerveposeestimator->Update();
-    }
-    PeriodicLooper::GetInstance()->TeleopRunCurrentState();
-}
+void Robot::TeleopPeriodic() { PeriodicLooper::GetInstance()->TeleopRunCurrentState(); }
 
 void Robot::TestInit()
 {
@@ -138,30 +179,10 @@ void Robot::InitializeRobot()
     RoboRio::GetInstance();
     auto chassisConfig = ChassisConfigMgr::GetInstance();
     chassisConfig->CreateDrivetrain();
-    m_container = SwerveContainer::GetInstance();
+
+    new RobotContainer(); // instantiate RobotContainer to setup commands and subsystems
 
     MechanismConfigMgr::GetInstance()->InitRobot((RobotIdentifier)teamNumber);
-
-    CameraConfigMgr::GetInstance()->InitCameras(static_cast<RobotIdentifier>(teamNumber));
-
-    m_dragonswerveposeestimator = DragonSwervePoseEstimator::GetInstance();
-
-    // auto dragonVision = DragonVision::GetDragonVision();
-    // if (dragonVision != nullptr)
-    // {
-    //     auto visionPoseEstimators = dragonVision->GetPoseEstimators();
-    //     for (auto &poseEstimator : visionPoseEstimators)
-    //     {
-    //         m_dragonswerveposeestimator->RegisterVisionPoseEstimator(poseEstimator);
-    //     }
-    //     if (!visionPoseEstimators.empty())
-    //     {
-    //         if (CameraConfigMgr::GetInstance()->GetCurrentConfig()->GetQuestIndex() != -1)
-    //         {
-    //             m_quest = static_cast<DragonQuest *>(visionPoseEstimators[CameraConfigMgr::GetInstance()->GetCurrentConfig()->GetQuestIndex()]);
-    //         }
-    //     }
-    // }
 
     m_robotState = RobotState::GetInstance();
     m_robotState->Init();
@@ -183,9 +204,11 @@ void Robot::UpdateDriveTeamFeedback()
     {
         m_previewer->CheckCurrentAuton();
     }
-    if (m_field != nullptr && m_dragonswerveposeestimator != nullptr)
+
+    auto chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
+    if (m_field != nullptr && chassis != nullptr)
     {
-        m_field->UpdateRobotPosition(m_dragonswerveposeestimator->GetPose());
+        m_field->UpdateRobotPosition(chassis->GetPose());
     }
     auto feedback = DriverFeedback::GetInstance();
     if (feedback != nullptr)

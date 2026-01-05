@@ -11,8 +11,42 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
-//====================================================================================================================================================#pragma once
+//====================================================================================================================================================
 #pragma once
+
+// Developer documentation:
+// @file DragonVisionEnums.h
+// @brief Enumerations for the vision subsystem.
+//
+// Purpose:
+//   Central location for strongly-typed enums used by vision-related code
+//   (target selection, camera types, modes, pipelines, and pose strategy).
+//
+// Usage:
+//   - These enums are referenced by vision processing modules, camera wrappers,
+//     and higher-level pose estimation/selection logic.
+//   - Keep enum values stable (don't reorder) if they are serialized/shared
+//     across networktables or logs.
+//
+// Enum summaries:
+//   - VisionTargetOption: How to select targets from the vision pipeline.
+//   - DragonTargetType: Type of detected target (AprilTag, object detection, ...).
+//   - DRAGON_LIMELIGHT_CAMERA_TYPE: Hardware model variant of Limelight used.
+//   - DRAGON_LIMELIGHT_CAMERA_IDENTIFIER: Which camera on the robot (front/back).
+//   - DRAGON_LIMELIGHT_CAMERA_USAGE: Primary intended usage of the camera.
+//   - DRAGON_LIMELIGHT_LED_MODE: LED control modes exposed by Limelight.
+//   - DRAGON_LIMELIGHT_CAM_MODE: Camera mode (vision processing vs driver view).
+//   - DRAGON_LIMELIGHT_STREAM_MODE: Multi-camera stream layout options.
+//   - DRAGON_LIMELIGHT_SNAPSHOT_MODE: Snapshot (still image) capture mode.
+//   - DRAGON_LIMELIGHT_PIPELINE: Named processing pipelines (tag/detection).
+//   - PoseEstimationStrategy: Strategy used when combining tag observations
+//     into a pose estimate (multi-tag, single-tag, mega-tag variants).
+//
+// Notes:
+//   - Prefer using these enums instead of raw integers/strings when interacting
+//     with vision APIs to improve clarity and type-safety.
+//   - Add short comments near enums if you add new values to document intended
+//     behaviour and any external mapping (NT keys, persisted values).
 
 enum class VisionTargetOption
 {
@@ -87,4 +121,13 @@ enum class DRAGON_LIMELIGHT_PIPELINE
     APRIL_TAG = 0,
     MACHINE_LEARNING_PL = 1,
     COLOR_THRESHOLD
+};
+
+enum class PoseEstimationStrategy
+{
+    MULTI_TAG,
+    SINGLE_TAG,
+    MEGA_TAG,
+    MEGA_TAG_2,
+    NONE
 };

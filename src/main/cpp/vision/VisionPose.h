@@ -12,52 +12,18 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
-//====================================================================================================================================================
-
+//====================================================================================================================================================#pragma once
 #pragma once
 
-#include <optional>
+#include "frc/geometry/Pose3d.h"
+#include "units/time.h"
+#include "vision/DragonVisionEnums.h"
+#include "wpi/array.h"
 
-#include "frc2/command/CommandPtr.h"
-#include <frc/TimedRobot.h>
-
-class CyclePrimitives;
-class TeleopControl;
-class SwerveContainer;
-class FMSData;
-class DragonField;
-class AutonPreviewer;
-class RobotState;
-class SomeMech;
-class DragonDataLoggerMgr;
-class DragonVisionPoseEstimatorContainer;
-class DragonQuest;
-
-class Robot : public frc::TimedRobot
+struct VisionPose
 {
-public:
-    Robot();
-    void RobotPeriodic() override;
-    void DisabledPeriodic() override;
-    void AutonomousInit() override;
-    void AutonomousPeriodic() override;
-    void TeleopInit() override;
-    void TeleopPeriodic() override;
-    void TestInit() override;
-
-private:
-    void InitializeRobot();
-    void InitializeAutonOptions();
-    void InitializeDriveteamFeedback();
-    void UpdateDriveTeamFeedback();
-
-    CyclePrimitives *m_cyclePrims;
-
-    DragonField *m_field;
-    AutonPreviewer *m_previewer;
-    RobotState *m_robotState;
-    DragonDataLoggerMgr *m_datalogger;
-    bool isFMSAttached = false;
-    DragonVisionPoseEstimatorContainer *m_dragonVisionPoseEstimator;
-    DragonQuest *m_quest;
+    frc::Pose3d estimatedPose = frc::Pose3d{};                                     // empty pose3d if we don't give one out
+    units::time::millisecond_t timeStamp = units::time::millisecond_t(-1.0);       // negative timestamp for no timestamp
+    wpi::array<double, 3> visionMeasurementStdDevs = {0.1, 0.1, 0.1};              // default std devs from WPI docs
+    PoseEstimationStrategy estimationStrategy = PoseEstimationStrategy::MULTI_TAG; // default estimation strategy, what should be used
 };

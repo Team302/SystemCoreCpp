@@ -16,7 +16,7 @@
 #include "auton/PrimitiveParams.h"
 #include "chassis/SwerveContainer.h"
 #include "chassis/commands/TrajectoryDrive.h"
-#include "chassis/commands/DriveToAprilTagTarget.h"
+#include "chassis/commands/DriveToPose.h"
 #include "configs/MechanismConfigMgr.h"
 #include "utils/logging/debug/Logger.h"
 #include "frc2/command/Commands.h"
@@ -96,7 +96,7 @@ void AutonDrivePrimitive::Run()
     if (!m_visionTransition && m_checkForDriveToUpdate && IsInZone())
     {
         ChassisOptionEnums::DriveStateType driveToType = m_zone->GetPathUpdateOption();
-        m_managedCommand = CreateDriveToAprilTagTargetCommand(driveToType);
+        m_managedCommand = CreateDriveToPoseCommand(driveToType);
         if (m_managedCommand.get() != nullptr)
         {
             frc2::CommandScheduler::GetInstance().Schedule(m_managedCommand);
@@ -154,7 +154,7 @@ bool AutonDrivePrimitive::IsInZone()
     return false;
 }
 
-frc2::CommandPtr AutonDrivePrimitive::CreateDriveToAprilTagTargetCommand(ChassisOptionEnums::DriveStateType driveToType)
+frc2::CommandPtr AutonDrivePrimitive::CreateDriveToPoseCommand(ChassisOptionEnums::DriveStateType driveToType)
 {
     auto container = SwerveContainer::GetInstance();
     switch (driveToType)

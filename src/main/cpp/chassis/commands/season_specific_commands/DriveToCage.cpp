@@ -17,7 +17,7 @@
 #include "utils/FMSData.h"
 
 DriveToCage::DriveToCage(subsystems::CommandSwerveDrivetrain *chassis, FieldConstants::CageLocation location)
-    : DriveToAprilTagTarget(chassis), m_location(location)
+    : DriveToPose(chassis), m_location(location)
 {
 }
 

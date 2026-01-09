@@ -131,7 +131,7 @@ void DragonTargetFinder::ResetGoalPose()
 }
 
 /**
- * @brief Calculates the field-relative pose as a target pose for the DriveToAprilTagTarget command.
+ * @brief Calculates the field-relative pose as a target pose for the DriveToPose command.
  *
  * @param data The vision data containing the transform from the robot to the target game piece.
  * @return std::optional<frc::Pose2d> The calculated goal pose for the robot's center, or std::nullopt if not possible.

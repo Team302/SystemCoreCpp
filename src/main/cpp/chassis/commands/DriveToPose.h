@@ -20,7 +20,7 @@
 #include <frc/geometry/Pose2d.h>
 #include "chassis/generated/CommandSwerveDrivetrain.h"
 
-class DriveToAprilTagTarget : public frc2::CommandHelper<frc2::Command, DriveToAprilTagTarget>
+class DriveToPose : public frc2::CommandHelper<frc2::Command, DriveToPose>
 {
 public:
     /**
@@ -29,7 +29,7 @@ public:
      * @param chassis A pointer to the swerve drive subsystem.
      * @param target The specific field element to target.
      */
-    DriveToAprilTagTarget(subsystems::CommandSwerveDrivetrain *chassis);
+    DriveToPose(subsystems::CommandSwerveDrivetrain *chassis);
 
     // FRC Command Lifecycle methods
     void Initialize() override;

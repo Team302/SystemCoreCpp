@@ -16,6 +16,7 @@
 #include "chassis/commands/TeleopFieldDrive.h"
 #include "state/RobotState.h"
 #include "utils/FMSData.h"
+#include "vision/DragonVision.h"
 
 // Note the simplified constructor and AddRequirements call
 TeleopFieldDrive::TeleopFieldDrive(subsystems::CommandSwerveDrivetrain *chassis,
@@ -27,9 +28,6 @@ TeleopFieldDrive::TeleopFieldDrive(subsystems::CommandSwerveDrivetrain *chassis,
                                                                                                    m_maxAngularRate(maxAngularRate)
 {
     AddRequirements(m_chassis);
-    m_targetFinder = DragonTargetFinder::GetInstance();
-    m_fieldHeadingDriveRequest.WithHeadingPID(m_heading_kP, m_heading_kI, m_heading_kD);
-    RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Int);
 }
 
 void TeleopFieldDrive::Initialize()
@@ -51,30 +49,10 @@ void TeleopFieldDrive::Execute()
     double strafe = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_STRAFE);
     double rotate = m_controller->GetAxisValue(TeleopControlFunctions::HOLONOMIC_DRIVE_ROTATE);
 
-    auto isFaceReefSelected = m_controller->IsButtonPressed(TeleopControlFunctions::FACE_REEF);
-
-    // Heading Control
-    if (isFaceReefSelected)
-    {
-        if (m_climbMode == RobotStateChanges::ClimbMode::ClimbModeOn)
-        {
-            m_targetHeading = units::angle::degree_t(-90);
-        }
-        else
-        {
-            FaceReef();
-        }
-        m_chassis->SetControl(m_fieldHeadingDriveRequest.WithVelocityX(forward * m_maxSpeed)
-                                  .WithVelocityY(strafe * m_maxSpeed)
-                                  .WithTargetDirection(m_targetHeading));
-    }
-    else // if nothing is selected then just drive with the current heading
-    {
-        m_chassis->SetControl(
-            m_fieldDriveRequest.WithVelocityX(forward * m_maxSpeed)
-                .WithVelocityY(strafe * m_maxSpeed)
-                .WithRotationalRate(rotate * m_maxAngularRate));
-    }
+    m_chassis->SetControl(
+        m_fieldDriveRequest.WithVelocityX(forward * m_maxSpeed)
+            .WithVelocityY(strafe * m_maxSpeed)
+            .WithRotationalRate(rotate * m_maxAngularRate));
 }
 
 bool TeleopFieldDrive::IsFinished()
@@ -87,20 +65,4 @@ bool TeleopFieldDrive::IsFinished()
 void TeleopFieldDrive::End(bool interrupted)
 {
     m_chassis->SetControl(swerve::requests::SwerveDriveBrake{});
-}
-
-void TeleopFieldDrive::FaceReef()
-{
-    auto info = m_targetFinder->GetPose(DragonTargetFinderTarget::CLOSEST_REEF_ALGAE);
-    if (info.has_value())
-    {
-        auto targetpose = get<1>(info.value());
-        m_targetHeading = frc::DriverStation::GetAlliance() == frc::DriverStation::Alliance::kBlue ? targetpose.Rotation().Degrees() - 180_deg : targetpose.Rotation().Degrees();
-    }
-}
-
-void TeleopFieldDrive::NotifyStateUpdate(RobotStateChanges::StateChange change, int value)
-{
-    if (RobotStateChanges::StateChange::ClimbModeStatus_Int == change)
-        m_climbMode = static_cast<RobotStateChanges::ClimbMode>(value);
 }

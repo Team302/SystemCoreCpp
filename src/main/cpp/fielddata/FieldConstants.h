@@ -20,9 +20,11 @@
 #include <frc/geometry/Pose3d.h>
 #include <frc/geometry/Rotation3d.h>
 
-#include <frc/apriltag/AprilTagFields.h>
-#include "frc/apriltag/AprilTagFieldLayout.h"
 #include "RobinHood/robin_hood.h"
+
+#include "fielddata/FieldAprilTagIDs.h"
+#include "frc/apriltag/AprilTagFieldLayout.h"
+
 #include "units/angle.h"
 #include "units/base.h"
 
@@ -106,44 +108,24 @@ public:
         RED_PROCESSOR_CALCULATED
     };
 
-    enum FIELD_ELEMENT_OFFSETS
+    enum class FIELD_ELEMENT_OFFSETS
     {
         LEFT_STICK,
         RIGHT_STICK
     };
 
-    enum AprilTagIDs
+    enum class CageLocation
     {
-        // Blue
-        BLUE_CORAL_STATION_LEFT_TAG = 13,
-        BLUE_CORAL_STATION_RIGHT_TAG = 12,
-        BLUE_PROCESSOR_TAG = 16,
-        BLUE_BARGE_FRONT_TAG = 14,
-        BLUE_BARGE_BACK_TAG = 4,
-        BLUE_REEF_AB_TAG = 18,
-        BLUE_REEF_CD_TAG = 17,
-        BLUE_REEF_EF_TAG = 22,
-        BLUE_REEF_GH_TAG = 21,
-        BLUE_REEF_IJ_TAG = 20,
-        BLUE_REEF_KL_TAG = 19,
-        // Red
-        RED_CORAL_STATION_LEFT_TAG = 1,
-        RED_CORAL_STATION_RIGHT_TAG = 2,
-        RED_PROCESSOR_TAG = 3,
-        RED_BARGE_FRONT_TAG = 5,
-        RED_BARGE_BACK_TAG = 15,
-        RED_REEF_AB_TAG = 7,
-        RED_REEF_CD_TAG = 8,
-        RED_REEF_EF_TAG = 9,
-        RED_REEF_GH_TAG = 10,
-        RED_REEF_IJ_TAG = 11,
-        RED_REEF_KL_TAG = 6
+        LEFT,
+        CENTER,
+        RIGHT
     };
+
     frc::Pose3d GetFieldElementPose(FIELD_ELEMENT element);
     frc::Pose2d GetFieldElementPose2d(FIELD_ELEMENT element);
 
-    frc::Pose3d GetAprilTagPose(AprilTagIDs tag);
-    frc::Pose2d GetAprilTagPose2d(AprilTagIDs tag);
+    frc::Pose3d GetAprilTagPose(FieldAprilTagIDs tag);
+    frc::Pose2d GetAprilTagPose2d(FieldAprilTagIDs tag);
 
 private:
     // make a singleton

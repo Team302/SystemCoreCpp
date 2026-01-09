@@ -19,7 +19,8 @@
 // C++ includes
 #include <optional>
 // 302 includes
-
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "fielddata/FieldAprilTagIDs.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/geometry/Pose2d.h"
 
@@ -28,7 +29,7 @@ class ProcessorHelper
 public:
     static ProcessorHelper *GetInstance();
     frc::Pose2d CalcProcessorPose();
-    std::optional<FieldConstants::AprilTagIDs> GetAprilTag();
+    std::optional<FieldAprilTagIDs> GetAprilTag();
 
 private:
     ProcessorHelper();

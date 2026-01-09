@@ -19,11 +19,12 @@
 #include <map>
 #include <tuple>
 
+#include "fielddata/FieldAprilTagIDs.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/geometry/Pose2d.h"
 #include "units/angle.h"
-#include "vision/DragonVision.h"
 #include "utils/logging/signals/DragonDataLogger.h"
+#include "vision/DragonVision.h"
 
 enum class DragonTargetFinderTarget
 {
@@ -69,10 +70,10 @@ private:
     DragonVision *m_vision;
     DragonTargetFinderTarget m_targetVisionTarget;
 
-    std::optional<FieldConstants::AprilTagIDs> GetAprilTag(DragonVision::VISION_ELEMENT item);
+    std::optional<FieldAprilTagIDs> GetAprilTag(DragonVision::VISION_ELEMENT item);
     frc::Pose3d GetAprilTagPose(DragonVision::VISION_ELEMENT item);
     units::angle::degree_t AdjustRobotRelativeAngleForIntake(units::angle::degree_t angle);
-    std::optional<frc::Pose2d> GetFieldRelativePose(std::optional<VisionData> data);
+    // std::optional<frc::Pose2d> GetFieldRelativePose(std::optional<VisionData> data);
     bool SwitchToVision(std::optional<frc::Pose3d> visTagPose);
 
     void SetChassis();

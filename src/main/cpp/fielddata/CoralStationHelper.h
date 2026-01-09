@@ -18,6 +18,8 @@
 
 #include <optional>
 
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "fielddata/FieldAprilTagIDs.h"
 #include "fielddata/FieldConstants.h"
 #include "frc/DriverStation.h"
 #include "frc/geometry/Pose2d.h"
@@ -27,16 +29,16 @@ class CoralStationHelper
 public:
     static CoralStationHelper *GetInstance();
 
-    std::optional<FieldConstants::AprilTagIDs> GetNearestCoralStationTag();
-    std::optional<FieldConstants::FIELD_ELEMENT> GetNearestAllianceWallCoralStation(FieldConstants::AprilTagIDs tag);
-    std::optional<FieldConstants::FIELD_ELEMENT> GetNearestSideWallCoralStation(FieldConstants::AprilTagIDs tag);
+    std::optional<FieldAprilTagIDs> GetNearestCoralStationTag();
+    std::optional<FieldConstants::FIELD_ELEMENT> GetNearestAllianceWallCoralStation(FieldAprilTagIDs tag);
+    std::optional<FieldConstants::FIELD_ELEMENT> GetNearestSideWallCoralStation(FieldAprilTagIDs tag);
 
 private:
     CoralStationHelper();
     ~CoralStationHelper() = default;
     static CoralStationHelper *m_instance;
 
-    units::length::meter_t CalcDistanceToAprilTag(FieldConstants::AprilTagIDs tag, frc::Pose2d currentPose);
+    units::length::meter_t CalcDistanceToAprilTag(FieldAprilTagIDs tag, frc::Pose2d currentPose);
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
     frc::DriverStation::Alliance m_allianceColor;

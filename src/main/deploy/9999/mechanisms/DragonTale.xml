@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<MechanismParameters xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <MotorControlData>
-    <MinimalMotorControlData name="PositionInch" pGain="2.0" iGain="0.0" dGain="0" fGain="0.25" iZone="0" sGain="0.1" vGain="0.175" aGain="0.02" peakValue="0" nominalValue="0" maxAcceleration="0" cruiseVelocity="0" enableFOC="true" feedForwardType="VOLTAGE" controlType="POSITION_INCH" controlLoopLocation="MOTOR_CONTROLLER" />
-    <MinimalMotorControlData name="PositionDegree" pGain="45" iGain="25" dGain="5" fGain="1.8" iZone="0" sGain="0" vGain="0.75" aGain="0.25" peakValue="0" nominalValue="0" maxAcceleration="0" cruiseVelocity="0" enableFOC="true" feedForwardType="VOLTAGE" controlType="POSITION_DEGREES" controlLoopLocation="MOTOR_CONTROLLER" />
-    <MinimalMotorControlData name="PercentOutput" pGain="0" iGain="0" dGain="0" fGain="0" iZone="0" sGain="0" vGain="0" aGain="0" peakValue="0" nominalValue="0" maxAcceleration="0" cruiseVelocity="0" enableFOC="false" feedForwardType="VOLTAGE" controlType="PERCENT_OUTPUT" controlLoopLocation="MOTOR_CONTROLLER" />
-  </MotorControlData>
-</MechanismParameters>

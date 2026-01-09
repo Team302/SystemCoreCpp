@@ -13,13 +13,14 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 #pragma once
-#include <vector>
 #include "chassis/ChassisConfigMgr.h"
-#include "chassis/pose/DragonVisionPoseEstimator.h"
-#include "frc/geometry/Pose2d.h"
 #include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "frc/geometry/Pose2d.h"
+#include "frc2/command/Command.h"
+#include "frc2/command/CommandHelper.h"
+#include <vector>
 
-class DragonSwervePoseEstimator
+class DragonSwervePoseEstimator : public frc2::CommandHelper<frc2::Command, DragonSwervePoseEstimator>
 {
 public:
     static DragonSwervePoseEstimator *GetInstance();
@@ -28,18 +29,20 @@ public:
 
     void Update();
 
-    void RegisterVisionPoseEstimator(DragonVisionPoseEstimator *poseEstimator);
     void CalculateInitialPose();
 
     void ResetPosition(const frc::Pose2d &pose);
     frc::Pose2d GetPose() const;
 
+    // FRC Command Lifecycle methods
+    void Initialize() override;
+    void Execute() override;
+    bool IsFinished() override;
+
 private:
     static DragonSwervePoseEstimator *m_instance;
 
     subsystems::CommandSwerveDrivetrain *m_chassis = ChassisConfigMgr::GetInstance()->GetSwerveChassis();
-
-    std::vector<DragonVisionPoseEstimator *> m_visionPoseEstimators;
 
     void AddVisionMeasurements();
 };

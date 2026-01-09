@@ -18,12 +18,20 @@
 #include "frc2/command/button/RobotModeTriggers.h"
 #include "chassis/commands/TeleopFieldDrive.h"
 #include "chassis/commands/TeleopRobotDrive.h"
-#include "chassis/commands/DriveToTarget.h"
+#include "chassis/commands/DriveToPose.h"
 #include "chassis/commands/VisionDrive.h"
 #include "state/RobotState.h"
 #include "state/IRobotStateChangeSubscriber.h"
 #include "frc2/command/ProxyCommand.h"
 #include "utils/logging/debug/Logger.h"
+#include "fielddata/FieldConstants.h"
+
+// Season Specific Commands
+#include "chassis/commands/season_specific_commands/DriveToBarge.h"
+#include "chassis/commands/season_specific_commands/DriveToBranch.h"
+#include "chassis/commands/season_specific_commands/DriveToCoralStation.h"
+#include "chassis/commands/season_specific_commands/DriveToCage.h"
+
 SwerveContainer *SwerveContainer::m_instance = nullptr;
 
 SwerveContainer *SwerveContainer::GetInstance()
@@ -39,17 +47,16 @@ SwerveContainer::SwerveContainer() : m_chassis(ChassisConfigMgr::GetInstance()->
                                      m_maxSpeed(ChassisConfigMgr::GetInstance()->GetMaxSpeed()),
                                      m_fieldDrive(std::make_unique<TeleopFieldDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate)),
                                      m_robotDrive(std::make_unique<TeleopRobotDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate)),
-                                     m_driveToCoralStationSidewall(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::CLOSEST_CORAL_STATION_SIDWALL_SIDE)),
-                                     m_driveToCoralStationAlliance(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::CLOSEST_CORAL_STATION_ALLIANCE_SIDE)),
-                                     m_driveToCoralRightBranch(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::CLOSEST_RIGHT_REEF_BRANCH)),
-                                     m_driveToCoralLeftBranch(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::CLOSEST_LEFT_REEF_BRANCH)),
-                                     m_driveToBarge(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::BARGE)),
-                                     m_driveToLeftCage(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::LEFT_CAGE)),
-                                     m_driveToRightCage(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::RIGHT_CAGE)),
-                                     m_driveToCenterCage(std::make_unique<DriveToTarget>(m_chassis, DragonTargetFinderTarget::CENTER_CAGE)),
+                                     m_driveToCoralStation(std::make_unique<DriveToCoralStation>(m_chassis)),
+                                     m_driveToCoralRightBranch(std::make_unique<DriveToBranch>(m_chassis, FieldConstants::FIELD_ELEMENT_OFFSETS::RIGHT_STICK)),
+                                     m_driveToCoralLeftBranch(std::make_unique<DriveToBranch>(m_chassis, FieldConstants::FIELD_ELEMENT_OFFSETS::LEFT_STICK)),
+                                     m_driveToBarge(std::make_unique<DriveToBarge>(m_chassis)),
+                                     m_driveToLeftCage(std::make_unique<DriveToCage>(m_chassis, FieldConstants::CageLocation::LEFT)),
+                                     m_driveToRightCage(std::make_unique<DriveToCage>(m_chassis, FieldConstants::CageLocation::RIGHT)),
+                                     m_driveToCenterCage(std::make_unique<DriveToCage>(m_chassis, FieldConstants::CageLocation::CENTER)),
                                      m_driveToAlgae(std::make_unique<VisionDrive>(m_chassis, TeleopControl::GetInstance(), m_maxSpeed, m_maxAngularRate)),
                                      m_trajectoryDrive(std::make_unique<TrajectoryDrive>(m_chassis))
-
+// TO DO: Decided how to do specified heading for telop drive(Either another child command of DriveToPose or potentially a child of TelopFieldDrive/RobotDrive dpending on what you need)
 {
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::ClimbModeStatus_Int);
     RobotState::GetInstance()->RegisterForStateChanges(this, RobotStateChanges::StateChange::DesiredCoralSide_Int);
@@ -113,19 +120,14 @@ void SwerveContainer::CreateReefscapeDriveToCommands(TeleopControl *controller)
 
     driveToCoralStation.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                            {
-    if (m_climbMode) {
-        return frc2::ProxyCommand(m_driveToCenterCage.get()).ToPtr();
-    }
-    else
-    {
-        if (m_desiredCoralSide == RobotStateChanges::DesiredCoralSide::AllianceWall)
+        if (m_climbMode)
         {
-            return frc2::ProxyCommand(m_driveToCoralStationAlliance.get()).ToPtr();
-        }   
+            return frc2::ProxyCommand(m_driveToCenterCage.get()).ToPtr();
+        }
         else
         {
-            return frc2::ProxyCommand(m_driveToCoralStationSidewall.get()).ToPtr();
-        } } }));
+            return frc2::ProxyCommand(m_driveToCoralStation.get()).ToPtr();
+        } }));
 
     driveToLeftReefBranch.WhileTrue(frc2::cmd::DeferredProxy([this]() -> frc2::CommandPtr
                                                              {
@@ -166,10 +168,5 @@ void SwerveContainer::NotifyStateUpdate(RobotStateChanges::StateChange change, i
     if (change == RobotStateChanges::StateChange::ClimbModeStatus_Int)
     {
         m_climbMode = value;
-    }
-    else if (change == RobotStateChanges::StateChange::DesiredCoralSide_Int)
-    {
-        m_desiredCoralSide = RobotStateChanges::DesiredCoralSide(value); // cast to enum
-        Logger::GetLogger()->LogData(LOGGER_LEVEL::PRINT, "SwerveContainer", "Desired Coral Side:", std::to_string(static_cast<int>(m_desiredCoralSide)));
     }
 }

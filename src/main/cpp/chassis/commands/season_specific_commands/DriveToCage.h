@@ -12,11 +12,31 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
+#pragma once
 
-#include "chassis/pose/DragonVisionPoseEstimator.h"
-#include "chassis/pose/DragonSwervePoseEstimator.h"
+#include "chassis/commands/DriveToPose.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "chassis/SwerveContainer.h"
+#include "fielddata/FieldConstants.h"
 
-DragonVisionPoseEstimator::DragonVisionPoseEstimator()
+class DriveToCage : public DriveToPose
 {
-    DragonSwervePoseEstimator::GetInstance()->RegisterVisionPoseEstimator(this);
-}
+public:
+    /**
+     * @brief Creates a command to drive to the Barge AprilTag.
+     *
+     * @param chassis A pointer to the swerve drive subsystem.
+     * @param location The cage location (LEFT, CENTER, RIGHT).
+     */
+    DriveToCage(subsystems::CommandSwerveDrivetrain *chassis, FieldConstants::CageLocation location);
+
+    /**
+     * @brief Default destructor.
+     */
+    ~DriveToCage() = default;
+
+    frc::Pose2d GetEndPose() override;
+
+private:
+    FieldConstants::CageLocation m_location;
+};

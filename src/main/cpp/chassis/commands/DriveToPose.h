@@ -19,9 +19,8 @@
 #include <frc/controller/ProfiledPIDController.h>
 #include <frc/geometry/Pose2d.h>
 #include "chassis/generated/CommandSwerveDrivetrain.h"
-#include "fielddata/DragonTargetFinder.h"
 
-class DriveToTarget : public frc2::CommandHelper<frc2::Command, DriveToTarget>
+class DriveToPose : public frc2::CommandHelper<frc2::Command, DriveToPose>
 {
 public:
     /**
@@ -30,7 +29,7 @@ public:
      * @param chassis A pointer to the swerve drive subsystem.
      * @param target The specific field element to target.
      */
-    DriveToTarget(subsystems::CommandSwerveDrivetrain *chassis, DragonTargetFinderTarget target);
+    DriveToPose(subsystems::CommandSwerveDrivetrain *chassis);
 
     // FRC Command Lifecycle methods
     void Initialize() override;
@@ -38,21 +37,21 @@ public:
     bool IsFinished() override;
     void End(bool interrupted) override;
 
+protected:
+    virtual frc::Pose2d GetEndPose() { return frc::Pose2d(); };
+
 private:
     void CalculateFeedForward(frc::ChassisSpeeds &chassisSpeeds);
 
     subsystems::CommandSwerveDrivetrain *m_chassis;
-    DragonTargetFinderTarget m_target;
-    DragonTargetFinder *m_targetFinder;
-    DragonTargetFinderData m_currentType = DragonTargetFinderData::NOT_FOUND;
 
     swerve::requests::FieldCentricFacingAngle m_driveRequest;
 
-    bool m_hasTarget = false;
     bool m_isSamePose = false;
-    frc::Pose2d m_endPose;
     frc::Pose2d m_prevPose;
     frc::Pose2d m_currentPose;
+    frc::Pose2d m_endPose;
+
     const units::length::inch_t m_distanceThreshold{0.25};
     const units::length::inch_t m_regenerationDistanceThreshold{2.0};
     const units::length::meter_t m_ffMinRadius{0.0};

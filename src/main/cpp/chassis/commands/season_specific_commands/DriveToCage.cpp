@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2025 Lake Orion Robotics FIRST Team 302
 //
@@ -13,42 +12,28 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-
-#include "fielddata/ProcessorHelper.h"
-#include "chassis/ChassisConfigMgr.h"
-#include "fielddata/FieldAprilTagIDs.h"
+#include "chassis/commands/season_specific_commands/DriveToCage.h"
+#include "fielddata/FieldConstants.h"
 #include "utils/FMSData.h"
 
-ProcessorHelper *ProcessorHelper::m_instance = nullptr;
-ProcessorHelper *ProcessorHelper::GetInstance()
-{
-    if (ProcessorHelper::m_instance == nullptr)
-    {
-        ProcessorHelper::m_instance = new ProcessorHelper();
-    }
-    return ProcessorHelper::m_instance;
-}
-
-ProcessorHelper::ProcessorHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveChassis()),
-                                     m_fieldConstants(FieldConstants::GetInstance())
+DriveToCage::DriveToCage(subsystems::CommandSwerveDrivetrain *chassis, FieldConstants::CageLocation location)
+    : DriveToPose(chassis), m_location(location)
 {
 }
 
-frc::Pose2d ProcessorHelper::CalcProcessorPose()
+frc::Pose2d DriveToCage::GetEndPose()
 {
     auto allianceColor = FMSData::GetAllianceColor();
-    frc::Pose2d pose2d{};
-    if (allianceColor == frc::DriverStation::Alliance::kRed)
-    {
-        pose2d = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::RED_PROCESSOR_CALCULATED);
-    }
-    else
-    {
-        pose2d = m_fieldConstants->GetFieldElementPose2d(FieldConstants::FIELD_ELEMENT::BLUE_PROCESSOR_CALCULATED);
-    }
-    return frc::Pose2d(pose2d.X(), pose2d.Y(), pose2d.Rotation().Degrees() + units::degree_t(180));
-}
-std::optional<FieldAprilTagIDs> ProcessorHelper::GetAprilTag()
-{
-    return FMSData::GetAllianceColor() == frc::DriverStation::Alliance::kRed ? FieldAprilTagIDs::RED_PROCESSOR_TAG : FieldAprilTagIDs::BLUE_PROCESSOR_TAG;
+    auto fieldElement = allianceColor == frc::DriverStation::kRed ? FieldConstants::FIELD_ELEMENT::RED_BARGE_FRONT_CALCULATED : FieldConstants::FIELD_ELEMENT::BLUE_BARGE_FRONT_CALCULATED; // defualt value in front of barge
+
+    if (m_location == FieldConstants::CageLocation::LEFT)
+        fieldElement = allianceColor == frc::DriverStation::kRed ? FieldConstants::FIELD_ELEMENT::RED_LEFT_CAGE : FieldConstants::FIELD_ELEMENT::BLUE_LEFT_CAGE;
+    else if (m_location == FieldConstants::CageLocation::RIGHT)
+        fieldElement = allianceColor == frc::DriverStation::kRed ? FieldConstants::FIELD_ELEMENT::RED_RIGHT_CAGE : FieldConstants::FIELD_ELEMENT::BLUE_RIGHT_CAGE;
+    else if (m_location == FieldConstants::CageLocation::CENTER)
+        fieldElement = allianceColor == frc::DriverStation::kRed ? FieldConstants::FIELD_ELEMENT::RED_CENTER_CAGE : FieldConstants::FIELD_ELEMENT::BLUE_CENTER_CAGE;
+
+    auto m_cagePose = FieldConstants::GetInstance()->GetFieldElementPose2d(fieldElement);
+
+    return frc::Pose2d(m_cagePose.X(), m_cagePose.Y(), frc::Rotation2d(m_cagePose.Rotation().Degrees() + 90_deg));
 }

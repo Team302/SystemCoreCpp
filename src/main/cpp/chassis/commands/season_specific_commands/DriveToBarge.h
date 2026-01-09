@@ -12,26 +12,26 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-
 #pragma once
 
-// C++ Includes
-#include <string>
-#include <vector>
+#include "chassis/commands/DriveToPose.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
 
-// FRC includes
-#include "frc/Timer.h"
-#include "networktables/NetworkTable.h"
-#include "units/angle.h"
-#include "units/length.h"
-#include "units/time.h"
-#include "frc/geometry/Pose2d.h"
-
-// Team 302 includes
-#include "vision/DragonLimelight.h"
-class DragonLimelight180 : public DragonLimelight
+class DriveToBarge : public DriveToPose
 {
 public:
-    inline std::optional<units::angle::degree_t> GetTargetYaw() override { return GetTx(); }
-    inline std::optional<units::angle::degree_t> GetTargetPitch() override { return -1.0 * GetTy(); }
+    /**
+     * @brief Creates a command to drive to the Barge AprilTag.
+     *
+     * @param chassis A pointer to the swerve drive subsystem.
+     */
+    DriveToBarge(subsystems::CommandSwerveDrivetrain *chassis);
+
+    /**
+     * @brief Default destructor.
+     */
+    ~DriveToBarge() = default;
+
+    frc::Pose2d GetEndPose() override;
+    void Execute() override;
 };

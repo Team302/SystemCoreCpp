@@ -31,7 +31,7 @@ class SwerveContainer : IRobotStateChangeSubscriber
 public:
     static SwerveContainer *GetInstance();
 
-    frc2::Command *GetDriveToCoralStationCommand() { return m_driveToCoralStationSidewall.get(); }
+    frc2::Command *GetDriveToCoralStationCommand() { return m_driveToCoralStation.get(); }
     frc2::Command *GetDriveToCoralLeftBranchCommand() { return m_driveToCoralLeftBranch.get(); }
     frc2::Command *GetDriveToCoralRightBranchCommand() { return m_driveToCoralRightBranch.get(); }
     frc2::Command *GetDriveToBargeCommand() { return m_driveToBarge.get(); }
@@ -51,8 +51,7 @@ private:
 
     frc2::CommandPtr m_fieldDrive;
     frc2::CommandPtr m_robotDrive;
-    frc2::CommandPtr m_driveToCoralStationSidewall;
-    frc2::CommandPtr m_driveToCoralStationAlliance;
+    frc2::CommandPtr m_driveToCoralStation;
     frc2::CommandPtr m_driveToCoralRightBranch;
     frc2::CommandPtr m_driveToCoralLeftBranch;
     frc2::CommandPtr m_driveToBarge;
@@ -63,7 +62,6 @@ private:
     std::unique_ptr<TrajectoryDrive> m_trajectoryDrive;
 
     bool m_climbMode = false;
-    RobotStateChanges::DesiredCoralSide m_desiredCoralSide = RobotStateChanges::DesiredCoralSide::Sidewall;
 
     void ConfigureBindings();
     void SetSysIDBinding(TeleopControl *controller);

@@ -11,38 +11,31 @@
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
-//======================================================\==============================================================================================
+//====================================================================================================================================================
 
-#include "utils/sensors/SensorDataMgr.h"
-#include "utils/sensors/SensorData.h"
+#pragma once
 
-#include <vector>
+#include <memory>
+#include <utility>
+#include <cmath>
 
-using std::vector;
+#include "units/length.h"
+#include "units/angle.h"
+#include "vision/DragonVisionStruct.h"
 
-SensorDataMgr *SensorDataMgr::m_instance = nullptr;
-SensorDataMgr *SensorDataMgr::GetInstance()
+class PoseOffsetUtils
 {
-    if (SensorDataMgr::m_instance == nullptr)
-    {
-        SensorDataMgr::m_instance = new SensorDataMgr();
-    }
-    return SensorDataMgr::m_instance;
-}
+public:
+    PoseOffsetUtils() = delete;
+    ~PoseOffsetUtils() = delete;
 
-SensorDataMgr::SensorDataMgr() : m_SensorData()
-{
-}
-void SensorDataMgr::RegisterSensorData(
-    SensorData *sd)
-{
-    m_SensorData.emplace_back(sd);
-}
+    /// @brief Calculates the X and Y distance from the center of the robot to the detected object.
+    /// @param target The vision target data (ObjectDetection).
+    /// @return std::pair<units::length::meter_t, units::length::meter_t> where first is X (Forward), second is Y (Left).
+    static std::pair<units::length::meter_t, units::length::meter_t> CalculateXYDistanceFromObject(const DragonVisionStruct &target, units::length::inch_t objectHeight);
 
-void SensorDataMgr::CacheData() const
-{
-    for (SensorData *sensor : m_SensorData)
-    {
-        sensor->PeriodicCacheData();
-    }
-}
+    /// @brief Calculates the straight-line ground distance (hypotenuse) from the center of the robot to the object.
+    /// @param target The vision target data (ObjectDetection).
+    /// @return units::length::meter_t The total ground distance.
+    static units::length::meter_t CalculateDistanceFromObject(const DragonVisionStruct &target, units::length::inch_t objectHeight);
+};

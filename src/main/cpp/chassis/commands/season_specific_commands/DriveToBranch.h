@@ -12,22 +12,31 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
-
 #pragma once
-#include "chassis/pose/DragonVisionPoseEstimatorStruct.h"
-#include "frc/geometry/Pose2d.h"
 
-class DragonVisionPoseEstimator
+#include "chassis/commands/DriveToPose.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "chassis/SwerveContainer.h"
+#include "fielddata/FieldConstants.h"
+
+class DriveToBranch : public DriveToPose
 {
 public:
-    DragonVisionPoseEstimator();
-    ~DragonVisionPoseEstimator() = default;
+    /**
+     * @brief Creates a command to drive to the Barge AprilTag.
+     *
+     * @param chassis A pointer to the swerve drive subsystem.
+     */
+    DriveToBranch(subsystems::CommandSwerveDrivetrain *chassis, FieldConstants::FIELD_ELEMENT_OFFSETS location);
 
-    virtual DragonVisionPoseEstimatorStruct GetPoseEstimate() { return DragonVisionPoseEstimatorStruct(); };
-    virtual void SetRobotPose(const frc::Pose2d &pose) {};
-    virtual bool HealthCheck() = 0;
+    /**
+     * @brief Default destructor.
+     */
+    ~DriveToBranch() = default;
+
+    frc::Pose2d GetEndPose() override;
+    void Execute() override;
 
 private:
-    DragonVisionPoseEstimator(const DragonVisionPoseEstimator &) = delete;
-    DragonVisionPoseEstimator &operator=(const DragonVisionPoseEstimator &) = delete;
+    FieldConstants::FIELD_ELEMENT_OFFSETS m_location;
 };

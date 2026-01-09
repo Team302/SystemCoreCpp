@@ -14,23 +14,29 @@
 //====================================================================================================================================================
 #pragma once
 
-#include <string>
-#include "vision/DragonVisionStructs.h"
-#include "vision/DragonLimelight.h"
-#include "frc/geometry/Translation3d.h"
-#include "frc/geometry/Transform3d.h"
-#include "Limelight/LimelightHelpers.h"
+#include "chassis/generated/CommandSwerveDrivetrain.h"
+#include "chassis/commands/DriveToPose.h"
+#include "state/IRobotStateChangeSubscriber.h"
 
-class DragonVisionStructLogger
+class DriveToCoralStation : public DriveToPose, IRobotStateChangeSubscriber
 {
 public:
-    static void logVisionData(const std::string& loggerName, const std::optional<VisionData> optVisionData);
-    static void logTransform3d(const std::string &loggerName, const frc::Transform3d transform3d);
-    static void logTranslation3d(const std::string &loggerName, const frc::Translation3d translation3d);
-    static void logRotation3d(const std::string &loggerName, const frc::Rotation3d rotation3d);
-    static void logDragonCamera(const std::string &loggerName, const DragonLimelight& camera);
-    static void logPose3d(const std::string &loggerName, const frc::Pose3d pose3d);
-    static void logVisionPose(const std::string &loggerName, const std::optional<VisionPose> optVisionPose);
-    static void logPose2d(const std::string &loggerName, const frc::Pose2d pose2d);
-    static void logLLPoseEstimation(const std::string &loggerName, const LimelightHelpers::PoseEstimate llPoseEstimate);
+    /**
+     * @brief Creates a command to drive to the Barge AprilTag.
+     *
+     * @param chassis A pointer to the swerve drive subsystem.
+     */
+    DriveToCoralStation(subsystems::CommandSwerveDrivetrain *chassis);
+
+    /**
+     * @brief Default destructor.
+     */
+    ~DriveToCoralStation() = default;
+
+    frc::Pose2d GetEndPose() override;
+
+private:
+    void NotifyStateUpdate(RobotStateChanges::StateChange change, int value) override;
+
+    RobotStateChanges::DesiredCoralSide m_desiredCoralSide = RobotStateChanges::DesiredCoralSide::Sidewall;
 };

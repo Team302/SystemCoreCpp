@@ -14,8 +14,9 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "chassis/ChassisConfigMgr.h"
 #include "fielddata/CoralStationHelper.h"
+#include "chassis/ChassisConfigMgr.h"
+#include "fielddata/FieldAprilTagIDs.h"
 #include "frc/DriverStation.h"
 #include "utils/FMSData.h"
 
@@ -35,7 +36,7 @@ CoralStationHelper::CoralStationHelper() : m_chassis(ChassisConfigMgr::GetInstan
 {
 }
 
-std::optional<FieldConstants::AprilTagIDs> CoralStationHelper::GetNearestCoralStationTag()
+std::optional<FieldAprilTagIDs> CoralStationHelper::GetNearestCoralStationTag()
 {
     if (m_chassis != nullptr)
     {
@@ -44,36 +45,36 @@ std::optional<FieldConstants::AprilTagIDs> CoralStationHelper::GetNearestCoralSt
         ;
         if (m_allianceColor == frc::DriverStation::Alliance::kRed)
         {
-            if (CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::RED_CORAL_STATION_LEFT_TAG, pose) <
-                CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::RED_CORAL_STATION_RIGHT_TAG, pose))
+            if (CalcDistanceToAprilTag(FieldAprilTagIDs::RED_CORAL_STATION_LEFT_TAG, pose) <
+                CalcDistanceToAprilTag(FieldAprilTagIDs::RED_CORAL_STATION_RIGHT_TAG, pose))
             {
-                return FieldConstants::AprilTagIDs::RED_CORAL_STATION_LEFT_TAG;
+                return FieldAprilTagIDs::RED_CORAL_STATION_LEFT_TAG;
             }
-            return FieldConstants::AprilTagIDs::RED_CORAL_STATION_RIGHT_TAG;
+            return FieldAprilTagIDs::RED_CORAL_STATION_RIGHT_TAG;
         }
         else
         {
-            if (CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::BLUE_CORAL_STATION_LEFT_TAG, pose) <
-                CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::BLUE_CORAL_STATION_RIGHT_TAG, pose))
+            if (CalcDistanceToAprilTag(FieldAprilTagIDs::BLUE_CORAL_STATION_LEFT_TAG, pose) <
+                CalcDistanceToAprilTag(FieldAprilTagIDs::BLUE_CORAL_STATION_RIGHT_TAG, pose))
             {
-                return FieldConstants::AprilTagIDs::BLUE_CORAL_STATION_LEFT_TAG;
+                return FieldAprilTagIDs::BLUE_CORAL_STATION_LEFT_TAG;
             }
-            return FieldConstants::AprilTagIDs::BLUE_CORAL_STATION_RIGHT_TAG;
+            return FieldAprilTagIDs::BLUE_CORAL_STATION_RIGHT_TAG;
         }
     }
     return std::nullopt;
 }
 
-std::optional<FieldConstants::FIELD_ELEMENT> CoralStationHelper::GetNearestAllianceWallCoralStation(FieldConstants::AprilTagIDs tag)
+std::optional<FieldConstants::FIELD_ELEMENT> CoralStationHelper::GetNearestAllianceWallCoralStation(FieldAprilTagIDs tag)
 {
     if (m_allianceColor == frc::DriverStation::Alliance::kRed)
     {
         switch (tag) // nearest april
         {
-        case FieldConstants::AprilTagIDs::RED_CORAL_STATION_LEFT_TAG:
+        case FieldAprilTagIDs::RED_CORAL_STATION_LEFT_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_CORAL_STATION_LEFT_ALLIANCE;
             break;
-        case FieldConstants::AprilTagIDs::RED_CORAL_STATION_RIGHT_TAG:
+        case FieldAprilTagIDs::RED_CORAL_STATION_RIGHT_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_CORAL_STATION_RIGHT_ALLIANCE;
             break;
         default:
@@ -84,10 +85,10 @@ std::optional<FieldConstants::FIELD_ELEMENT> CoralStationHelper::GetNearestAllia
     {
         switch (tag) // nearest april
         {
-        case FieldConstants::AprilTagIDs::BLUE_CORAL_STATION_LEFT_TAG:
+        case FieldAprilTagIDs::BLUE_CORAL_STATION_LEFT_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_CORAL_STATION_LEFT_ALLIANCE;
             break;
-        case FieldConstants::AprilTagIDs::BLUE_CORAL_STATION_RIGHT_TAG:
+        case FieldAprilTagIDs::BLUE_CORAL_STATION_RIGHT_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_CORAL_STATION_RIGHT_ALLIANCE;
             break;
         default:
@@ -97,16 +98,16 @@ std::optional<FieldConstants::FIELD_ELEMENT> CoralStationHelper::GetNearestAllia
     return std::nullopt;
 }
 
-std::optional<FieldConstants::FIELD_ELEMENT> CoralStationHelper::GetNearestSideWallCoralStation(FieldConstants::AprilTagIDs tag)
+std::optional<FieldConstants::FIELD_ELEMENT> CoralStationHelper::GetNearestSideWallCoralStation(FieldAprilTagIDs tag)
 {
     if (m_allianceColor == frc::DriverStation::Alliance::kRed)
     {
         switch (tag) // nearest april
         {
-        case FieldConstants::AprilTagIDs::RED_CORAL_STATION_LEFT_TAG:
+        case FieldAprilTagIDs::RED_CORAL_STATION_LEFT_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_CORAL_STATION_LEFT_SIDEWALL;
             break;
-        case FieldConstants::AprilTagIDs::RED_CORAL_STATION_RIGHT_TAG:
+        case FieldAprilTagIDs::RED_CORAL_STATION_RIGHT_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_CORAL_STATION_RIGHT_SIDEWALL;
             break;
         default:
@@ -117,10 +118,10 @@ std::optional<FieldConstants::FIELD_ELEMENT> CoralStationHelper::GetNearestSideW
     {
         switch (tag) // nearest april
         {
-        case FieldConstants::AprilTagIDs::BLUE_CORAL_STATION_LEFT_TAG:
+        case FieldAprilTagIDs::BLUE_CORAL_STATION_LEFT_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_CORAL_STATION_LEFT_SIDEWALL;
             break;
-        case FieldConstants::AprilTagIDs::BLUE_CORAL_STATION_RIGHT_TAG:
+        case FieldAprilTagIDs::BLUE_CORAL_STATION_RIGHT_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_CORAL_STATION_RIGHT_SIDEWALL;
             break;
         default:
@@ -130,7 +131,7 @@ std::optional<FieldConstants::FIELD_ELEMENT> CoralStationHelper::GetNearestSideW
     return std::nullopt;
 }
 
-units::length::meter_t CoralStationHelper::CalcDistanceToAprilTag(FieldConstants::AprilTagIDs tag, frc::Pose2d currentPose)
+units::length::meter_t CoralStationHelper::CalcDistanceToAprilTag(FieldAprilTagIDs tag, frc::Pose2d currentPose)
 {
     return currentPose.Translation().Distance(m_fieldConstants->GetAprilTagPose2d(tag).Translation());
 }

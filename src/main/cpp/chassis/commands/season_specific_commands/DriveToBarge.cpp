@@ -1,4 +1,3 @@
-
 //====================================================================================================================================================
 // Copyright 2025 Lake Orion Robotics FIRST Team 302
 //
@@ -13,15 +12,29 @@
 // DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
+#include "chassis/commands/season_specific_commands/DriveToBarge.h"
+#include "fielddata/BargeHelper.h"
 
-#pragma once
-
-///  @brief	    Interface for loggable items that can be mixed in with other interfaces
-class SensorData
+DriveToBarge::DriveToBarge(subsystems::CommandSwerveDrivetrain *chassis)
+    : DriveToPose(chassis)
 {
-public:
-	SensorData();
-	virtual ~SensorData() = default;
+}
 
-	virtual void PeriodicCacheData() = 0;
-};
+frc::Pose2d DriveToBarge::GetEndPose()
+{
+    frc::Pose2d endPose;
+    auto bargeHelper = BargeHelper::GetInstance();
+    if (bargeHelper != nullptr)
+    {
+        endPose = bargeHelper->CalcBargePose();
+    }
+    return endPose;
+}
+
+void DriveToBarge::Execute()
+{
+    DriveToPose::Execute();
+
+    auto bargeHelper = BargeHelper::GetInstance();
+    bargeHelper->IsInZone();
+}

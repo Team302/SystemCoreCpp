@@ -14,8 +14,9 @@
 // OR OTHER DEALINGS IN THE SOFTWARE.
 //====================================================================================================================================================
 
-#include "chassis/ChassisConfigMgr.h"
 #include "fielddata/ReefHelper.h"
+#include "chassis/ChassisConfigMgr.h"
+#include "fielddata/FieldAprilTagIDs.h"
 #include "frc/DriverStation.h"
 #include "utils/FMSData.h"
 #include "utils/logging/debug/Logger.h"
@@ -39,7 +40,7 @@ ReefHelper::ReefHelper() : m_chassis(ChassisConfigMgr::GetInstance()->GetSwerveC
     InitZones();
 }
 
-std::optional<FieldConstants::AprilTagIDs> ReefHelper::GetNearestReefTag()
+std::optional<FieldAprilTagIDs> ReefHelper::GetNearestReefTag()
 {
     m_allianceColor = FMSData::GetAllianceColor();
     if (m_chassis != nullptr)
@@ -71,58 +72,58 @@ std::optional<FieldConstants::AprilTagIDs> ReefHelper::GetNearestReefTag()
 
             if (chassisX >= m_redReefCenter.X())
             {
-                distance = CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::RED_REEF_AB_TAG, pose);
-                if (CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::RED_REEF_CD_TAG, pose) < distance)
+                distance = CalcDistanceToAprilTag(FieldAprilTagIDs::RED_REEF_AB_TAG, pose);
+                if (CalcDistanceToAprilTag(FieldAprilTagIDs::RED_REEF_CD_TAG, pose) < distance)
                 {
-                    return FieldConstants::AprilTagIDs::RED_REEF_CD_TAG;
+                    return FieldAprilTagIDs::RED_REEF_CD_TAG;
                 }
-                else if (CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::RED_REEF_KL_TAG, pose) < distance)
+                else if (CalcDistanceToAprilTag(FieldAprilTagIDs::RED_REEF_KL_TAG, pose) < distance)
                 {
-                    return FieldConstants::AprilTagIDs::RED_REEF_KL_TAG;
+                    return FieldAprilTagIDs::RED_REEF_KL_TAG;
                 }
-                return FieldConstants::AprilTagIDs::RED_REEF_AB_TAG;
+                return FieldAprilTagIDs::RED_REEF_AB_TAG;
             }
             else
             {
-                distance = CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::RED_REEF_GH_TAG, pose);
-                if (CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::RED_REEF_EF_TAG, pose) < distance)
+                distance = CalcDistanceToAprilTag(FieldAprilTagIDs::RED_REEF_GH_TAG, pose);
+                if (CalcDistanceToAprilTag(FieldAprilTagIDs::RED_REEF_EF_TAG, pose) < distance)
                 {
-                    return FieldConstants::AprilTagIDs::RED_REEF_EF_TAG;
+                    return FieldAprilTagIDs::RED_REEF_EF_TAG;
                 }
-                else if (CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::RED_REEF_IJ_TAG, pose) < distance)
+                else if (CalcDistanceToAprilTag(FieldAprilTagIDs::RED_REEF_IJ_TAG, pose) < distance)
                 {
-                    return FieldConstants::AprilTagIDs::RED_REEF_IJ_TAG;
+                    return FieldAprilTagIDs::RED_REEF_IJ_TAG;
                 }
-                return FieldConstants::AprilTagIDs::RED_REEF_GH_TAG;
+                return FieldAprilTagIDs::RED_REEF_GH_TAG;
             }
         }
         else
         {
             if (chassisX <= m_blueReefCenter.X())
             {
-                distance = CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::BLUE_REEF_AB_TAG, pose);
-                if (CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::BLUE_REEF_CD_TAG, pose) < distance)
+                distance = CalcDistanceToAprilTag(FieldAprilTagIDs::BLUE_REEF_AB_TAG, pose);
+                if (CalcDistanceToAprilTag(FieldAprilTagIDs::BLUE_REEF_CD_TAG, pose) < distance)
                 {
-                    return FieldConstants::AprilTagIDs::BLUE_REEF_CD_TAG;
+                    return FieldAprilTagIDs::BLUE_REEF_CD_TAG;
                 }
-                else if (CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::BLUE_REEF_KL_TAG, pose) < distance)
+                else if (CalcDistanceToAprilTag(FieldAprilTagIDs::BLUE_REEF_KL_TAG, pose) < distance)
                 {
-                    return FieldConstants::AprilTagIDs::BLUE_REEF_KL_TAG;
+                    return FieldAprilTagIDs::BLUE_REEF_KL_TAG;
                 }
-                return FieldConstants::AprilTagIDs::BLUE_REEF_AB_TAG;
+                return FieldAprilTagIDs::BLUE_REEF_AB_TAG;
             }
             else
             {
-                distance = CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::BLUE_REEF_GH_TAG, pose);
-                if (CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::BLUE_REEF_EF_TAG, pose) < distance)
+                distance = CalcDistanceToAprilTag(FieldAprilTagIDs::BLUE_REEF_GH_TAG, pose);
+                if (CalcDistanceToAprilTag(FieldAprilTagIDs::BLUE_REEF_EF_TAG, pose) < distance)
                 {
-                    return FieldConstants::AprilTagIDs::BLUE_REEF_EF_TAG;
+                    return FieldAprilTagIDs::BLUE_REEF_EF_TAG;
                 }
-                else if (CalcDistanceToAprilTag(FieldConstants::AprilTagIDs::BLUE_REEF_IJ_TAG, pose) < distance)
+                else if (CalcDistanceToAprilTag(FieldAprilTagIDs::BLUE_REEF_IJ_TAG, pose) < distance)
                 {
-                    return FieldConstants::AprilTagIDs::BLUE_REEF_IJ_TAG;
+                    return FieldAprilTagIDs::BLUE_REEF_IJ_TAG;
                 }
-                return FieldConstants::AprilTagIDs::BLUE_REEF_GH_TAG;
+                return FieldAprilTagIDs::BLUE_REEF_GH_TAG;
             }
         }
     }
@@ -130,28 +131,28 @@ std::optional<FieldConstants::AprilTagIDs> ReefHelper::GetNearestReefTag()
     return std::nullopt;
 }
 
-std::optional<FieldConstants::FIELD_ELEMENT> ReefHelper::GetNearestLeftReefBranch(FieldConstants::AprilTagIDs tag)
+std::optional<FieldConstants::FIELD_ELEMENT> ReefHelper::GetNearestLeftReefBranch(FieldAprilTagIDs tag)
 {
     if (m_allianceColor == frc::DriverStation::Alliance::kRed)
     {
         switch (tag) // nearest april
         {
-        case FieldConstants::AprilTagIDs::RED_REEF_AB_TAG:
+        case FieldAprilTagIDs::RED_REEF_AB_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_REEF_A;
             break;
-        case FieldConstants::AprilTagIDs::RED_REEF_CD_TAG:
+        case FieldAprilTagIDs::RED_REEF_CD_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_REEF_C;
             break;
-        case FieldConstants::AprilTagIDs::RED_REEF_EF_TAG:
+        case FieldAprilTagIDs::RED_REEF_EF_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_REEF_E;
             break;
-        case FieldConstants::AprilTagIDs::RED_REEF_GH_TAG:
+        case FieldAprilTagIDs::RED_REEF_GH_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_REEF_G;
             break;
-        case FieldConstants::AprilTagIDs::RED_REEF_IJ_TAG:
+        case FieldAprilTagIDs::RED_REEF_IJ_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_REEF_I;
             break;
-        case FieldConstants::AprilTagIDs::RED_REEF_KL_TAG:
+        case FieldAprilTagIDs::RED_REEF_KL_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_REEF_K;
             break;
         default:
@@ -162,22 +163,22 @@ std::optional<FieldConstants::FIELD_ELEMENT> ReefHelper::GetNearestLeftReefBranc
     {
         switch (tag) // nearest april
         {
-        case FieldConstants::AprilTagIDs::BLUE_REEF_AB_TAG:
+        case FieldAprilTagIDs::BLUE_REEF_AB_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_REEF_A;
             break;
-        case FieldConstants::AprilTagIDs::BLUE_REEF_CD_TAG:
+        case FieldAprilTagIDs::BLUE_REEF_CD_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_REEF_C;
             break;
-        case FieldConstants::AprilTagIDs::BLUE_REEF_EF_TAG:
+        case FieldAprilTagIDs::BLUE_REEF_EF_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_REEF_E;
             break;
-        case FieldConstants::AprilTagIDs::BLUE_REEF_GH_TAG:
+        case FieldAprilTagIDs::BLUE_REEF_GH_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_REEF_G;
             break;
-        case FieldConstants::AprilTagIDs::BLUE_REEF_IJ_TAG:
+        case FieldAprilTagIDs::BLUE_REEF_IJ_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_REEF_I;
             break;
-        case FieldConstants::AprilTagIDs::BLUE_REEF_KL_TAG:
+        case FieldAprilTagIDs::BLUE_REEF_KL_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_REEF_K;
             break;
         default:
@@ -187,29 +188,29 @@ std::optional<FieldConstants::FIELD_ELEMENT> ReefHelper::GetNearestLeftReefBranc
     return std::nullopt;
 }
 
-std::optional<FieldConstants::FIELD_ELEMENT> ReefHelper::GetNearestRightReefBranch(FieldConstants::AprilTagIDs tag)
+std::optional<FieldConstants::FIELD_ELEMENT> ReefHelper::GetNearestRightReefBranch(FieldAprilTagIDs tag)
 {
     if (m_allianceColor == frc::DriverStation::Alliance::kRed)
     {
 
         switch (tag) // nearest april
         {
-        case FieldConstants::AprilTagIDs::RED_REEF_AB_TAG:
+        case FieldAprilTagIDs::RED_REEF_AB_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_REEF_B;
             break;
-        case FieldConstants::AprilTagIDs::RED_REEF_CD_TAG:
+        case FieldAprilTagIDs::RED_REEF_CD_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_REEF_D;
             break;
-        case FieldConstants::AprilTagIDs::RED_REEF_EF_TAG:
+        case FieldAprilTagIDs::RED_REEF_EF_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_REEF_F;
             break;
-        case FieldConstants::AprilTagIDs::RED_REEF_GH_TAG:
+        case FieldAprilTagIDs::RED_REEF_GH_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_REEF_H;
             break;
-        case FieldConstants::AprilTagIDs::RED_REEF_IJ_TAG:
+        case FieldAprilTagIDs::RED_REEF_IJ_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_REEF_J;
             break;
-        case FieldConstants::AprilTagIDs::RED_REEF_KL_TAG:
+        case FieldAprilTagIDs::RED_REEF_KL_TAG:
             return FieldConstants::FIELD_ELEMENT::RED_REEF_L;
             break;
         default:
@@ -220,22 +221,22 @@ std::optional<FieldConstants::FIELD_ELEMENT> ReefHelper::GetNearestRightReefBran
     {
         switch (tag) // nearest april
         {
-        case FieldConstants::AprilTagIDs::BLUE_REEF_AB_TAG:
+        case FieldAprilTagIDs::BLUE_REEF_AB_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_REEF_B;
             break;
-        case FieldConstants::AprilTagIDs::BLUE_REEF_CD_TAG:
+        case FieldAprilTagIDs::BLUE_REEF_CD_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_REEF_D;
             break;
-        case FieldConstants::AprilTagIDs::BLUE_REEF_EF_TAG:
+        case FieldAprilTagIDs::BLUE_REEF_EF_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_REEF_F;
             break;
-        case FieldConstants::AprilTagIDs::BLUE_REEF_GH_TAG:
+        case FieldAprilTagIDs::BLUE_REEF_GH_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_REEF_H;
             break;
-        case FieldConstants::AprilTagIDs::BLUE_REEF_IJ_TAG:
+        case FieldAprilTagIDs::BLUE_REEF_IJ_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_REEF_J;
             break;
-        case FieldConstants::AprilTagIDs::BLUE_REEF_KL_TAG:
+        case FieldAprilTagIDs::BLUE_REEF_KL_TAG:
             return FieldConstants::FIELD_ELEMENT::BLUE_REEF_L;
             break;
         default:
@@ -245,7 +246,7 @@ std::optional<FieldConstants::FIELD_ELEMENT> ReefHelper::GetNearestRightReefBran
     return std::nullopt;
 }
 
-units::length::meter_t ReefHelper::CalcDistanceToAprilTag(FieldConstants::AprilTagIDs tag, frc::Pose2d currentPose)
+units::length::meter_t ReefHelper::CalcDistanceToAprilTag(FieldAprilTagIDs tag, frc::Pose2d currentPose)
 {
     return currentPose.Translation().Distance(m_fieldConstants->GetAprilTagPose2d(tag).Translation());
 }
@@ -265,5 +266,22 @@ void ReefHelper::IsInZone()
         bool intheZone = reefZones->IsPoseInZone(m_chassis->GetPose());
 
         RobotState::GetInstance()->PublishStateChange(RobotStateChanges::StateChange::IsInReefZone_Bool, intheZone);
+    }
+}
+
+std::optional<frc::Pose2d> ReefHelper::GetClosestReefTagPose()
+{
+    auto fieldconst = FieldConstants::GetInstance();
+    auto taginfo = GetNearestReefTag();
+    if (taginfo.has_value())
+    {
+        auto tag = taginfo.value();
+        auto tagpose{fieldconst->GetAprilTagPose2d(tag)};
+
+        return tagpose;
+    }
+    else
+    {
+        return std::nullopt;
     }
 }

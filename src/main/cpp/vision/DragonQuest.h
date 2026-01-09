@@ -16,22 +16,20 @@
 #include <string>
 #include <vector>
 
-#include <frc/smartdashboard/SendableChooser.h>
-#include <frc/smartdashboard/SmartDashboard.h>
-#include <networktables/NetworkTable.h>
-#include <networktables/NetworkTableEntry.h>
-#include <networktables/NetworkTableInstance.h>
-#include <networktables/DoubleTopic.h>
-#include <state/IRobotStateChangeSubscriber.h>
-#include "chassis/pose/DragonVisionPoseEstimator.h"
 #include "networktables/DoubleArrayTopic.h"
 #include "networktables/IntegerTopic.h"
 #include "utils/logging/signals/DragonDataLogger.h"
-#include "vision/DragonVisionStructs.h"
+#include <frc/smartdashboard/SendableChooser.h>
+#include <frc/smartdashboard/SmartDashboard.h>
+#include <networktables/DoubleTopic.h>
+#include <networktables/NetworkTable.h>
+#include <networktables/NetworkTableEntry.h>
+#include <networktables/NetworkTableInstance.h>
+#include <state/IRobotStateChangeSubscriber.h>
 
 using namespace std;
 
-class DragonQuest : public IRobotStateChangeSubscriber, public DragonDataLogger, public DragonVisionPoseEstimator
+class DragonQuest : public IRobotStateChangeSubscriber, public DragonDataLogger
 
 {
 public:
@@ -45,11 +43,10 @@ public:
     );
     frc::Pose2d GetEstimatedPose();
     void DataLog(uint64_t timestamp) override;
-    bool HealthCheck() override { return m_isConnected; };
+    bool HealthCheck() { return m_isConnected; };
     void SetIsConnected();
 
-    DragonVisionPoseEstimatorStruct GetPoseEstimate() override;
-    void SetRobotPose(const frc::Pose2d &pose) override;
+    // void SetRobotPose(const frc::Pose2d &pose) override;
 
     void RefreshNT();
     void HandleHeartBeat();

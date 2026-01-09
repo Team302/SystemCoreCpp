@@ -34,7 +34,7 @@ public:
     bool IsDone() override;
 
 private:
-    frc2::CommandPtr CreateDriveToTargetCommand(ChassisOptionEnums::DriveStateType driveToType);
+    frc2::CommandPtr CreateDriveToPoseCommand(ChassisOptionEnums::DriveStateType driveToType);
     bool IsInZone();
     int FindDriveToZoneIndex(ZoneParamsVector zones);
 

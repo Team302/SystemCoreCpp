@@ -14,32 +14,77 @@
 //====================================================================================================================================================#pragma once
 #pragma once
 
-#include "frc/geometry/Pose3d.h"
-#include "frc/geometry/Translation3d.h"
-#include "wpi/array.h"
-#include "units/time.h"
-
-enum PoseEstimationStrategy
+enum class VisionTargetOption
 {
-    MULTI_TAG,
-    SINGLE_TAG,
-    MEGA_TAG,
-    MEGA_TAG_2,
-    NONE
+    CLOSEST_VALID_TARGET,
+    FUSED_TARGET_INFO,
+    ALL_VALID_TARGETS
 };
 
-struct VisionPose
+enum class DragonTargetType
 {
-    frc::Pose3d estimatedPose = frc::Pose3d{};                                     // empty pose3d if we don't give one out
-    units::time::millisecond_t timeStamp = units::time::millisecond_t(-1.0);       // negative timestamp for no timestamp
-    wpi::array<double, 3> visionMeasurementStdDevs = {0.1, 0.1, 0.1};              // default std devs from WPI docs
-    PoseEstimationStrategy estimationStrategy = PoseEstimationStrategy::MULTI_TAG; // default estimation strategy, what should be used
+    UNKNOWN,
+    APRIL_TAG,
+    OBJECT_DETECTION
 };
 
-struct VisionData
+enum class DRAGON_LIMELIGHT_CAMERA_TYPE
 {
-    frc::Transform3d transformToTarget = frc::Transform3d{}; // from robot center
-    frc::Translation3d translationToTarget = frc::Translation3d{};
-    frc::Rotation3d rotationToTarget = frc::Rotation3d{};
-    int tagId = -1; // if we don't have april tag data, use null id
+    LIMELIGHT4,
+    LIMELIGHT4_W_HAILO8,
+    LIMELIGHT3G,
+    LIMELIGHT3,
+    LIMELIGHT3_W_CORAL
+};
+
+enum class DRAGON_LIMELIGHT_CAMERA_IDENTIFIER
+{
+    BACK_CAMERA,
+    FRONT_CAMERA
+};
+
+enum class DRAGON_LIMELIGHT_CAMERA_USAGE
+{
+    APRIL_TAGS,
+    OBJECT_DETECTION_ALGAE,
+    ALGAE_AND_APRIL_TAGS
+};
+
+enum class DRAGON_LIMELIGHT_LED_MODE
+{
+    LED_UNKNOWN = -1,
+    LED_PIPELINE_CONTROL,
+    LED_OFF,
+    LED_BLINK,
+    LED_ON
+};
+
+enum class DRAGON_LIMELIGHT_CAM_MODE
+{
+    CAM_UNKNOWN = -1,
+    CAM_VISION,
+    CAM_DRIVER
+};
+
+enum class DRAGON_LIMELIGHT_STREAM_MODE
+{
+    STREAM_UNKNOWN = -1,
+    STREAM_STANDARD,     // side by side if two cams
+    STREAM_PIP_MAIN,     // Second Cam bottom right of Main Cam
+    STREAM_PIP_SECONDARY // Main Cam bottom right of Second Cam
+};
+
+enum class DRAGON_LIMELIGHT_SNAPSHOT_MODE
+{
+    SNAPSHOT_MODE_UNKNOWN = -1,
+    SNAP_OFF,
+    SNAP_ON
+};
+
+enum class DRAGON_LIMELIGHT_PIPELINE
+{
+    UNKNOWN = -1,
+    APRIL_TAG = 0,
+    MACHINE_LEARNING_PL = 1,
+    COLOR_THRESHOLD
 };
